@@ -5,7 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.elvetor.elevatorsubsyste
+import frc.robot.subsystems.elvetor.elevatorsubsystem;
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class elevatorcommand extends Command {
   private elevatorsubsystem m_elevator;
