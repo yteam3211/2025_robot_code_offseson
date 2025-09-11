@@ -4,8 +4,6 @@
 
 package frc.robot.commands;
 
-import java.io.IOError;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -32,7 +30,7 @@ public class elevatorcommand extends Command {
   @Override
   public void execute() {
     m_elevator.set(m_elevator.inputs.getstate().getTarget());
-  } 
+  }
 
   // Called once the command ends or is interrupted.
   @Override

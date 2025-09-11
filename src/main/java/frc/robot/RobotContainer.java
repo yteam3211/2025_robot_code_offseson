@@ -128,8 +128,7 @@ public class RobotContainer {
             () -> -controller.getLeftY(),
             () -> -controller.getLeftX(),
             () -> -controller.getRightX()));
-    elevator.setDefaultCommand(
-      elevatorcommand.circleelvator(elevator, controller.circle()));
+    elevator.setDefaultCommand(elevatorcommand.circleelvator(elevator, controller.circle()));
   }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
