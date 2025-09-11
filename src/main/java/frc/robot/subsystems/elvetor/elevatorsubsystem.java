@@ -4,22 +4,23 @@
 
 package frc.robot.subsystems.elvetor;
 
-import com.ctre.phoenix6.hardware.TalonFX;
-
-import com.ctre.phoenix6.controls.Follower;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
+import frc.robot.states.Elavatorstates;
 
 public class elevatorsubsystem extends SubsystemBase {
   public elevatorio io;
-  private TalonFX m_master = new TalonFX(Constants.elevatorcos.masterid);
-  private TalonFX m_slave = new TalonFX(Constants.elevatorcos.slaveid);
-  public elevatorsubsystem(){
-    m_slave.setControl(new Follower(m_master.getDeviceID(), false));
-  };
+  public elevatorio.elevatorioinputs inputs = new elevatorio.elevatorioinputs();
+
+  public elevatorsubsystem() {
+    inputs.setslave();
+  }
+  ;
   /** Creates a new elevatorsubsystem. */
   public elevatorsubsystem(elevatorio io) {
     this.io = io;
+    this.inputs.state = Elavatorstates.Close;
   }
 
   @Override
@@ -27,8 +28,14 @@ public class elevatorsubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
 
   }
-
-  public void set(double speed) {
-    m_master.set(speed);
+  public Command set(double d) {
+    io.updatepose(
+        new Pose3d(
+            inputs.elevatorpPose.getX(),
+            inputs.elevatorpPose.getY(),
+            inputs.elevatorpPose.getZ() + 0.2,
+            inputs.elevatorpPose.getRotation()));
+    ;
+    return runOnce(() -> io.set(d));
   }
 }

@@ -4,8 +4,14 @@
 
 package frc.robot.commands;
 
+import java.io.IOError;
+
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.states.Elavatorstates;
 import frc.robot.subsystems.elvetor.elevatorsubsystem;
+
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class elevatorcommand extends Command {
   private elevatorsubsystem m_elevator;
@@ -13,32 +19,41 @@ public class elevatorcommand extends Command {
   public elevatorcommand(elevatorsubsystem elevator) {
     m_elevator = elevator;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(elevator);
+    addRequirements(m_elevator);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    m_elevator.set(0);
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (m_elevator.io.state >= m_elevator.io.getestametedpos()) {
-      m_elevator.set(-(m_elevator.io.state.getTarget() / 10));
-    } else {
-      m_elevator.set(m_elevator.io.state.getTarget() / 10);
-      ;
-    }
-  }
+    m_elevator.set(m_elevator.inputs.getstate().getTarget());
+  } 
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    m_elevator.set(0);
+    m_elevator.inputs.state = Elavatorstates.Close;
+  }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_elevator.io.state.getTarget() == m_elevator.io.getestametedpos();
+    return m_elevator.inputs.state.getTarget() == m_elevator.inputs.getestametedpos().getZ();
+  }
+
+  public static Command circleelvator(elevatorsubsystem m_elevator, Trigger circle) {
+    return Commands.run(
+        () -> {
+          circle.whileTrue(m_elevator.set(0.5));
+          circle.whileFalse(m_elevator.set(0));
+        },
+        m_elevator);
   }
   ;
 }

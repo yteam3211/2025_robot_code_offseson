@@ -13,7 +13,6 @@ public enum Elavatorstates implements ITarget {
   Threshold(0.075),
   Net(2);
 
-
   private double m_hight;
 
   Elavatorstates(double hight) {}

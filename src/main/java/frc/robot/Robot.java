@@ -36,7 +36,6 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 public class Robot extends LoggedRobot {
   private Command autonomousCommand;
   private RobotContainer robotContainer;
-  public Pose3d components[] = new Pose3d[2];
 
   public Robot() {
     // Record metadata
@@ -98,7 +97,7 @@ public class Robot extends LoggedRobot {
     }
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our autonomous chooser on the dashboard.
-
+    Pose3d[] components = new Pose3d[2];
     for (int i = 0; i < components.length; i++) {
       components[i] = new Pose3d();
     }

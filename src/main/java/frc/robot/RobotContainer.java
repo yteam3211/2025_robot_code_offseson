@@ -29,6 +29,7 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.elvetor.elevatorio;
+import frc.robot.subsystems.elvetor.elevatorioreal;
 import frc.robot.subsystems.elvetor.elevatoriosim;
 import frc.robot.subsystems.elvetor.elevatorsubsystem;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -62,9 +63,8 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.FrontRight),
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
-        elevator = new elevatorsubsystem(new elevatorio() {
-          
-        });
+        elevator = new elevatorsubsystem(new elevatorioreal() {});
+
         break;
 
       case SIM:
@@ -88,7 +88,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
-        elevator = new elevatorsubsystem();
+        elevator = new elevatorsubsystem(new elevatorio() {});
         break;
     }
 
@@ -128,7 +128,8 @@ public class RobotContainer {
             () -> -controller.getLeftY(),
             () -> -controller.getLeftX(),
             () -> -controller.getRightX()));
-    elevator.setDefaultCommand(new elevatorcommand(elevator));
+    elevator.setDefaultCommand(
+      elevatorcommand.circleelvator(elevator, controller.circle()));
   }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
