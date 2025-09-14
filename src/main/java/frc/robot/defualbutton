@@ -1,0 +1,16 @@
+public class defaultbutton {
+    public static void elevator(elevatorsubsystem elevatorsubsystem) {
+        Runnable setElevatorTargetByState = () -> {
+          if (!elevatorsubsystem.isFirstResetOccurred()) {
+            elevatorsubsystem.stop();
+          } else if (robotSubsystems.coral.getAngle() < CoralPosition.SafeZone.getTarget()) {
+            elevatorsubsystem.setLevel(elevatorsubsystem.inputs.state.getTarget());
+          }
+        };
+        Command followElevatorStateTargetCommand = new SetSubsystemTargetCommand(
+          robotSubsystems.elevator,
+          setElevatorTargetByState
+        );
+        robotSubsystems.elevator.setDefaultCommand(followElevatorStateTargetCommand);
+      }
+}

@@ -7,36 +7,33 @@ package frc.robot.subsystems.elvetor;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.states.Elavatorstates;
+import frc.robot.states.Elevatorstates;
 
 public class elevatorsubsystem extends SubsystemBase {
   public elevatorio io;
-  public elevatorio.elevatorioinputs inputs = new elevatorio.elevatorioinputs();
-
-  public elevatorsubsystem() {
-    inputs.setslave();
-  }
+  public ElevatorioinputsAutoLogged inputs = new ElevatorioinputsAutoLogged();
   ;
   /** Creates a new elevatorsubsystem. */
   public elevatorsubsystem(elevatorio io) {
     this.io = io;
-    this.inputs.state = Elavatorstates.Close;
+    this.inputs.state = Elevatorstates.Close;
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-
-  }
-
-  public Command set(double d) {
+    if (io.isElevatorDown()) {
+      io.resetEncoder();
+    }
     io.updatepose(
         new Pose3d(
             inputs.elevatorpPose.getX(),
             inputs.elevatorpPose.getY(),
-            inputs.elevatorpPose.getZ() + 0.2,
+            inputs.elevatorpPose.getZ() + io.gethight(),
             inputs.elevatorpPose.getRotation()));
-    ;
+  }
+
+  public Command set(double d) {
     return runOnce(() -> io.set(d));
   }
 }

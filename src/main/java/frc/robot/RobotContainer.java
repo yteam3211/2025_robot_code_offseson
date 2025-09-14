@@ -17,7 +17,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.PS5Controller;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.elevatorcommand;
@@ -46,8 +46,10 @@ public class RobotContainer {
   public final Drive drive;
   public final elevatorsubsystem elevator;
   // Controller
-  private final CommandPS5Controller controller = new CommandPS5Controller(0);
-
+  // private final CommandPS5Controller controller = new CommandPS5Controller(0);
+  private final CommandXboxController controller = new CommandXboxController(0);
+  // commands
+  elevatorcommand elevatorcommand;
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
 
@@ -91,7 +93,8 @@ public class RobotContainer {
         elevator = new elevatorsubsystem(new elevatorio() {});
         break;
     }
-
+    // setup commands
+    elevatorcommand = new elevatorcommand(elevator);
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
@@ -128,7 +131,6 @@ public class RobotContainer {
             () -> -controller.getLeftY(),
             () -> -controller.getLeftX(),
             () -> -controller.getRightX()));
-    elevator.setDefaultCommand(elevatorcommand.circleelvator(elevator, controller.circle()));
   }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

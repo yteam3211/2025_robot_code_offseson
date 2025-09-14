@@ -7,7 +7,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.states.Elavatorstates;
+import frc.robot.states.Elevatorstates;
 import frc.robot.subsystems.elvetor.elevatorsubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
@@ -36,7 +36,7 @@ public class elevatorcommand extends Command {
   @Override
   public void end(boolean interrupted) {
     m_elevator.set(0);
-    m_elevator.inputs.state = Elavatorstates.Close;
+    m_elevator.inputs.state = Elevatorstates.Close;
   }
 
   // Returns true when the command should end.
@@ -48,7 +48,7 @@ public class elevatorcommand extends Command {
   public static Command circleelvator(elevatorsubsystem m_elevator, Trigger circle) {
     return Commands.run(
         () -> {
-          circle.whileTrue(m_elevator.set(0.5));
+          circle.whileTrue(m_elevator.set(15));
           circle.whileFalse(m_elevator.set(0));
         },
         m_elevator);

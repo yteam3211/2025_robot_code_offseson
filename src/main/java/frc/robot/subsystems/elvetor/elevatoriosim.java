@@ -3,17 +3,17 @@ package frc.robot.subsystems.elvetor;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
-import frc.robot.states.Elavatorstates;
+import frc.robot.states.Elevatorstates;
 import org.littletonrobotics.junction.Logger;
 
 public class elevatoriosim implements elevatorio {
 
-  private static final DCMotor DRIVE_GEARBOX = DCMotor.getKrakenX60Foc(2);
+  private final DCMotor DRIVE_GEARBOX = DCMotor.getKrakenX60Foc(2);
 
-  public elevatorioinputsAutoLogged inputs = new elevatorioinputsAutoLogged();
+  public ElevatorioinputsAutoLogged inputs = new ElevatorioinputsAutoLogged();
   public ElevatorSim motor =
       new ElevatorSim(
-          LinearSystemId.createElevatorSystem(DRIVE_GEARBOX, 9.85165, 0.071, 5),
+          LinearSystemId.createElevatorSystem(DRIVE_GEARBOX, 9.85165, 0.071, 0.158227848),
           DRIVE_GEARBOX,
           0.17,
           2.45,
@@ -30,10 +30,26 @@ public class elevatoriosim implements elevatorio {
     motor.setInputVoltage(speed);
   }
 
-  public void updateInputs(elevatorioinputsAutoLogged inputs) {
-    this.inputs.state = Elavatorstates.Close;
-    this.inputs.elevatorpPose = (inputs.elevatorpPose);
-    Logger.recordOutput("Elavator/State", this.inputs.state);
-    Logger.recordOutput("Elavator/EstimatedPos", this.inputs.getestametedpos());
+  public void updateInputs(ElevatorioinputsAutoLogged inputs) {
+    this.inputs.state = Elevatorstates.Close;
+    this.inputs.elevatorpPose = inputs.elevatorpPose;
+    Logger.recordOutput("Elevator/State", this.inputs.state);
+    Logger.recordOutput("Elevator/EstimatedPos", this.inputs.getestametedpos());
+  }
+
+  @Override
+  public double gethight() {
+    Logger.recordOutput("Elevator/gethight", motor.getPositionMeters());
+    return motor.getPositionMeters();
+  }
+
+  @Override
+  public void resetEncoder() {
+    motor.setState(0.17, 0);
+  }
+
+  @Override
+  public boolean isElevatorDown() {
+    return motor.getPositionMeters() <= 0.17;
   }
 }

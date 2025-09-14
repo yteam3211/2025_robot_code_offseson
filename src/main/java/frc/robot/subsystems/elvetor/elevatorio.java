@@ -1,31 +1,26 @@
 package frc.robot.subsystems.elvetor;
 
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.wpilibj.Alert;
-import frc.robot.states.Elavatorstates;
+import frc.robot.states.Elevatorstates;
 import org.littletonrobotics.junction.AutoLog;
 import org.littletonrobotics.junction.Logger;
 
 public interface elevatorio {
   @AutoLog
-  public static class elevatorioinputs {
-    public Elavatorstates state = Elavatorstates.Close;
+  public static class Elevatorioinputs {
+    public Elevatorstates state = Elevatorstates.Close;
     public Pose3d elevatorpPose = new Pose3d();
 
-    public void setslave() {
-      //
-    }
-
-    public elevatorioinputs() {
-      Logger.recordOutput("Elavator/State", state);
-      Logger.recordOutput("Elavator/EstimatedPos", getestametedpos());
+    public Elevatorioinputs() {
+      Logger.recordOutput("Elevator/State", state);
+      Logger.recordOutput("Elevator/EstimatedPos", getestametedpos());
     }
 
     public Pose3d getestametedpos() {
       return elevatorpPose;
     }
 
-    public Elavatorstates getstate() {
+    public Elevatorstates getstate() {
       return state;
     }
 
@@ -36,18 +31,25 @@ public interface elevatorio {
   }
 
   public default void updatepose(Pose3d newpose) {
-    elevatorioinputsAutoLogged inputs = new elevatorioinputsAutoLogged();
+    ElevatorioinputsAutoLogged inputs = new ElevatorioinputsAutoLogged();
     inputs.elevatorpPose = newpose;
     updateInputs(inputs);
   }
 
-  public default void updateInputs(elevatorioinputsAutoLogged inputs) {
-    new Alert("no updateInputs in elevator", Alert.AlertType.kError)
-        .set(true); // Alert that the method is not overridden
+  public default void updateInputs(ElevatorioinputsAutoLogged inputs) {}
+
+  public default void set(double d) {}
+  ;
+
+  public default void resetEncoder() {}
+
+  public default void setslave(int masterid, int slaveid) {}
+
+  public default double gethight() {
+    return 0;
   }
 
-  public default void set(double d) {
-    System.out.println("Elevator set is not configured");
+  public default boolean isElevatorDown() {
+    return false;
   }
-  ;
 }
