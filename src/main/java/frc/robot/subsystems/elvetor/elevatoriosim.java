@@ -11,7 +11,7 @@ public class elevatoriosim implements elevatorio {
   private final DCMotor DRIVE_GEARBOX = DCMotor.getKrakenX60Foc(2);
 
   public ElevatorioinputsAutoLogged inputs = new ElevatorioinputsAutoLogged();
-  public ElevatorSim motor =
+  private ElevatorSim motor =
       new ElevatorSim(
           LinearSystemId.createElevatorSystem(DRIVE_GEARBOX, 9.85165, 0.071, 0.158227848),
           DRIVE_GEARBOX,
@@ -51,5 +51,9 @@ public class elevatoriosim implements elevatorio {
   @Override
   public boolean isElevatorDown() {
     return motor.getPositionMeters() <= 0.17;
+  }
+  @Override
+  public void setlevel(double pos) {
+    motor.setInputVoltage(0);
   }
 }

@@ -31,9 +31,29 @@ public class elevatorsubsystem extends SubsystemBase {
             inputs.elevatorpPose.getY(),
             inputs.elevatorpPose.getZ() + io.gethight(),
             inputs.elevatorpPose.getRotation()));
+    io.updateInputs(inputs);
   }
 
   public Command set(double d) {
     return runOnce(() -> io.set(d));
   }
+
+  boolean m_occurred = false;
+  public boolean isFirstResetOccurred() {
+    if (isElevatorDown()) {
+              m_occurred = true;
+        }
+        return m_occurred;
+      }
+    public boolean isElevatorDown() {
+      return io.isElevatorDown();
+    }
+  public Command stop() {
+    return set(0);
+  }
+
+  public void setLevel(double pos) {
+    io.setlevel(pos);
+  }
 }
+

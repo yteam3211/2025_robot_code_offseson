@@ -52,4 +52,6 @@ public interface elevatorio {
   public default boolean isElevatorDown() {
     return false;
   }
+
+public default void setlevel(double pos){}
 }
