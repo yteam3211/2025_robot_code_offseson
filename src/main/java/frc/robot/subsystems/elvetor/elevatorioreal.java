@@ -1,6 +1,7 @@
 package frc.robot.subsystems.elvetor;
 
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -10,6 +11,8 @@ import frc.robot.states.Elevatorstates;
 public class elevatorioreal implements elevatorio {
   public Elevatorstates state = Elevatorstates.Close;
   public Pose3d elevatorpPose = new Pose3d();
+
+  private final MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
   private TalonFX motor = new TalonFX(Constants.elevatorcos.masterid);
   private TalonFX m_slave = new TalonFX(Constants.elevatorcos.slaveid);
   private DigitalInput m_closeSwitch;
@@ -49,7 +52,6 @@ public class elevatorioreal implements elevatorio {
 
   @Override
   public void setlevel(double pos) {
-    return;
-    //motor.setControl(motionMagicVoltage.withPosition(pos).withSlot(0));
+    motor.setControl(motionMagicVoltage.withPosition(pos).withSlot(0));
   }
 }
