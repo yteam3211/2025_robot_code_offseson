@@ -17,6 +17,7 @@ public class elevatorioreal implements elevatorio {
   private TalonFX m_slave = new TalonFX(Constants.elevatorcos.slaveid);
   private DigitalInput m_closeSwitch;
   public ElevatorioinputsAutoLogged inputs = new ElevatorioinputsAutoLogged();
+
   public elevatorioreal() {
     updateInputs(inputs);
     m_slave.setControl(new Follower(motor.getDeviceID(), false));
@@ -37,18 +38,18 @@ public class elevatorioreal implements elevatorio {
   public void set(double speed) {
     motor.set(speed);
   }
+
   @Override
   public void resetEncoder() {
     motor.setPosition(0);
   }
+
   public boolean isElevatorDown() {
     return !m_closeSwitch.get();
   }
 
   @Override
-  public void setslave(int masterid, int slaveid) {
-
-  }
+  public void setslave(int masterid, int slaveid) {}
 
   @Override
   public void setlevel(double pos) {

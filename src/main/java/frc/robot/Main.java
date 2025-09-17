@@ -22,7 +22,7 @@ import edu.wpi.first.wpilibj.RobotBase;
  */
 public final class Main {
   private Main() {}
-  //last edit 15/09/2025 17:38
+  // last edit 15/09/2025 17:38
   /**
    * Main initialization function. Do not perform any initialization here.
    *

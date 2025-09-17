@@ -3,9 +3,9 @@ package frc.robot.states;
 import frc.lib.util.ITarget;
 
 public enum Elevatorstates implements ITarget {
-  Close(0),
+  Close(0.17),
   Human(0.03),
-  L1(0),
+  L1(0.17),
   L2(0.43),
   L3(0.8),
   L4(1.5),
@@ -19,6 +19,6 @@ public enum Elevatorstates implements ITarget {
 
   @Override
   public double getTarget() {
-    return m_hight;
+    return m_hight * 2000;
   }
 }

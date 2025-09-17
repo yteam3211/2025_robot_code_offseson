@@ -1,14 +1,16 @@
 package frc.robot.subsystems.elvetor;
 
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.states.Elevatorstates;
 import org.littletonrobotics.junction.AutoLog;
 import org.littletonrobotics.junction.Logger;
 
 public interface elevatorio {
   @AutoLog
-  public static class Elevatorioinputs {
-    public Elevatorstates state = Elevatorstates.Close;
+  public class Elevatorioinputs {
+    public Elevatorstates state = Elevatorstates.L3;
     public Pose3d elevatorpPose = new Pose3d();
 
     public Elevatorioinputs() {
@@ -24,17 +26,25 @@ public interface elevatorio {
       return state;
     }
 
+    public Command gotonewxtstate() {
+      return new InstantCommand(
+          () -> {
+            if (state == Elevatorstates.Close) {
+              state = Elevatorstates.L3;
+            } else {
+              state = Elevatorstates.Close;
+            }
+            Logger.recordOutput("Elevator/State", state);
+          });
+    }
+
     public void set(double speed) {
       // io.set(speed);
       System.out.println("Elevator is not configured");
     }
   }
 
-  public default void updatepose(Pose3d newpose) {
-    ElevatorioinputsAutoLogged inputs = new ElevatorioinputsAutoLogged();
-    inputs.elevatorpPose = newpose;
-    updateInputs(inputs);
-  }
+  public default void updatepose(Pose3d newpose) {}
 
   public default void updateInputs(ElevatorioinputsAutoLogged inputs) {}
 
@@ -53,5 +63,5 @@ public interface elevatorio {
     return false;
   }
 
-public default void setlevel(double pos){}
+  public default void setlevel(double pos) {}
 }

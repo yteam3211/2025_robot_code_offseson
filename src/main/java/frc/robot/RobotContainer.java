@@ -20,7 +20,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.elevatorcommand;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -34,26 +33,24 @@ public class RobotContainer {
   // subsystems
   public final RobotSubsystems subsystems;
   // Controller
-  // private final CommandPS5Controller controller = new CommandPS5Controller(0);
   private final CommandXboxController controller = new CommandXboxController(0);
-  // commands
-  elevatorcommand elevatorcommand;
+
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     subsystems = new RobotSubsystems();
-    // setup commands
-    elevatorcommand = new elevatorcommand(subsystems.elevator);
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     // Set up SysId routines
     autoChooser.addOption(
-        "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(subsystems.drive));
+        "Drive Wheel Radius Characterization",
+        DriveCommands.wheelRadiusCharacterization(subsystems.drive));
     autoChooser.addOption(
-        "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(subsystems.drive));
+        "Drive Simple FF Characterization",
+        DriveCommands.feedforwardCharacterization(subsystems.drive));
     autoChooser.addOption(
         "Drive SysId (Quasistatic Forward)",
         subsystems.drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
@@ -61,9 +58,11 @@ public class RobotContainer {
         "Drive SysId (Quasistatic Reverse)",
         subsystems.drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
     autoChooser.addOption(
-        "Drive SysId (Dynamic Forward)", subsystems.drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
+        "Drive SysId (Dynamic Forward)",
+        subsystems.drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
-        "Drive SysId (Dynamic Reverse)", subsystems.drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+        "Drive SysId (Dynamic Reverse)",
+        subsystems.drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -82,6 +81,10 @@ public class RobotContainer {
             () -> -controller.getLeftY(),
             () -> -controller.getLeftX(),
             () -> -controller.getRightX()));
+    // Elevator command
+    controller.a().onTrue(subsystems.elevator.inputs.gotonewxtstate());
+    controller.x().onTrue(subsystems.elevator.set(subsystems.elevator.inputs.state.getTarget()));
+    // defaultbutton.loadButtons(subsystems);
   }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
