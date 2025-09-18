@@ -6,8 +6,6 @@ import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import frc.robot.states.Elevatorstates;
 
-import org.littletonrobotics.junction.Logger;
-
 public class elevatoriosim implements elevatorio {
 
   private final DCMotor DRIVE_GEARBOX = DCMotor.getKrakenX60Foc(2);

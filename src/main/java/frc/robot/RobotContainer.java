@@ -17,9 +17,13 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.PS5Controller;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.lib.util.SetSubsystemTargetCommand;
 import frc.robot.commands.DriveCommands;
+import frc.robot.states.Elevatorstates;
+import frc.robot.subsystems.drive.Drive;
+
+import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -33,7 +37,7 @@ public class RobotContainer {
   // subsystems
   public final RobotSubsystems subsystems;
   // Controller
-  private final CommandXboxController controller = new CommandXboxController(0);
+  private final Controller controller;
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -41,6 +45,7 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     subsystems = new RobotSubsystems();
+    controller = new Controller();
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
@@ -77,14 +82,17 @@ public class RobotContainer {
     // Default command, normal field-relative drive
     subsystems.drive.setDefaultCommand(
         DriveCommands.joystickDrive(
-            subsystems.drive,
-            () -> -controller.getLeftY(),
-            () -> -controller.getLeftX(),
-            () -> -controller.getRightX()));
-    // Elevator command
-    controller.a().onTrue(subsystems.elevator.inputs.gotonewxtstate());
-    controller.x().onTrue(subsystems.elevator.set(subsystems.elevator.inputs.state.getTarget()));
-    // defaultbutton.loadButtons(subsystems);
+          subsystems.drive,
+            () -> -controller.swervecontroller.getLeftY(),
+            () -> -controller.swervecontroller.getLeftX(),
+            () -> -controller.swervecontroller.getRightX()));
+        controller.swervecontroller.x().and(controller.swervecontroller.b()).onTrue(subsystems.elevator.inputs.gotonewxtstate(subsystems.elevator));
+    controller
+        .swervecontroller
+        .x()
+        .onTrue(
+          subsystems.elevator.set(subsystems.elevator.inputs.getstate().getTarget()));
+    //defaultbutton.loadButtons(subsystems, controller);
   }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

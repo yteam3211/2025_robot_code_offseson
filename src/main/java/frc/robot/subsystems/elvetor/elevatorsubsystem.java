@@ -4,11 +4,9 @@
 
 package frc.robot.subsystems.elvetor;
 
-import org.littletonrobotics.junction.Logger;
-
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.littletonrobotics.junction.Logger;
 
 public class elevatorsubsystem extends SubsystemBase {
   public elevatorio io;
@@ -27,8 +25,7 @@ public class elevatorsubsystem extends SubsystemBase {
       io.resetEncoder();
     }*/
     io.updateInputs(inputs);
-    io.    updatepose(
-        inputs.elevatorpPose);
+    io.updatepose(inputs.elevatorpPose);
     Logger.processInputs("Elevator/inputs", inputs);
   }
 
