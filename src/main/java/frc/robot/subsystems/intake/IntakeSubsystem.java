@@ -6,6 +6,7 @@ package frc.robot.subsystems.intake;
 
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -26,6 +27,7 @@ public class IntakeSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putBoolean("IntakeSubsytem has coral", isCoralIn());
   }
 
   public void setgriper(double speed) {
@@ -51,5 +53,10 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public Command stopindexerCommand() {
     return this.runOnce(() -> setIndexerSpeed(0));
+  }
+
+  public boolean isCoralIn() {
+    return m_griperintake.getSupplyCurrent().getValueAsDouble()
+        > Constants.intakecos.INTAKE_CURRENT_THRESHOLD;
   }
 }

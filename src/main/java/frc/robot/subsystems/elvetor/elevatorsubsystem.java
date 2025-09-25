@@ -8,6 +8,7 @@ import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
@@ -22,13 +23,14 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.elevatorcos.MotorCurrentLimits;
 import frc.robot.states.Elevatorstates;
+import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 
 public class elevatorsubsystem extends SubsystemBase {
   public Elevatorstates state = Elevatorstates.Close;
   private final MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
-  private TalonFX motor = new TalonFX(Constants.elevatorcos.masterid);
-  private TalonFX m_slave = new TalonFX(Constants.elevatorcos.slaveid);
+  private TalonFX motor = new TalonFX(Constants.elevatorcos.masterid, "canv");
+  private TalonFX m_slave = new TalonFX(Constants.elevatorcos.slaveid, "canv");
   private DigitalInput m_closeSwitch =
       new DigitalInput(Constants.elevatorcos.ELEVATOR_CLOSE_SWITCH_PORT);
 
@@ -41,7 +43,10 @@ public class elevatorsubsystem extends SubsystemBase {
     TalonFXConfiguration talonFXConfiguration = new TalonFXConfiguration();
     CurrentLimitsConfigs limitConfigs = talonFXConfiguration.CurrentLimits;
     FeedbackConfigs feedbackConfigs = talonFXConfiguration.Feedback;
+    feedbackConfigs.FeedbackSensorSource = Constants.elevatorcos.SensorSource;
     feedbackConfigs.SensorToMechanismRatio = Constants.elevatorcos.POSITION_CONVERSION_FACTOR;
+    MotorOutputConfigs motorOutputConfigs = talonFXConfiguration.MotorOutput;
+    motorOutputConfigs.NeutralMode = Constants.elevatorcos.NeutralMode;
     // feedbackConfigs.SensorToMechanismRatio = 1;
 
     limitConfigs.SupplyCurrentLimit = MotorCurrentLimits.SUPPLY_CURRENT_LIMIT;
@@ -80,6 +85,32 @@ public class elevatorsubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putBoolean("ELevatordown", m_closeSwitch.get());
+    SmartDashboard.putNumber("ELEVATOR: distance", getHeight());
+    SmartDashboard.putNumber("ELEVATOR velcoity", getVelocity());
+  }
+
+  public double getHeight() {
+    return motor.getPosition().getValueAsDouble();
+  }
+
+  public double getVelocity() {
+    return motor.getVelocity().getValueAsDouble();
+  }
+
+  public void setHeight(DoubleSupplier targetHeight) {
+    motor.setControl(motionMagicVoltage.withPosition(targetHeight.getAsDouble()).withSlot(0));
+  }
+
+  public void setSpeed(double speed) {
+    motor.set(speed);
+  }
+
+  public Command setSpeedCommand(double speed) {
+    return this.runOnce(() -> setSpeed(speed));
+  }
+
+  public Command setHeightCommand(DoubleSupplier targetHeight) {
+    return this.runOnce(() -> setHeight(targetHeight));
   }
 
   boolean m_occurred = true;
