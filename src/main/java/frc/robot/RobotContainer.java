@@ -52,16 +52,11 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    controller
-        .subcontroller
-        .circle()
-        .onTrue(subsystems.intakepitch.setIntakePositionCommand(() -> 140));
-    controller.subcontroller.circle().onFalse(subsystems.intakepitch.stopIntakeCommand());
+    controller.subcontroller.circle().onTrue(subsystems.intake.setindexerCommand(-0.4));
+    controller.subcontroller.circle().onFalse(subsystems.intake.stopindexerCommand());
 
-    controller
-        .subcontroller
-        .cross()
-        .onTrue(subsystems.intakepitch.setIntakePositionCommand(() -> 0));
+    controller.subcontroller.cross().onTrue(subsystems.intake.setgriperCommand(-0.4));
+    controller.subcontroller.cross().onFalse(subsystems.intake.stopgriperCommand());
     // Default command, normal field-relative drive
     // SwerveButtons.loadButtons(controller, subsystems);
     // defaultbutton.loadButtons(controller, subsystems);

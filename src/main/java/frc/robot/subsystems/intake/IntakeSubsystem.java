@@ -4,9 +4,8 @@
 
 package frc.robot.subsystems.intake;
 
-
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.hardware.TalonFX;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -15,8 +14,8 @@ import frc.robot.states.inakegriperstate;
 
 public class IntakeSubsystem extends SubsystemBase {
 
-  TalonFX m_griperintake = new TalonFX(Constants.intakecos.griperid);
-  TalonFX m_indexer = new TalonFX(Constants.intakecos.indexerid);
+  TalonFX m_griperintake = new TalonFX(Constants.intakecos.griperid, "canv");
+  TalonFX m_indexer = new TalonFX(Constants.intakecos.indexerid, "canv");
 
   inakegriperstate gripertate = inakegriperstate.KeepItIn;
   IntakeIndexer indexer = IntakeIndexer.close;
@@ -26,28 +25,31 @@ public class IntakeSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-
     // This method will be called once per scheduler run
   }
 
   public void setgriper(double speed) {
-    m_griperintake.set(speed);
+    m_griperintake.setControl(new DutyCycleOut(speed));
   }
 
+  public Command setgriperCommand(double speed) {
+    return this.runOnce(() -> setgriper(speed));
+  }
 
-  public Command setgriperCommand(double speed){
-    return this.runOnce(()-> setgriper(speed));
+  public Command stopgriperCommand() {
+    return this.runOnce(() -> setgriper(0)); // stop
   }
-  public Command stopgriperCommand(){
-    return this.runOnce(()-> setgriper(0));//stop
-  }
-  public void setindexer(double speed){
+
+  public void setIndexerSpeed(double speed) {
     m_indexer.set(speed);
+    System.out.println("indexer speed: " + speed);
   }
-  public Command setindexerCommand(double speed){
-    return this.runOnce(()-> setindexer(speed));
+
+  public Command setindexerCommand(double speed) {
+    return this.runOnce(() -> setIndexerSpeed(speed));
   }
-  public Command stopindexerCommand(){
-    return this.runOnce(()-> setindexer(0));
+
+  public Command stopindexerCommand() {
+    return this.runOnce(() -> setIndexerSpeed(0));
   }
 }
