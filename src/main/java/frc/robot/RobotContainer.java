@@ -17,8 +17,6 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.PS5Controller;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Buttons.SwerveButtons;
-import frc.robot.Buttons.defaultbutton;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -54,9 +52,19 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+    controller
+        .subcontroller
+        .circle()
+        .onTrue(subsystems.intakepitch.setIntakePositionCommand(() -> 140));
+    controller.subcontroller.circle().onFalse(subsystems.intakepitch.stopIntakeCommand());
+
+    controller
+        .subcontroller
+        .cross()
+        .onTrue(subsystems.intakepitch.setIntakePositionCommand(() -> 0));
     // Default command, normal field-relative drive
-    SwerveButtons.loadButtons(controller, subsystems);
-    defaultbutton.loadButtons(controller, subsystems);
+    // SwerveButtons.loadButtons(controller, subsystems);
+    // defaultbutton.loadButtons(controller, subsystems);
   }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

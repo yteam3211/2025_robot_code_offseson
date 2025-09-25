@@ -4,21 +4,6 @@
 
 package frc.robot.subsystems.elvetor;
 
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
-import frc.robot.Constants.elevatorcos.MotorCurrentLimits;
-import frc.robot.states.Elevatorstates;
-
-import java.lang.Thread.State;
-
-import org.littletonrobotics.junction.AutoLogOutput;
-import org.littletonrobotics.junction.Logger;
-
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
@@ -28,21 +13,32 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
+import frc.robot.Constants.elevatorcos.MotorCurrentLimits;
+import frc.robot.states.Elevatorstates;
+import org.littletonrobotics.junction.AutoLogOutput;
 
 public class elevatorsubsystem extends SubsystemBase {
   public Elevatorstates state = Elevatorstates.Close;
-    private final MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
+  private final MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
   private TalonFX motor = new TalonFX(Constants.elevatorcos.masterid);
   private TalonFX m_slave = new TalonFX(Constants.elevatorcos.slaveid);
   private DigitalInput m_closeSwitch =
       new DigitalInput(Constants.elevatorcos.ELEVATOR_CLOSE_SWITCH_PORT);
+
   @AutoLogOutput(key = "Elevator/Pose")
   public Pose3d elevatorpose = new Pose3d(0, 0, 0.17, new Rotation3d());
 
   ;
   /** Creates a new elevatorsubsystem. */
   public elevatorsubsystem() {
-        TalonFXConfiguration talonFXConfiguration = new TalonFXConfiguration();
+    TalonFXConfiguration talonFXConfiguration = new TalonFXConfiguration();
     CurrentLimitsConfigs limitConfigs = talonFXConfiguration.CurrentLimits;
     FeedbackConfigs feedbackConfigs = talonFXConfiguration.Feedback;
     feedbackConfigs.SensorToMechanismRatio = Constants.elevatorcos.POSITION_CONVERSION_FACTOR;
@@ -90,17 +86,20 @@ public class elevatorsubsystem extends SubsystemBase {
 
   public boolean isFirstResetOccurred() {
     if (isElevatorDown()) {
-          m_occurred = true;
-        }
-        return m_occurred;
-      }
-    
+      m_occurred = true;
+    }
+    return m_occurred;
+  }
+
   public boolean isElevatorDown() {
-    return !m_closeSwitch.get();}
+    return !m_closeSwitch.get();
+  }
+
   public Command set(double pos) {
-    return runOnce(() -> setLevel(pos));}
-    
-      public Command stop() {
+    return runOnce(() -> setLevel(pos));
+  }
+
+  public Command stop() {
     return set(state.getTarget());
   }
 
