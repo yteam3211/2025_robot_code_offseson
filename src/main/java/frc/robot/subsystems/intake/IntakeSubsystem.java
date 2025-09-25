@@ -4,9 +4,7 @@
 
 package frc.robot.subsystems.intake;
 
-
 import com.ctre.phoenix6.hardware.TalonFX;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -34,20 +32,23 @@ public class IntakeSubsystem extends SubsystemBase {
     m_griperintake.set(speed);
   }
 
+  public Command setgriperCommand(double speed) {
+    return this.runOnce(() -> setgriper(speed));
+  }
 
-  public Command setgriperCommand(double speed){
-    return this.runOnce(()-> setgriper(speed));
+  public Command stopgriperCommand() {
+    return this.runOnce(() -> setgriper(0)); // stop
   }
-  public Command stopgriperCommand(){
-    return this.runOnce(()-> setgriper(0));//stop
-  }
-  public void setindexer(double speed){
+
+  public void setindexer(double speed) {
     m_indexer.set(speed);
   }
-  public Command setindexerCommand(double speed){
-    return this.runOnce(()-> setindexer(speed));
+
+  public Command setindexerCommand(double speed) {
+    return this.runOnce(() -> setindexer(speed));
   }
-  public Command stopindexerCommand(){
-    return this.runOnce(()-> setindexer(0));
+
+  public Command stopindexerCommand() {
+    return this.runOnce(() -> setindexer(0));
   }
 }

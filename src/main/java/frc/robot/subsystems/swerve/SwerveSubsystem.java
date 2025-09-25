@@ -6,6 +6,9 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
+
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -21,6 +24,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.math.Conversions;
+import frc.lib.util.LimelightHelpers;
 import frc.lib.util.SwerveModule;
 import frc.robot.constants.SwerveConstants;
 import java.util.Optional;
@@ -100,6 +104,44 @@ public class SwerveSubsystem extends SubsystemBase {
       e.printStackTrace();
     }
   }
+
+  public void updateMegaTag2Pose(SwerveDrivePoseEstimator m_poseEstimator, AHRS m_gyro) {
+    // --- LIMELIGHT LEFT ---
+    LimelightHelpers.SetRobotOrientation(
+        "limelight-left",
+        m_poseEstimator.getEstimatedPosition().getRotation().getDegrees(),
+        0, 0, 0, 0, 0
+    );
+    LimelightHelpers.PoseEstimate mt2Left =
+        LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-left");
+
+    // --- LIMELIGHT RIGHT ---
+    LimelightHelpers.SetRobotOrientation(
+        "limelight-right",
+        m_poseEstimator.getEstimatedPosition().getRotation().getDegrees(),
+        0, 0, 0, 0, 0
+    );
+    LimelightHelpers.PoseEstimate mt2Right =
+        LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-right");
+
+    // reject if spinning too fast
+    if (Math.abs(m_gyro.getRate()) > 360) {
+        return;
+    }
+
+    // left vision update
+    if (mt2Left != null && mt2Left.tagCount > 0) {
+        m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.7, 0.7, 9999999));
+        m_poseEstimator.addVisionMeasurement(mt2Left.pose, mt2Left.timestampSeconds);
+    }
+
+    // right vision update
+    if (mt2Right != null && mt2Right.tagCount > 0) {
+        m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.7, 0.7, 9999999));
+        m_poseEstimator.addVisionMeasurement(mt2Right.pose, mt2Right.timestampSeconds);
+    }
+}
+
 
   public void drive(
       Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
@@ -231,6 +273,10 @@ public class SwerveSubsystem extends SubsystemBase {
         m_swerveMods[0].getDriveMotor().getPosition().getValueAsDouble(),
         SwerveConstants.WHEEL_CIRCUMFERENCE);
   }
+
+  public void stop() {
+    drive(new Translation2d(0, 0), 0.0, true, true);
+}
 
   public String getDriveMotorDistances() {
     StringBuilder builder = new StringBuilder();
