@@ -17,13 +17,8 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.PS5Controller;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.lib.util.SetSubsystemTargetCommand;
-import frc.robot.commands.DriveCommands;
-import frc.robot.states.Elevatorstates;
-import frc.robot.subsystems.drive.Drive;
-
-import org.littletonrobotics.junction.Logger;
+import frc.robot.Buttons.SwerveButtons;
+import frc.robot.Buttons.defaultbutton;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -48,26 +43,6 @@ public class RobotContainer {
     controller = new Controller();
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-
-    // Set up SysId routines
-    autoChooser.addOption(
-        "Drive Wheel Radius Characterization",
-        DriveCommands.wheelRadiusCharacterization(subsystems.drive));
-    autoChooser.addOption(
-        "Drive Simple FF Characterization",
-        DriveCommands.feedforwardCharacterization(subsystems.drive));
-    autoChooser.addOption(
-        "Drive SysId (Quasistatic Forward)",
-        subsystems.drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Drive SysId (Quasistatic Reverse)",
-        subsystems.drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    autoChooser.addOption(
-        "Drive SysId (Dynamic Forward)",
-        subsystems.drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Drive SysId (Dynamic Reverse)",
-        subsystems.drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -80,19 +55,8 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // Default command, normal field-relative drive
-    subsystems.drive.setDefaultCommand(
-        DriveCommands.joystickDrive(
-          subsystems.drive,
-            () -> -controller.swervecontroller.getLeftY(),
-            () -> -controller.swervecontroller.getLeftX(),
-            () -> -controller.swervecontroller.getRightX()));
-        controller.swervecontroller.x().and(controller.swervecontroller.b()).onTrue(subsystems.elevator.inputs.gotonewxtstate(subsystems.elevator));
-    controller
-        .swervecontroller
-        .x()
-        .onTrue(
-          subsystems.elevator.set(subsystems.elevator.inputs.getstate().getTarget()));
-    //defaultbutton.loadButtons(subsystems, controller);
+    SwerveButtons.loadButtons(controller, subsystems);
+    defaultbutton.loadButtons(controller, subsystems);
   }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

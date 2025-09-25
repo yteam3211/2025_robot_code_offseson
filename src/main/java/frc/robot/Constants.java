@@ -13,6 +13,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.RobotBase;
+
 /**
  * This class defines the runtime mode used by AdvantageKit. The mode is always "real" when running
  * on a roboRIO. Change the value of "simMode" to switch between "sim" (physics sim) and "replay"
@@ -20,7 +22,7 @@ package frc.robot;
  */
 public final class Constants {
   public static final Mode simMode = Mode.SIM;
-  public static final Mode currentMode = Mode.SIM; // RobotBase.isReal() ? Mode.REAL : simMode;
+  public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
 
   public static enum Mode {
     /** Running on a real robot. */
@@ -34,8 +36,11 @@ public final class Constants {
   }
 
   public static class elevatorcos {
-    public static int masterid = 0;
-    public static int slaveid = 1;
+
+    public static final int ELEVATOR_CLOSE_SWITCH_PORT = 2;
+    public static int masterid = 40;
+    public static int slaveid = 41;
+    public static final double POSITION_CONVERSION_FACTOR = 48.7;
 
     public static final class MotorCurrentLimits {
 
@@ -50,6 +55,27 @@ public final class Constants {
       public static final double MOTION_MAGIC_ACCELERATION = 2.5;
       public static final double MOTION_MAGIC_JERK = 25;
 
+      public static final double MOTOR_KS = 0.06; // TODO INITILIZE THESE VALUES
+      public static final double MOTOR_KA = 0.5;
+      public static final double MOTOR_KV = 0.12;
+      public static final double MOTOR_KG = 0.03;
+      public static final double MOTOR_KP = 60;
+      public static final double MOTOR_KI = 0;
+      public static final double MOTOR_KD = 0;
+    }
+  }
+
+  public static final class Armconstants {
+
+    public static final double POSITION_CONVERSION_FACTOR = 98.5714285711;
+    public static int m_spinid = 16;
+    public static int m_grieprid = 15;
+
+    public final class MotionMagicConstantsspin {
+      public static final double MOTION_MAGIC_VELOCITY = 2;
+      public static final double MOTION_MAGIC_ACCELERATION = 2.5;
+      public static final double MOTION_MAGIC_JERK = 25;
+
       public static final double MOTOR_KS = 0.045; // TODO INITILIZE THESE VALUES
       public static final double MOTOR_KA = 0.5;
       public static final double MOTOR_KV = 6.5;
@@ -60,14 +86,58 @@ public final class Constants {
     }
   }
 
-public static final class Armconstants {
+  public static class intakecos {
+    public static final double POSITION_CONVERSION_FACTOR = 0;
+    public static int griperid = 20;
+    public static int spinid = 60;
+    public static int middleid = 21;
+    public static final int INTAKE_CLOSE_SWITCH_PORT = 9;
 
-  public static int m_spinid = 1;
-public static int m_holderid = 2;
+    public final class MotionMagicConstants {
+      public static final double MOTION_MAGIC_VELOCITY = 2;
+      public static final double MOTION_MAGIC_ACCELERATION = 2.5;
+      public static final double MOTION_MAGIC_JERK = 25;
 
-
-
-
+      public static final double MOTOR_KS = 0.045; // TODO INITILIZE THESE VALUES
+      public static final double MOTOR_KA = 0.5;
+      public static final double MOTOR_KV = 6.5;
+      public static final double MOTOR_KG = 0;
+      public static final double MOTOR_KP = 60;
+      public static final double MOTOR_KI = 0;
+      public static final double MOTOR_KD = 0;
+    }
   }
 
+  public class ClimbSubsystemConstants {
+
+    public static final class MotorCurrentLimits {
+
+      public static final int SUPPLY_CURRENT_LIMIT = 40;
+      public static final boolean SUPPLY_CURRENT_LIMIT_ENABLE = true;
+      public static final double SUPPLY_CURRENT_LOWER_LIMIT = 0;
+    }
+
+    public static final int CLIMB_MOTOR_ID = 60;
+    public static final int POSITION_CONVERSION_FACTOR = 1;
+    public static final int VELOCITY_CONVERSION_FACTOR = 1000;
+
+    public static final int WHEEL_KP = -0;
+    public static final int WHEEL_KI = -0;
+    public static final int WHEEL_KD = -0;
+    public static final int WHEEL_KFF = -0;
+
+    public static final class MotionMagicConstants {
+
+      public static final double MOTION_MAGIC_VELOCITY = -0;
+      public static final double MOTION_MAGIC_ACCELERATION = -0;
+      public static final double MOTION_MAGIC_JERK = -0;
+
+      public static final int MOTOR_KS = -0; // TODO INITILIZE THESE VALUES
+      public static final int MOTOR_KA = -0;
+      public static final int MOTOR_KV = -0;
+      public static final int MOTOR_KP = -0;
+      public static final int MOTOR_KI = -0;
+      public static final int MOTOR_KD = -0;
+    }
+  }
 }

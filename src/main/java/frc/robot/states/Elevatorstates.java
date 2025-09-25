@@ -19,6 +19,6 @@ public enum Elevatorstates implements ITarget {
 
   @Override
   public double getTarget() {
-    return m_hight * 2000;
+    return m_hight;
   }
 }

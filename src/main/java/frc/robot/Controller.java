@@ -1,10 +1,10 @@
 package frc.robot;
 
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 
 public class Controller {
-  public final CommandXboxController swervecontroller = new CommandXboxController(0);
-  public final CommandXboxController subcontroller = new CommandXboxController(1);
+  public final CommandPS5Controller swervecontroller = new CommandPS5Controller(0);
+  public final CommandPS5Controller subcontroller = new CommandPS5Controller(1);
 
   public Controller() {}
 }
