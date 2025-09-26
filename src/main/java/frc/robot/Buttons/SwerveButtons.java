@@ -11,11 +11,12 @@ public class SwerveButtons {
     robotControllers
         .swervecontroller
         .touchpad()
-        .onTrue(new InstantCommand(() -> robotSubsystems.swerve.resetGyro()));
-    robotControllers
-        .swervecontroller
-        .R1()
-        .onTrue(Commands.runOnce(() -> robotSubsystems.swerve.resetPose(), robotSubsystems.swerve));
+        .onTrue(new InstantCommand(() -> robotSubsystems.swerve.zeroHeading()));
+    // robotControllers
+    //     .swervecontroller
+    //     .R1()
+    //     .onTrue(Commands.runOnce(() -> robotSubsystems.swerve.resetPose(),
+    // robotSubsystems.swerve));
     robotControllers
         .swervecontroller
         .R2()
