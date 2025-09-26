@@ -19,7 +19,7 @@ public class IntakePitchConstants {
     public static final double MOTOR_KA = 0.005;
     public static final double MOTOR_KV = 0.013;
     public static final double MOTOR_KG = -0.0525;
-    public static final double MOTOR_KP = -0.001; // -0.025
+    public static final double MOTOR_KP = -0.001;
     public static final double MOTOR_KI = 0;
     public static final double MOTOR_KD = 0.00;
   }

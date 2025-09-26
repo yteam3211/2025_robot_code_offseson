@@ -13,6 +13,9 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
+import com.ctre.phoenix6.signals.GravityTypeValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -40,7 +43,10 @@ public final class Constants {
     public static final int ELEVATOR_CLOSE_SWITCH_PORT = 2;
     public static int masterid = 40;
     public static int slaveid = 41;
-    public static final double POSITION_CONVERSION_FACTOR = 48.7;
+    public static final double POSITION_CONVERSION_FACTOR = 32;
+    public static final FeedbackSensorSourceValue SensorSource =
+        FeedbackSensorSourceValue.RotorSensor;
+    public static final NeutralModeValue NeutralMode = NeutralModeValue.Brake;
 
     public static final class MotorCurrentLimits {
 
@@ -51,15 +57,15 @@ public final class Constants {
 
     public static final class MotionMagicConstants {
 
-      public static final double MOTION_MAGIC_VELOCITY = 2;
-      public static final double MOTION_MAGIC_ACCELERATION = 2.5;
-      public static final double MOTION_MAGIC_JERK = 25;
+      public static final double MOTION_MAGIC_VELOCITY = 1.2;
+      public static final double MOTION_MAGIC_ACCELERATION = 2;
+      public static final double MOTION_MAGIC_JERK = 0;
 
-      public static final double MOTOR_KS = 0.06; // TODO INITILIZE THESE VALUES
-      public static final double MOTOR_KA = 0.5;
-      public static final double MOTOR_KV = 0.12;
-      public static final double MOTOR_KG = 0.03;
-      public static final double MOTOR_KP = 60;
+      public static final double MOTOR_KS = 0.00; // TODO INITILIZE THESE VALUES
+      public static final double MOTOR_KA = 0.0;
+      public static final double MOTOR_KV = 4;
+      public static final double MOTOR_KG = 0.524;
+      public static final double MOTOR_KP = 0.01;
       public static final double MOTOR_KI = 0;
       public static final double MOTOR_KD = 0;
     }
@@ -67,31 +73,34 @@ public final class Constants {
 
   public static final class Armconstants {
 
-    public static final double POSITION_CONVERSION_FACTOR = 98.5714285711;
+    public static final double POSITION_CONVERSION_FACTOR = 1 / 3.82; // 98.5714285711;
+    public static final NeutralModeValue NeutralMode = NeutralModeValue.Brake;
     public static int m_spinid = 16;
     public static int m_grieprid = 15;
 
     public final class MotionMagicConstantsspin {
-      public static final double MOTION_MAGIC_VELOCITY = 2;
-      public static final double MOTION_MAGIC_ACCELERATION = 2.5;
-      public static final double MOTION_MAGIC_JERK = 25;
+      public static final double MOTION_MAGIC_VELOCITY = 283.73;
+      public static final double MOTION_MAGIC_ACCELERATION = 160.5;
+      public static final double MOTION_MAGIC_JERK = 0;
 
-      public static final double MOTOR_KS = 0.045; // TODO INITILIZE THESE VALUES
-      public static final double MOTOR_KA = 0.5;
-      public static final double MOTOR_KV = 6.5;
-      public static final double MOTOR_KG = 0.015;
-      public static final double MOTOR_KP = 60;
-      public static final double MOTOR_KI = 0;
+      public static final double MOTOR_KS = 0; // TODO INITILIZE THESE VALUES
+      public static final double MOTOR_KA = 0;
+      public static final double MOTOR_KV = 0.03511;
+      public static final double MOTOR_KG = 0.9;
+      public static final double MOTOR_KP = 0.5;
+      public static final double MOTOR_KI = 0.001;
       public static final double MOTOR_KD = 0;
+      public static final GravityTypeValue GravityType = GravityTypeValue.Arm_Cosine;
     }
   }
 
   public static class intakecos {
-    public static final double POSITION_CONVERSION_FACTOR = 0;
+    public static final double POSITION_CONVERSION_FACTOR = 1;
     public static int griperid = 20;
-    public static int spinid = 60;
     public static int indexerid = 21;
-    public static final int INTAKE_CLOSE_SWITCH_PORT = 9;
+    public static final int INTAKE_CLOSE_SWITCH_PORT = 8;
+    public static final double INTAKE_CURRENT_THRESHOLD = 17;
+    public static final int INTAKE_STOP_BUTTON_PORT = 3;
 
     public final class MotionMagicConstants {
       public static final double MOTION_MAGIC_VELOCITY = 2;
