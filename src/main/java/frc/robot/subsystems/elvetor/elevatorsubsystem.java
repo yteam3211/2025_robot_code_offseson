@@ -30,7 +30,7 @@ import org.littletonrobotics.junction.AutoLogOutput;
 
 public class elevatorsubsystem extends SubsystemBase {
   public Elevatorstates state = Elevatorstates.INTAKE_MODE;
-  public static double currentHeight = 0;
+  public static double currentHeight = -4;
 
   private final MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
   private TalonFX motor = new TalonFX(Constants.elevatorcos.masterid, "canv");
