@@ -17,6 +17,8 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.PS5Controller;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.commands.ArmCommands;
+import frc.robot.commands.IntakeCommands;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -31,7 +33,8 @@ public class RobotContainer {
   public final RobotSubsystems subsystems;
   // Controller
   private final Controller controller;
-
+  private final IntakeCommands intakeCommands;
+  private final ArmCommands armCommands;
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
 
@@ -39,6 +42,10 @@ public class RobotContainer {
   public RobotContainer() {
     subsystems = new RobotSubsystems();
     controller = new Controller();
+    intakeCommands = new IntakeCommands(subsystems.intake, subsystems.intakepitch);
+    armCommands =
+        new ArmCommands(
+            subsystems.arm, subsystems.elevator, subsystems.intake, subsystems.intakepitch);
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
     // Configure the button bindings
@@ -52,13 +59,16 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    // controller.subcontroller.circle().onTrue(subsystems.intake.setindexerCommand(-0.4));
-    // controller.subcontroller.circle().onFalse(subsystems.intake.stopindexerCommand());
-
-    // controller.subcontroller.cross().onTrue(subsystems.intake.setgriperCommand(-0.4));
-    // controller.subcontroller.cross().onFalse(subsystems.intake.stopgriperCommand());
+    controller.subcontroller.circle().onTrue(intakeCommands.intakeCommand());
+    controller.subcontroller.square().onTrue(armCommands.coralFromIntakeToArmCommand());
     controller.subcontroller.cross().onTrue(subsystems.elevator.setHeightCommand(() -> 1));
-    controller.subcontroller.circle().onTrue(subsystems.elevator.setHeightCommand(() -> 0));
+    // controller.subcontroller.triangle().onTrue(subsystems.elevator.setHeightCommand(() -> 0));
+    // controller.subcontroller.povUp().onTrue(subsystems.arm.setRotationCommand(() -> 90));
+    // controller.subcontroller.povDown().onTrue(subsystems.arm.setRotationCommand(() -> -90));
+    // // controller.subcontroller.povRight().onTrue(subsystems.arm.setRotationCommand(() -> 0));
+    // controller.subcontroller.povLeft().onTrue(subsystems.arm.setRotationCommand(() -> -180));
+    // controller.subcontroller.povRight().onTrue(subsystems.arm.setRotationCommand(() -> 180));
+    // // controller.subcontroller.circle().onTrue(subsystems.arm.setSpeedCommand(0.5));
     // Default command, normal field-relative drive
     // SwerveButtons.loadButtons(controller, subsystems);
     // defaultbutton.loadButtons(controller, subsystems);

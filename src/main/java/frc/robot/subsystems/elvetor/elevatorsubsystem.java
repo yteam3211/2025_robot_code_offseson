@@ -19,15 +19,19 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.elevatorcos.MotorCurrentLimits;
 import frc.robot.states.Elevatorstates;
+import java.util.Set;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 
 public class elevatorsubsystem extends SubsystemBase {
-  public Elevatorstates state = Elevatorstates.Close;
+  public Elevatorstates state = Elevatorstates.INTAKE_MODE;
+  public static double currentHeight = 0.1;
+
   private final MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
   private TalonFX motor = new TalonFX(Constants.elevatorcos.masterid, "canv");
   private TalonFX m_slave = new TalonFX(Constants.elevatorcos.slaveid, "canv");
@@ -40,6 +44,7 @@ public class elevatorsubsystem extends SubsystemBase {
   ;
   /** Creates a new elevatorsubsystem. */
   public elevatorsubsystem() {
+
     TalonFXConfiguration talonFXConfiguration = new TalonFXConfiguration();
     CurrentLimitsConfigs limitConfigs = talonFXConfiguration.CurrentLimits;
     FeedbackConfigs feedbackConfigs = talonFXConfiguration.Feedback;
@@ -47,7 +52,7 @@ public class elevatorsubsystem extends SubsystemBase {
     feedbackConfigs.SensorToMechanismRatio = Constants.elevatorcos.POSITION_CONVERSION_FACTOR;
     MotorOutputConfigs motorOutputConfigs = talonFXConfiguration.MotorOutput;
     motorOutputConfigs.NeutralMode = Constants.elevatorcos.NeutralMode;
-    // feedbackConfigs.SensorToMechanismRatio = 1;
+    feedbackConfigs.SensorToMechanismRatio = 1;
 
     limitConfigs.SupplyCurrentLimit = MotorCurrentLimits.SUPPLY_CURRENT_LIMIT;
     limitConfigs.SupplyCurrentLowerLimit = MotorCurrentLimits.SUPPLY_CURRENT_LOWER_LIMIT;
@@ -80,13 +85,21 @@ public class elevatorsubsystem extends SubsystemBase {
     if (!status.isOK()) {
       System.out.println("Could not configure device. Error: " + status.toString());
     }
+    this.setDefaultCommand(elevatorFloat());
+  }
+
+  public Command elevatorFloat() {
+    return Commands.defer(() -> setHeightCommand(() -> currentHeight), Set.of(this));
   }
 
   @Override
   public void periodic() {
-    SmartDashboard.putBoolean("ELevatordown", m_closeSwitch.get());
+    SmartDashboard.putBoolean("ELevatordown", isElevatorDown());
     SmartDashboard.putNumber("ELEVATOR: distance", getHeight());
     SmartDashboard.putNumber("ELEVATOR velcoity", getVelocity());
+    SmartDashboard.putNumber("Elevator desired height", currentHeight);
+
+    resetHeight();
   }
 
   public double getHeight() {
@@ -97,6 +110,20 @@ public class elevatorsubsystem extends SubsystemBase {
     return motor.getVelocity().getValueAsDouble();
   }
 
+  public Command toggleState(Elevatorstates newstate) {
+    return Commands.runOnce(() -> state = newstate);
+  }
+
+  public Command setIntakeHeight() {
+    return toggleState(Elevatorstates.INTAKE_MODE)
+        .alongWith(setHeightCommand(() -> Elevatorstates.INTAKE_MODE.getTarget()));
+  }
+
+  public Command setInitialPosHeight() {
+    return toggleState(Elevatorstates.INITIAL_POSITION)
+        .alongWith(setHeightCommand(() -> Elevatorstates.INITIAL_POSITION.getTarget()));
+  }
+
   public void setHeight(DoubleSupplier targetHeight) {
     motor.setControl(motionMagicVoltage.withPosition(targetHeight.getAsDouble()).withSlot(0));
   }
@@ -105,12 +132,18 @@ public class elevatorsubsystem extends SubsystemBase {
     motor.set(speed);
   }
 
+  public void resetHeight() {
+    if (isElevatorDown()) {
+      motor.setPosition(0);
+    }
+  }
+
   public Command setSpeedCommand(double speed) {
     return this.runOnce(() -> setSpeed(speed));
   }
 
   public Command setHeightCommand(DoubleSupplier targetHeight) {
-    return this.runOnce(() -> setHeight(targetHeight));
+    return this.run(() -> setHeight(targetHeight));
   }
 
   boolean m_occurred = true;
@@ -123,7 +156,7 @@ public class elevatorsubsystem extends SubsystemBase {
   }
 
   public boolean isElevatorDown() {
-    return !m_closeSwitch.get();
+    return m_closeSwitch.get();
   }
 
   public Command set(double pos) {
