@@ -28,9 +28,9 @@ public class DriveToPointFactory {
 
   /** Builds a fine PID settle command after pathfinding */
   private Command fineAlign(Pose2d target) {
-    PIDController xPID = new PIDController(1.5, 0, 0);
-    PIDController yPID = new PIDController(1.5, 0, 0);
-    PIDController rotPID = new PIDController(2.0, 0, 0);
+    PIDController xPID = new PIDController(0, 0, 0);
+    PIDController yPID = new PIDController(0, 0, 0);
+    PIDController rotPID = new PIDController(0, 0, 0);
     rotPID.enableContinuousInput(-Math.PI, Math.PI);
 
     return swerve
