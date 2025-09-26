@@ -15,11 +15,8 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-<<<<<<< HEAD
-=======
 import frc.robot.subsystems.elvetor.elevatorsubsystem;
 import org.littletonrobotics.junction.LogFileUtil;
->>>>>>> 07abf5e25bc2ea840711ad4b7fb8d69e6f94193d
 import org.littletonrobotics.junction.LoggedRobot;
 
 /**
