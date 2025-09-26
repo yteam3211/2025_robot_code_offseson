@@ -17,6 +17,8 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.PS5Controller;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Buttons.SwerveButtons;
+import frc.robot.Buttons.defaultbutton;
 import frc.robot.commands.ArmCommands;
 import frc.robot.commands.IntakeCommands;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -59,10 +61,8 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    controller.subcontroller.circle().onTrue(intakeCommands.intakeCommand());
-    controller.subcontroller.square().onTrue(armCommands.coralFromIntakeToArmCommand());
-    controller.subcontroller.cross().onTrue(subsystems.elevator.setHeightCommand(() -> 1));
-    // controller.subcontroller.triangle().onTrue(subsystems.elevator.setHeightCommand(() -> 0));
+    // // // controller.subcontroller.triangle().onTrue(subsystems.elevator.setHeightCommand(() ->
+    // 0));
     // controller.subcontroller.povUp().onTrue(subsystems.arm.setRotationCommand(() -> 90));
     // controller.subcontroller.povDown().onTrue(subsystems.arm.setRotationCommand(() -> -90));
     // // controller.subcontroller.povRight().onTrue(subsystems.arm.setRotationCommand(() -> 0));
@@ -70,8 +70,11 @@ public class RobotContainer {
     // controller.subcontroller.povRight().onTrue(subsystems.arm.setRotationCommand(() -> 180));
     // // controller.subcontroller.circle().onTrue(subsystems.arm.setSpeedCommand(0.5));
     // Default command, normal field-relative drive
-    // SwerveButtons.loadButtons(controller, subsystems);
-    // defaultbutton.loadButtons(controller, subsystems);
+    // controller.subcontroller.circle().onTrue(intakeCommands.intakeCommand());
+    // controller.subcontroller.square().onTrue(armCommands.coralFromIntakeToArmCommand());
+    // controller.subcontroller.cross().onTrue(subsystems.elevator.setHeightCommand(() -> 1));
+    SwerveButtons.loadButtons(controller, subsystems);
+    defaultbutton.loadButtons(controller, subsystems);
   }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
