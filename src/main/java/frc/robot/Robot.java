@@ -15,17 +15,12 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-<<<<<<< HEAD
-=======
-import frc.robot.subsystems.elvetor.elevatorsubsystem;
-import org.littletonrobotics.junction.LogFileUtil;
->>>>>>> 07abf5e25bc2ea840711ad4b7fb8d69e6f94193d
 import org.littletonrobotics.junction.LoggedRobot;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
  * each mode, as described in the TimedRobot documentation. If you change the name of this class or
- * the package after creating this project, you must also update the build.gradle file in the
+ * the package after creating thTis project, you must also update the build.gradle file in the
  * project.
  */
 public class Robot extends LoggedRobot {
@@ -71,6 +66,7 @@ public class Robot extends LoggedRobot {
     //     Logger.setReplaySource(new WPILOGReader(logPath));
     //     Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim")));
     //     break;
+    robotContainer = new RobotContainer();
   }
 
   // Start AdvantageKit logger
@@ -80,7 +76,6 @@ public class Robot extends LoggedRobot {
   // and put our autonomous chooser on the dashboard.
   // Pose3d components = new Pose3d();
 
-  // robotContainer = new RobotContainer();
   // Logger.recordOutput("components", components);
 
   /** This function is called periodically during all modes. */
@@ -138,7 +133,7 @@ public class Robot extends LoggedRobot {
       autonomousCommand.cancel();
     }
 
-    elevatorsubsystem.currentHeight = 0.1;
+    // elevatorsubsystem.currentHeight = 0.1;
     CommandScheduler.getInstance().cancelAll();
   }
 

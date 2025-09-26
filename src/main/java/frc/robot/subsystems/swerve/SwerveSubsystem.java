@@ -6,7 +6,6 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
-
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -110,8 +109,11 @@ public class SwerveSubsystem extends SubsystemBase {
     LimelightHelpers.SetRobotOrientation(
         "limelight-left",
         m_poseEstimator.getEstimatedPosition().getRotation().getDegrees(),
-        0, 0, 0, 0, 0
-    );
+        0,
+        0,
+        0,
+        0,
+        0);
     LimelightHelpers.PoseEstimate mt2Left =
         LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-left");
 
@@ -119,29 +121,31 @@ public class SwerveSubsystem extends SubsystemBase {
     LimelightHelpers.SetRobotOrientation(
         "limelight-right",
         m_poseEstimator.getEstimatedPosition().getRotation().getDegrees(),
-        0, 0, 0, 0, 0
-    );
+        0,
+        0,
+        0,
+        0,
+        0);
     LimelightHelpers.PoseEstimate mt2Right =
         LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-right");
 
     // reject if spinning too fast
     if (Math.abs(m_gyro.getRate()) > 360) {
-        return;
+      return;
     }
 
     // left vision update
     if (mt2Left != null && mt2Left.tagCount > 0) {
-        m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.7, 0.7, 9999999));
-        m_poseEstimator.addVisionMeasurement(mt2Left.pose, mt2Left.timestampSeconds);
+      m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.7, 0.7, 9999999));
+      m_poseEstimator.addVisionMeasurement(mt2Left.pose, mt2Left.timestampSeconds);
     }
 
     // right vision update
     if (mt2Right != null && mt2Right.tagCount > 0) {
-        m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.7, 0.7, 9999999));
-        m_poseEstimator.addVisionMeasurement(mt2Right.pose, mt2Right.timestampSeconds);
+      m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.7, 0.7, 9999999));
+      m_poseEstimator.addVisionMeasurement(mt2Right.pose, mt2Right.timestampSeconds);
     }
-}
-
+  }
 
   public void drive(
       Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
@@ -276,7 +280,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
   public void stop() {
     drive(new Translation2d(0, 0), 0.0, true, true);
-}
+  }
 
   public String getDriveMotorDistances() {
     StringBuilder builder = new StringBuilder();
