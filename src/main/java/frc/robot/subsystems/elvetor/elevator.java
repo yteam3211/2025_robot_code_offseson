@@ -21,37 +21,36 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
-import frc.robot.Constants.elevatorcos.MotorCurrentLimits;
+import frc.robot.subsystems.elvetor.elvetorconstants.MotorCurrentLimits;
 import frc.robot.states.Elevatorstates;
 import java.util.Set;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 
-public class elevatorsubsystem extends SubsystemBase {
+public class elevator extends SubsystemBase {
   public Elevatorstates state = Elevatorstates.INTAKE_MODE;
   public static double currentHeight = 0;
 
   private final MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
-  private TalonFX motor = new TalonFX(Constants.elevatorcos.masterid, "canv");
-  private TalonFX m_slave = new TalonFX(Constants.elevatorcos.slaveid, "canv");
+  private TalonFX motor = new TalonFX(elvetorconstants.masterid, "canv");
+  private TalonFX m_slave = new TalonFX(elvetorconstants.slaveid, "canv");
   private DigitalInput m_closeSwitch =
-      new DigitalInput(Constants.elevatorcos.ELEVATOR_CLOSE_SWITCH_PORT);
+      new DigitalInput(elvetorconstants.ELEVATOR_CLOSE_SWITCH_PORT);
 
   @AutoLogOutput(key = "Elevator/Pose")
   public Pose3d elevatorpose = new Pose3d(0, 0, 0.17, new Rotation3d());
 
   ;
   /** Creates a new elevatorsubsystem. */
-  public elevatorsubsystem() {
+  public elevator() {
 
     TalonFXConfiguration talonFXConfiguration = new TalonFXConfiguration();
     CurrentLimitsConfigs limitConfigs = talonFXConfiguration.CurrentLimits;
     FeedbackConfigs feedbackConfigs = talonFXConfiguration.Feedback;
-    feedbackConfigs.FeedbackSensorSource = Constants.elevatorcos.SensorSource;
-    feedbackConfigs.SensorToMechanismRatio = Constants.elevatorcos.POSITION_CONVERSION_FACTOR;
+    feedbackConfigs.FeedbackSensorSource = elvetorconstants.SensorSource;
+    feedbackConfigs.SensorToMechanismRatio = elvetorconstants.POSITION_CONVERSION_FACTOR;
     MotorOutputConfigs motorOutputConfigs = talonFXConfiguration.MotorOutput;
-    motorOutputConfigs.NeutralMode = Constants.elevatorcos.NeutralMode;
+    motorOutputConfigs.NeutralMode = elvetorconstants.NeutralMode;
     feedbackConfigs.SensorToMechanismRatio = 1;
 
     limitConfigs.SupplyCurrentLimit = MotorCurrentLimits.SUPPLY_CURRENT_LIMIT;
@@ -60,20 +59,20 @@ public class elevatorsubsystem extends SubsystemBase {
 
     MotionMagicConfigs motionMagicConfigs = talonFXConfiguration.MotionMagic;
     motionMagicConfigs.MotionMagicCruiseVelocity =
-        Constants.elevatorcos.MotionMagicConstants.MOTION_MAGIC_VELOCITY;
+        elvetorconstants.MotionMagicConstants.MOTION_MAGIC_VELOCITY;
     motionMagicConfigs.MotionMagicAcceleration =
-        Constants.elevatorcos.MotionMagicConstants.MOTION_MAGIC_ACCELERATION;
+        elvetorconstants.MotionMagicConstants.MOTION_MAGIC_ACCELERATION;
     motionMagicConfigs.MotionMagicJerk =
-        Constants.elevatorcos.MotionMagicConstants.MOTION_MAGIC_JERK;
+        elvetorconstants.MotionMagicConstants.MOTION_MAGIC_JERK;
 
     Slot0Configs slot0 = talonFXConfiguration.Slot0;
-    slot0.kS = Constants.elevatorcos.MotionMagicConstants.MOTOR_KS;
-    slot0.kG = Constants.elevatorcos.MotionMagicConstants.MOTOR_KG;
-    slot0.kV = Constants.elevatorcos.MotionMagicConstants.MOTOR_KV;
-    slot0.kA = Constants.elevatorcos.MotionMagicConstants.MOTOR_KA;
-    slot0.kP = Constants.elevatorcos.MotionMagicConstants.MOTOR_KP;
-    slot0.kI = Constants.elevatorcos.MotionMagicConstants.MOTOR_KI;
-    slot0.kD = Constants.elevatorcos.MotionMagicConstants.MOTOR_KD;
+    slot0.kS = elvetorconstants.MotionMagicConstants.MOTOR_KS;
+    slot0.kG = elvetorconstants.MotionMagicConstants.MOTOR_KG;
+    slot0.kV = elvetorconstants.MotionMagicConstants.MOTOR_KV;
+    slot0.kA = elvetorconstants.MotionMagicConstants.MOTOR_KA;
+    slot0.kP = elvetorconstants.MotionMagicConstants.MOTOR_KP;
+    slot0.kI = elvetorconstants.MotionMagicConstants.MOTOR_KI;
+    slot0.kD = elvetorconstants.MotionMagicConstants.MOTOR_KD;
 
     m_slave.setControl(new Follower(motor.getDeviceID(), false));
 

@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems;
+package frc.robot.subsystems.Example;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -42,8 +42,24 @@ public class ExampleSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
   }
 
-  @Override
-  public void simulationPeriodic() {
-    // This method will be called once per scheduler run during simulation
+  //how to build subsystem on a state robot
+  public void setMotortospeed(double speed) {
+    //can be with motion magic or not 
+    //set motor to speed
   }
+  public Command setMotortospeedCommand(double speed) {
+    //can be with motion magic or not 
+    return this.runOnce(() -> {
+      //set motor to speed
+      setMotortospeed(speed);
+    });
+  }
+
+  public void changeState(Examplestaet newstate){
+    this.examplestaet=newstate;
+  }
+  public Command changeStateCommand(Examplestaet newstate){
+    return this.runOnce(()->changeState(newstate));
+  }
+
 }

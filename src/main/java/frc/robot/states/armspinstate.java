@@ -4,8 +4,8 @@ import frc.lib.util.ITarget;
 
 public enum armspinstate implements ITarget {
   COLLECT(-90),
-  EJECT(0.125),
-  STOP(0);
+  Score(0.125),
+  rest(0);
 
   private double m_roatoion;
 

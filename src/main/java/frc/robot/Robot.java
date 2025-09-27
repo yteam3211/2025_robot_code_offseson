@@ -104,7 +104,6 @@ public class Robot extends LoggedRobot {
   @Override
   public void disabledPeriodic() {
     robotContainer.subsystems.elevator.resetHeight();
-    robotContainer.subsystems.arm.resetPos();
   }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */

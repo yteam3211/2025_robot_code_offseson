@@ -1,26 +1,32 @@
 package frc.robot;
 
+import frc.robot.subsystems.Aempitch.armPitchsubsystem;
+import frc.robot.subsystems.IntakeIndexer.IntakeIndexer;
 import frc.robot.subsystems.IntakePitch.IntakePitch;
-import frc.robot.subsystems.arm.armsubsystem;
-import frc.robot.subsystems.elvetor.elevatorsubsystem;
-import frc.robot.subsystems.intake.IntakeSubsystem;
+import frc.robot.subsystems.arm.ArmGriper;
+import frc.robot.subsystems.elvetor.elevator;
+import frc.robot.subsystems.intakeGriper.IntakeGriper;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 
 public class RobotSubsystems {
   // subsystems
-  public final elevatorsubsystem elevator;
-  public final armsubsystem arm;
-  public final IntakeSubsystem intake;
-  public final SwerveSubsystem swerve;
+  public final elevator elevator;
+  public final ArmGriper ArmGriper;
+  public final armPitchsubsystem armpitch;
+  public final IntakeGriper IntakeGriper;
   public final IntakePitch intakepitch;
+  public final IntakeIndexer intakeindexer;
+  public final SwerveSubsystem swerve;
+
+
 
   public RobotSubsystems() {
-    arm = new armsubsystem();
+    ArmGriper = new ArmGriper();
+    armpitch = new armPitchsubsystem();
     swerve = new SwerveSubsystem();
-    intake = new IntakeSubsystem();
+    IntakeGriper = new IntakeGriper();
     intakepitch = new IntakePitch();
-    elevator = new elevatorsubsystem();
-    // Configure subsystems based on mode
-
+    intakeindexer = new IntakeIndexer();
+    elevator = new elevator();
   }
 }
