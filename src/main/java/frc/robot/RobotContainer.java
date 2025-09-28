@@ -20,7 +20,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Buttons.SwerveButtons;
 import frc.robot.Buttons.defaultbutton;
 import frc.robot.commands.IntakeCommands;
-import frc.robot.states.Elevatorstates;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -64,10 +63,8 @@ public class RobotContainer {
     // controller.swervecontroller.circle().onTrue(intakeCommands.downTakeIndex());
     // controller.swervecontroller.cross().onTrue(intakeCommands.upTakeIndex());
     // controller.swervecontroller.square().onTrue(intakeCommands.scoreL1Command());
-    controller
-        .swervecontroller
-        .circle()
-        .onTrue(subsystems.elevator.changestaeCommand(Elevatorstates.INTAKE_MODE));
+    controller.swervecontroller.circle().onTrue(subsystems.elevator.setHeightCommand(() -> 50));
+    controller.swervecontroller.square().onTrue(subsystems.elevator.setHeightCommand(() -> 0));
     SwerveButtons.loadButtons(controller, subsystems);
     defaultbutton.loadButtons(controller, subsystems);
   }

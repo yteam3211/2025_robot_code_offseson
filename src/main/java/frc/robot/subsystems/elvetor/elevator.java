@@ -14,8 +14,6 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -23,19 +21,15 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.states.Elevatorstates;
 import frc.robot.subsystems.elvetor.elvetorconstants.MotorCurrentLimits;
 import java.util.function.DoubleSupplier;
-import org.littletonrobotics.junction.AutoLogOutput;
 
 public class elevator extends SubsystemBase {
-  public Elevatorstates state = Elevatorstates.INTAKE_MODE;
+  public Elevatorstates state = Elevatorstates.REST_MODE;
 
   private final MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
   private TalonFX motor = new TalonFX(elvetorconstants.masterid, "canv");
   private TalonFX m_slave = new TalonFX(elvetorconstants.slaveid, "canv");
   private DigitalInput m_closeSwitch =
       new DigitalInput(elvetorconstants.ELEVATOR_CLOSE_SWITCH_PORT);
-
-  @AutoLogOutput(key = "Elevator/Pose")
-  public Pose3d elevatorpose = new Pose3d(0, 0, 0.17, new Rotation3d());
 
   ;
   /** Creates a new elevatorsubsystem. */
@@ -89,6 +83,7 @@ public class elevator extends SubsystemBase {
     SmartDashboard.putBoolean("ELevatordown", isElevatorDown());
     SmartDashboard.putNumber("ELEVATOR: distance", getHeight());
     SmartDashboard.putNumber("ELEVATOR velcoity", getVelocity());
+    SmartDashboard.putString("ELEVATOR state", state.name());
 
     resetHeight();
   }

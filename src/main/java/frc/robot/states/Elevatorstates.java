@@ -4,7 +4,7 @@ import frc.lib.util.ITarget;
 
 public enum Elevatorstates implements ITarget {
   INTAKE_MODE(1.2),
-  INITIAL_POSITION(0);
+  REST_MODE(0);
 
   private double m_hight;
 
