@@ -5,36 +5,36 @@
 package frc.robot.subsystems.IntakeIndexer;
 
 import com.ctre.phoenix6.hardware.TalonFX;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.states.IntakeIndexerState;
 
 public class IntakeIndexer extends SubsystemBase {
+  TalonFX m_indexer = new TalonFX(IntakeIndexerConstants.indexerid, "canv");
+  IntakeIndexerState indexerstate = IntakeIndexerState.STOP;
   /** Creates a new IntakeIndexer. */
-  TalonFX IntakeGriper = new TalonFX(IntakeIndexerConstants.indexerid);
-  IntakeIndexerState state = IntakeIndexerState.STOP;
   public IntakeIndexer() {
-    this.setDefaultCommand(setindexerdefualtCommand());
+    this.setDefaultCommand(SetDefualCommandIntakeIndexer());
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
   }
-  public void setindexer(double speed){
-    IntakeGriper.set(speed);
+
+  public void setspeed(double speed) {
+    m_indexer.set(speed);
   }
-  public Command setindexerCommand(double speed){
-    return this.runOnce(()->setindexer(speed));
+
+  public void changestate(IntakeIndexerState newstate) {
+    this.indexerstate = newstate;
   }
-  public Command setindexerdefualtCommand(){
-    return this.setindexerCommand(state.getTarget());
+
+  public Command changestateCommand(IntakeIndexerState newstate) {
+    return this.runOnce(() -> changestate(newstate));
   }
-  public void changestate(IntakeIndexerState newstate){
-    this.state=newstate;
-  }
-  public Command changestateCommand(IntakeIndexerState newstate){
-    return this.runOnce(()->changestate(newstate));
+
+  public Command SetDefualCommandIntakeIndexer() {
+    return this.runOnce(() -> setspeed(indexerstate.getTarget()));
   }
 }

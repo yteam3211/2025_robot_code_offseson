@@ -19,17 +19,14 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.elvetor.elvetorconstants.MotorCurrentLimits;
 import frc.robot.states.Elevatorstates;
-import java.util.Set;
+import frc.robot.subsystems.elvetor.elvetorconstants.MotorCurrentLimits;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 
 public class elevator extends SubsystemBase {
   public Elevatorstates state = Elevatorstates.INTAKE_MODE;
-  public static double currentHeight = -4;
 
   private final MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
   private TalonFX motor = new TalonFX(elvetorconstants.masterid, "canv");
@@ -62,8 +59,7 @@ public class elevator extends SubsystemBase {
         elvetorconstants.MotionMagicConstants.MOTION_MAGIC_VELOCITY;
     motionMagicConfigs.MotionMagicAcceleration =
         elvetorconstants.MotionMagicConstants.MOTION_MAGIC_ACCELERATION;
-    motionMagicConfigs.MotionMagicJerk =
-        elvetorconstants.MotionMagicConstants.MOTION_MAGIC_JERK;
+    motionMagicConfigs.MotionMagicJerk = elvetorconstants.MotionMagicConstants.MOTION_MAGIC_JERK;
 
     Slot0Configs slot0 = talonFXConfiguration.Slot0;
     slot0.kS = elvetorconstants.MotionMagicConstants.MOTOR_KS;
@@ -73,6 +69,7 @@ public class elevator extends SubsystemBase {
     slot0.kP = elvetorconstants.MotionMagicConstants.MOTOR_KP;
     slot0.kI = elvetorconstants.MotionMagicConstants.MOTOR_KI;
     slot0.kD = elvetorconstants.MotionMagicConstants.MOTOR_KD;
+    slot0.GravityType = elvetorconstants.MotionMagicConstants.GravityType;
 
     m_slave.setControl(new Follower(motor.getDeviceID(), false));
 
@@ -84,11 +81,7 @@ public class elevator extends SubsystemBase {
     if (!status.isOK()) {
       System.out.println("Could not configure device. Error: " + status.toString());
     }
-    this.setDefaultCommand(elevatorFloat());
-  }
-
-  public Command elevatorFloat() {
-    return Commands.defer(() -> setHeightCommand(() -> currentHeight), Set.of(this));
+    this.setDefaultCommand(setDefualElvetorCommand());
   }
 
   @Override
@@ -96,7 +89,6 @@ public class elevator extends SubsystemBase {
     SmartDashboard.putBoolean("ELevatordown", isElevatorDown());
     SmartDashboard.putNumber("ELEVATOR: distance", getHeight());
     SmartDashboard.putNumber("ELEVATOR velcoity", getVelocity());
-    SmartDashboard.putNumber("Elevator desired height", currentHeight);
 
     resetHeight();
   }
@@ -109,18 +101,12 @@ public class elevator extends SubsystemBase {
     return motor.getVelocity().getValueAsDouble();
   }
 
-  public Command toggleState(Elevatorstates newstate) {
-    return Commands.runOnce(() -> state = newstate);
+  public Command changestaeCommand(Elevatorstates newstate) {
+    return this.runOnce(() -> state = newstate);
   }
 
-  public Command setIntakeHeight() {
-    return toggleState(Elevatorstates.INTAKE_MODE)
-        .alongWith(setHeightCommand(() -> Elevatorstates.INTAKE_MODE.getTarget()));
-  }
-
-  public Command setInitialPosHeight() {
-    return toggleState(Elevatorstates.INITIAL_POSITION)
-        .alongWith(setHeightCommand(() -> Elevatorstates.INITIAL_POSITION.getTarget()));
+  public Command setDefualElvetorCommand() {
+    return this.runOnce(() -> setHeight(() -> state.getTarget()));
   }
 
   public void setHeight(DoubleSupplier targetHeight) {

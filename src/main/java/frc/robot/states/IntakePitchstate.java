@@ -4,8 +4,8 @@ import frc.lib.util.ITarget;
 
 public enum IntakePitchstate implements ITarget {
   ZERO_POSITION(0),
-  INTAKE_POSITION(110),
-  MIDLLE_POSITION(30);
+  INTAKE_POSITION(120),
+  L1(40);
 
   private final double angleDegrees;
 

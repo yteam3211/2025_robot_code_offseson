@@ -5,20 +5,18 @@
 package frc.robot.subsystems.intakeGriper;
 
 import com.ctre.phoenix6.hardware.TalonFX;
-
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycle;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 import frc.robot.states.inakegriperstate;
 
 public class IntakeGriper extends SubsystemBase {
 
   TalonFX m_griperintake = new TalonFX(IntakeGriperConstants.griperid, "canv");
-  DutyCycle m_stopbutton =
-      new DutyCycle(new DigitalInput(IntakeGriperConstants.INTAKE_CLOSE_SWITCH_PORT));
+  DigitalInput DigitalInput = new DigitalInput(IntakeGriperConstants.INTAKE_IS_CORAL_IN);
+  final DutyCycle m_stop_DigitalInput = new DutyCycle(DigitalInput);
   inakegriperstate gripertate = inakegriperstate.KeepItIn;
 
   /** Creates a new intakesubsystem. */
@@ -30,32 +28,30 @@ public class IntakeGriper extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     SmartDashboard.putBoolean("IntakeSubsytem has coral", isCoralIn());
-    SmartDashboard.putNumber("IntakeSubsystem Coral Distance", getCoralDistance());
+    SmartDashboard.putNumber("IntakeSubsytem distance sensor", sensordata());
   }
-  public Command SetDefualCommandGriperIntake(){
-    return this.runOnce(()->setgriper(gripertate.getTarget()));
+
+  public Command SetDefualCommandGriperIntake() {
+    return this.run(() -> setgriper(gripertate.getTarget()));
   }
 
   public void setgriper(double speed) {
     m_griperintake.set(speed);
   }
 
-  public Command setgriperCommand(double speed) {
-    return this.runOnce(() -> setgriper(speed)).until(() -> isCoralIn());
-  }
-
-
   public boolean isCoralIn() {
-    return m_griperintake.getSupplyCurrent().getValueAsDouble() > 20;
+    return DigitalInput.get();
   }
 
-  public double getCoralDistance() {
-    return m_stopbutton.getOutput();
+  public double sensordata() {
+    return m_stop_DigitalInput.getHighTimeNanoseconds();
   }
-  public void changeState(inakegriperstate newstate){
-    this.gripertate=newstate;
+
+  public void changeState(inakegriperstate newstate) {
+    this.gripertate = newstate;
   }
-  public Command changeStateCommand(inakegriperstate newstate){
-    return this.runOnce(()->changeState(newstate));
+
+  public Command changeStateCommand(inakegriperstate newstate) {
+    return this.runOnce(() -> changeState(newstate));
   }
 }

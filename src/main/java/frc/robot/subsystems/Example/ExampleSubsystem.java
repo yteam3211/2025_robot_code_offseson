@@ -42,24 +42,26 @@ public class ExampleSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
   }
 
-  //how to build subsystem on a state robot
+  // how to build subsystem on a state robot
   public void setMotortospeed(double speed) {
-    //can be with motion magic or not 
-    //set motor to speed
+    // can be with motion magic or not
+    // set motor to speed
   }
+
   public Command setMotortospeedCommand(double speed) {
-    //can be with motion magic or not 
-    return this.runOnce(() -> {
-      //set motor to speed
-      setMotortospeed(speed);
-    });
+    // can be with motion magic or not
+    return this.runOnce(
+        () -> {
+          // set motor to speed
+          setMotortospeed(speed);
+        });
   }
 
-  public void changeState(Examplestaet newstate){
-    this.examplestaet=newstate;
-  }
-  public Command changeStateCommand(Examplestaet newstate){
-    return this.runOnce(()->changeState(newstate));
+  public void changeState(Examplestaet newstate) {
+    this.examplestaet = newstate;
   }
 
+  public Command changeStateCommand(Examplestaet newstate) {
+    return this.runOnce(() -> changeState(newstate));
+  }
 }

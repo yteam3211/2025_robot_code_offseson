@@ -18,8 +18,6 @@ public class RobotSubsystems {
   public final IntakeIndexer intakeindexer;
   public final SwerveSubsystem swerve;
 
-
-
   public RobotSubsystems() {
     ArmGriper = new ArmGriper();
     armpitch = new armPitchsubsystem();

@@ -15,19 +15,22 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.states.IntakePitchstate;
 import java.util.function.DoubleSupplier;
 
 public class IntakePitch extends SubsystemBase {
   public TalonFX m_spinintake = new TalonFX(IntakePitchConstants.PITCH_MOTOR_ID);
-  public DigitalInput m_intakeswitch = new DigitalInput(IntakePitchConstants.CLOSE_SWITCH_PORT);
+  public DigitalInput m_limiteswitch = new DigitalInput(IntakePitchConstants.CLOSE_SWITCH_PORT);
+  public IntakePitchstate state = IntakePitchstate.INTAKE_POSITION;
   private final MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
 
   public IntakePitch() {
     TalonFXConfiguration talonFXConfigurationspin = new TalonFXConfiguration();
     FeedbackConfigs feedbackConfigsspin = talonFXConfigurationspin.Feedback;
     feedbackConfigsspin.SensorToMechanismRatio = IntakePitchConstants.POSITION_CONVERSION_FACTOR;
+    feedbackConfigsspin.FeedbackRotorOffset = IntakePitchConstants.FeedbackRotorOffset;
     MotorOutputConfigs motorOutputConfigsspin = talonFXConfigurationspin.MotorOutput;
     motorOutputConfigsspin.Inverted = IntakePitchConstants.MOTOR_INVERTED;
     motorOutputConfigsspin.NeutralMode = IntakePitchConstants.MOTOR_NEUTRAL_MODE;
@@ -47,6 +50,7 @@ public class IntakePitch extends SubsystemBase {
     slot0spin.kP = IntakePitchConstants.MotionMagicConstants.MOTOR_KP;
     slot0spin.kI = IntakePitchConstants.MotionMagicConstants.MOTOR_KI;
     slot0spin.kD = IntakePitchConstants.MotionMagicConstants.MOTOR_KD;
+    slot0spin.GravityType = IntakePitchConstants.MotionMagicConstants.GravityType;
 
     StatusCode status = StatusCode.StatusCodeNotInitialized;
     for (int i = 0; i < 5; ++i) {
@@ -56,14 +60,27 @@ public class IntakePitch extends SubsystemBase {
     if (!status.isOK()) {
       System.out.println("Could not configure device. Error: " + status.toString());
     }
+    this.setDefaultCommand(SetIntakePitchDefualtCommand());
+  }
+
+  public double intakeGetPos() {
+    return m_spinintake.getPosition().getValueAsDouble();
+  }
+
+  public void setdefualt() {
+    setIntakePosition(state.getTarget());
+  }
+
+  public Command SetIntakePitchDefualtCommand() {
+    return this.runOnce(() -> setdefualt());
   }
 
   public boolean isClose() {
-    return !m_intakeswitch.get();
+    return !m_limiteswitch.get();
   }
 
   public void setIntakePosition(double position) {
-    m_spinintake.setControl(motionMagicVoltage.withPosition(position));
+    m_spinintake.setControl(motionMagicVoltage.withPosition(position).withSlot(0));
   }
 
   public void stopIntake() {
@@ -75,19 +92,22 @@ public class IntakePitch extends SubsystemBase {
   }
 
   public Command setIntakePositionCommand(DoubleSupplier position) {
+    System.out.println("IntakePitch: Setting position to " + position.getAsDouble());
     return this.run(() -> setIntakePosition(position.getAsDouble()));
   }
 
-  public Command setIntakeToIntakePosCommand() {
-    return setIntakePositionCommand(IntakePitchstate.INTAKE_POSITION::getTarget);
+  public Command changestateCommand(IntakePitchstate new_state) {
+    return Commands.runOnce(() -> setstate(new_state));
   }
 
-  public Command setIntakeToZeroPosCommand() {
-    return setIntakePositionCommand(IntakePitchstate.ZERO_POSITION::getTarget);
+  public void setstate(IntakePitchstate new_state) {
+    state = new_state;
   }
 
-  public Command setIntakeToMiddlePosCommand() {
-    return setIntakePositionCommand(IntakePitchstate.MIDLLE_POSITION::getTarget);
+  public Command settozerodposCommand() {
+    return changestateCommand(IntakePitchstate.ZERO_POSITION)
+        .andThen(setspeddCommand(() -> -0.15))
+        .until(this::isClose);
   }
 
   public void setSpeed(double speed) {
@@ -95,12 +115,20 @@ public class IntakePitch extends SubsystemBase {
   }
 
   public Command setspeddCommand(DoubleSupplier speed) {
-    return this.run(() -> setSpeed(speed.getAsDouble()));
+    return this.runOnce(() -> setSpeed(speed.getAsDouble()));
   }
 
   @Override
   public void periodic() {
     SmartDashboard.putBoolean("IntakePitch: isClose", isClose());
     // This method will be called once per scheduler run
+    if (isClose()) {
+      resetPos();
+    }
+  }
+
+  public void resetPos() {
+
+    m_spinintake.setPosition(0);
   }
 }
