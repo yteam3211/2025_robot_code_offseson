@@ -24,12 +24,12 @@ import frc.robot.subsystems.elvetor.elvetorconstants.MotorCurrentLimits;
 public class elevator extends SubsystemBase {
   public Elevatorstates state = Elevatorstates.REST_MODE;
 
-  private final MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
   private TalonFX motor = new TalonFX(elvetorconstants.masterid, "canv");
   private TalonFX m_slave = new TalonFX(elvetorconstants.slaveid, "canv");
   private DigitalInput m_closeSwitch =
       new DigitalInput(elvetorconstants.ELEVATOR_CLOSE_SWITCH_PORT);
 
+  private final MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
   ;
   /** Creates a new elevatorsubsystem. */
   public elevator() {
@@ -74,7 +74,7 @@ public class elevator extends SubsystemBase {
     if (!status.isOK()) {
       System.out.println("Could not configure device. Error: " + status.toString());
     }
-    this.setDefaultCommand(setdefualtelevatorCommand());
+    this.setDefaultCommand(this.setToPosCommand(state.getTarget()));
   }
 
   @Override
@@ -87,32 +87,36 @@ public class elevator extends SubsystemBase {
     resetHeight();
   }
 
+  public void setDefaultElevator() {
+    setToPos(state.getTarget());
+  }
+
+  public Command setDefualElevatorCommand() {
+    return this.runOnce(() -> setDefaultElevator());
+  }
+
+  public void changeState(Elevatorstates newstate) {
+    this.state = newstate;
+  }
+
+  public Command changeStateCommand(Elevatorstates newstate) {
+    return this.runOnce(() -> changeState(newstate));
+  }
+
+  public void setToPos(double Pos) {
+    motor.setControl(motionMagicVoltage.withPosition(Pos).withSlot(0));
+  }
+
+  public Command setToPosCommand(double Pos) {
+    return this.run(() -> setToPos(Pos));
+  }
+
   public double getHeight() {
     return motor.getPosition().getValueAsDouble();
   }
 
   public double getVelocity() {
     return motor.getVelocity().getValueAsDouble();
-  }
-
-  public Command changestaeCommand(Elevatorstates newstate) {
-    return this.runOnce(() -> changestate(newstate));
-  }
-
-  public void changestate(Elevatorstates newstate) {
-    state = newstate;
-  }
-
-  public void setpos(double pos) {
-    motor.setControl(motionMagicVoltage.withPosition(pos).withSlot(0));
-  }
-
-  public Command setposCommand(double pos) {
-    return this.runOnce(() -> setpos(pos));
-  }
-
-  public Command setdefualtelevatorCommand() {
-    return this.run  (() -> setLevel(state.getTarget()));
   }
 
   public void resetHeight() {
@@ -132,17 +136,5 @@ public class elevator extends SubsystemBase {
 
   public boolean isElevatorDown() {
     return m_closeSwitch.get();
-  }
-
-  public Command set(double pos) {
-    return runOnce(() -> setLevel(pos));
-  }
-
-  public Command stop() {
-    return set(state.getTarget());
-  }
-
-  public void setLevel(double pos) {
-    motor.setControl(motionMagicVoltage.withPosition(pos).withSlot(0));
   }
 }

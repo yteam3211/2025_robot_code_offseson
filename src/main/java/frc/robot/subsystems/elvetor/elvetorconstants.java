@@ -7,8 +7,8 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 public class elvetorconstants {
 
   public static final int ELEVATOR_CLOSE_SWITCH_PORT = 2;
-  public static int masterid = 40;
-  public static int slaveid = 41;
+  public static int masterid = 41;
+  public static int slaveid = 42;
   public static final double POSITION_CONVERSION_FACTOR = 0.3024;
   public static final FeedbackSensorSourceValue SensorSource =
       FeedbackSensorSourceValue.RotorSensor;

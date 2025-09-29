@@ -45,7 +45,8 @@ public class IntakeCommands {
   public Command scoreL1Command() {
     return intakePitch
         .changestateCommand(IntakePitchstate.L1)
-        .alongWith(Intakegriper.changeStateCommand(inakegriperstate.KeepItIn))
+        .alongWith(intakeIndexer.changestateCommand(IntakeIndexerState.STOP))
+        .withTimeout(5)
         .andThen(Intakegriper.changeStateCommand(inakegriperstate.Eject));
   }
 }
