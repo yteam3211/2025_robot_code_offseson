@@ -20,7 +20,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.states.Elevatorstates;
 import frc.robot.subsystems.elvetor.elvetorconstants.MotorCurrentLimits;
-import java.util.function.DoubleSupplier;
 
 public class elevator extends SubsystemBase {
   public Elevatorstates state = Elevatorstates.REST_MODE;
@@ -34,16 +33,16 @@ public class elevator extends SubsystemBase {
   ;
   /** Creates a new elevatorsubsystem. */
   public elevator() {
-
     TalonFXConfiguration talonFXConfiguration = new TalonFXConfiguration();
-    CurrentLimitsConfigs limitConfigs = talonFXConfiguration.CurrentLimits;
+
     FeedbackConfigs feedbackConfigs = talonFXConfiguration.Feedback;
     feedbackConfigs.FeedbackSensorSource = elvetorconstants.SensorSource;
     feedbackConfigs.SensorToMechanismRatio = elvetorconstants.POSITION_CONVERSION_FACTOR;
+
     MotorOutputConfigs motorOutputConfigs = talonFXConfiguration.MotorOutput;
     motorOutputConfigs.NeutralMode = elvetorconstants.NeutralMode;
-    feedbackConfigs.SensorToMechanismRatio = 1;
 
+    CurrentLimitsConfigs limitConfigs = talonFXConfiguration.CurrentLimits;
     limitConfigs.SupplyCurrentLimit = MotorCurrentLimits.SUPPLY_CURRENT_LIMIT;
     limitConfigs.SupplyCurrentLowerLimit = MotorCurrentLimits.SUPPLY_CURRENT_LOWER_LIMIT;
     limitConfigs.SupplyCurrentLimitEnable = MotorCurrentLimits.SUPPLY_CURRENT_LIMIT_ENABLE;
@@ -75,7 +74,7 @@ public class elevator extends SubsystemBase {
     if (!status.isOK()) {
       System.out.println("Could not configure device. Error: " + status.toString());
     }
-    this.setDefaultCommand(setDefualElvetorCommand());
+    this.setDefaultCommand(setdefualtelevatorCommand());
   }
 
   @Override
@@ -97,19 +96,23 @@ public class elevator extends SubsystemBase {
   }
 
   public Command changestaeCommand(Elevatorstates newstate) {
-    return this.runOnce(() -> state = newstate);
+    return this.runOnce(() -> changestate(newstate));
   }
 
-  public Command setDefualElvetorCommand() {
-    return this.runOnce(() -> setHeight(() -> state.getTarget()));
+  public void changestate(Elevatorstates newstate) {
+    state = newstate;
   }
 
-  public void setHeight(DoubleSupplier targetHeight) {
-    motor.setControl(motionMagicVoltage.withPosition(targetHeight.getAsDouble()).withSlot(0));
+  public void setpos(double pos) {
+    motor.setControl(motionMagicVoltage.withPosition(pos).withSlot(0));
   }
 
-  public void setSpeed(double speed) {
-    motor.set(speed);
+  public Command setposCommand(double pos) {
+    return this.runOnce(() -> setpos(pos));
+  }
+
+  public Command setdefualtelevatorCommand() {
+    return this.run  (() -> setLevel(state.getTarget()));
   }
 
   public void resetHeight() {
@@ -118,15 +121,7 @@ public class elevator extends SubsystemBase {
     }
   }
 
-  public Command setSpeedCommand(double speed) {
-    return this.runOnce(() -> setSpeed(speed));
-  }
-
-  public Command setHeightCommand(DoubleSupplier targetHeight) {
-    return this.run(() -> setHeight(targetHeight));
-  }
-
-  boolean m_occurred = true;
+  boolean m_occurred = false;
 
   public boolean isFirstResetOccurred() {
     if (isElevatorDown()) {

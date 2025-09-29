@@ -20,7 +20,7 @@ import frc.robot.states.armgriperstate;
 import frc.robot.states.armspinstate;
 import java.util.function.DoubleSupplier;
 
-public class armPitchsubsystem extends SubsystemBase {
+public class armPitch extends SubsystemBase {
 
   public TalonFX m_Pitch = new TalonFX(ArmPItchConstants.m_PitchID, "rio");
   public armspinstate spinstate = armspinstate.rest;
@@ -32,7 +32,7 @@ public class armPitchsubsystem extends SubsystemBase {
   // armio m_io;
 
   /** Creates a new armsubsystem. */
-  public armPitchsubsystem(/* armio io*/ ) {
+  public armPitch(/* armio io*/ ) {
     // m_io = io;
 
     TalonFXConfiguration talonFXConfigurationspin = new TalonFXConfiguration();

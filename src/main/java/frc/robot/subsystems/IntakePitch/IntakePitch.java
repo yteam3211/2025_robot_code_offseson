@@ -23,7 +23,7 @@ import java.util.function.DoubleSupplier;
 public class IntakePitch extends SubsystemBase {
   public TalonFX m_spinintake = new TalonFX(IntakePitchConstants.PITCH_MOTOR_ID);
   public DigitalInput m_limiteswitch = new DigitalInput(IntakePitchConstants.CLOSE_SWITCH_PORT);
-  public IntakePitchstate state = IntakePitchstate.INTAKE_POSITION;
+  public IntakePitchstate state = IntakePitchstate.ZERO_POSITION;
   private final MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
 
   public IntakePitch() {
@@ -67,6 +67,10 @@ public class IntakePitch extends SubsystemBase {
     return m_spinintake.getPosition().getValueAsDouble();
   }
 
+  public void setIntakePosition(double position) {
+    m_spinintake.setControl(motionMagicVoltage.withPosition(position).withSlot(0));
+  }
+
   public void setdefualt() {
     setIntakePosition(state.getTarget());
   }
@@ -79,10 +83,6 @@ public class IntakePitch extends SubsystemBase {
     return !m_limiteswitch.get();
   }
 
-  public void setIntakePosition(double position) {
-    m_spinintake.setControl(motionMagicVoltage.withPosition(position).withSlot(0));
-  }
-
   public void stopIntake() {
     m_spinintake.set(0);
   }
@@ -92,7 +92,6 @@ public class IntakePitch extends SubsystemBase {
   }
 
   public Command setIntakePositionCommand(DoubleSupplier position) {
-    System.out.println("IntakePitch: Setting position to " + position.getAsDouble());
     return this.run(() -> setIntakePosition(position.getAsDouble()));
   }
 

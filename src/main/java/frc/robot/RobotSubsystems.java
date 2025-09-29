@@ -1,6 +1,6 @@
 package frc.robot;
 
-import frc.robot.subsystems.Aempitch.armPitchsubsystem;
+import frc.robot.subsystems.Aempitch.armPitch;
 import frc.robot.subsystems.IntakeIndexer.IntakeIndexer;
 import frc.robot.subsystems.IntakePitch.IntakePitch;
 import frc.robot.subsystems.arm.ArmGriper;
@@ -12,7 +12,7 @@ public class RobotSubsystems {
   // subsystems
   public final elevator elevator;
   public final ArmGriper ArmGriper;
-  public final armPitchsubsystem armpitch;
+  public final armPitch armpitch;
   public final IntakeGriper IntakeGriper;
   public final IntakePitch intakepitch;
   public final IntakeIndexer intakeindexer;
@@ -20,7 +20,7 @@ public class RobotSubsystems {
 
   public RobotSubsystems() {
     ArmGriper = new ArmGriper();
-    armpitch = new armPitchsubsystem();
+    armpitch = new armPitch();
     swerve = new SwerveSubsystem();
     IntakeGriper = new IntakeGriper();
     intakepitch = new IntakePitch();

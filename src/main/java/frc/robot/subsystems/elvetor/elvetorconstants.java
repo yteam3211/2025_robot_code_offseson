@@ -23,7 +23,7 @@ public class elvetorconstants {
 
   public static final class MotionMagicConstants {
 
-    public static final double MOTION_MAGIC_VELOCITY = 66.5;
+    public static final double MOTION_MAGIC_VELOCITY = 80.5;
     public static final double MOTION_MAGIC_ACCELERATION = 578;
     public static final double MOTION_MAGIC_JERK = 0;
 
