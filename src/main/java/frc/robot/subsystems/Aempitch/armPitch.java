@@ -12,21 +12,16 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.states.armgriperstate;
-import frc.robot.states.armspinstate;
-import java.util.function.DoubleSupplier;
+import frc.robot.states.armPitchState;
 
 public class armPitch extends SubsystemBase {
 
   public TalonFX m_Pitch = new TalonFX(ArmPItchConstants.m_PitchID, "rio");
-  public armspinstate spinstate = armspinstate.rest;
-  public armgriperstate gripertate = armgriperstate.KeepItIn;
+  public armPitchState state = armPitchState.rest;
   private final MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
-  public Pose3d Armpose = new Pose3d();
 
   // armioinputsautologged input = new armioinputsautolog;
   // armio m_io;
@@ -66,12 +61,22 @@ public class armPitch extends SubsystemBase {
     if (!status.isOK()) {
       System.out.println("Could not configure device. Error: " + status.toString());
     }
+    // this.setDefaultCommand(setDefualArmPitchCommand());
+  }
+
+  public void setdefualt() {
+    setRotationCommand(state.getTarget());
+  }
+
+  public Command setDefualArmPitchCommand() {
+    return this.runOnce(() -> setdefualt());
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Arm Position", getArmPosition());
+    SmartDashboard.putString("Arm Pitch", state.name() + state.getTarget());
     // io.updateinputs(inputs);
   }
 
@@ -83,27 +88,23 @@ public class armPitch extends SubsystemBase {
     return m_Pitch.getPosition().getValueAsDouble();
   }
 
-  public void setSpeed(double speed) {
-    m_Pitch.set(speed);
+  public void chengestate(armPitchState new_state) {
+    state = new_state;
   }
 
-  public Command setSpeedCommand(double speed) {
-    return this.run(() -> setSpeed(speed));
+  public Command chengestateCommand(armPitchState new_state) {
+    return this.runOnce(() -> chengestate(new_state));
   }
 
-  public void setRotation(DoubleSupplier targetPos) {
-    m_Pitch.setControl(motionMagicVoltage.withPosition(targetPos.getAsDouble()).withSlot(0));
+  public void setRotation(Double targetPos) {
+    m_Pitch.setControl(motionMagicVoltage.withPosition(targetPos).withSlot(0));
   }
 
-  public Command setRotationCommand(DoubleSupplier targetPos) {
-    return this.run(() -> setRotation(targetPos));
+  public Command setRotationCommand(Double targetPos) {
+    return this.runOnce(() -> setRotation(targetPos));
   }
 
   public double getarmspin() {
     return m_Pitch.getPosition().getValueAsDouble();
-  }
-
-  public void stopspin() {
-    m_Pitch.set(0);
   }
 }

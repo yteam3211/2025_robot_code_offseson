@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.states.Elevatorstates;
 import frc.robot.subsystems.elvetor.elvetorconstants.MotorCurrentLimits;
+import java.util.function.DoubleSupplier;
 
 public class elevator extends SubsystemBase {
   public Elevatorstates state = Elevatorstates.REST_MODE;
@@ -74,7 +75,7 @@ public class elevator extends SubsystemBase {
     if (!status.isOK()) {
       System.out.println("Could not configure device. Error: " + status.toString());
     }
-    this.setDefaultCommand(this.setToPosCommand(state.getTarget()));
+    this.setDefaultCommand(this.setDefualElevatorCommand());
   }
 
   @Override
@@ -82,17 +83,17 @@ public class elevator extends SubsystemBase {
     SmartDashboard.putBoolean("ELevatordown", isElevatorDown());
     SmartDashboard.putNumber("ELEVATOR: distance", getHeight());
     SmartDashboard.putNumber("ELEVATOR velcoity", getVelocity());
-    SmartDashboard.putString("ELEVATOR state", state.name());
+    SmartDashboard.putString("ELEVATOR state", state.name() + state.getTarget());
 
     resetHeight();
   }
 
   public void setDefaultElevator() {
-    setToPos(state.getTarget());
+    setToPos(() -> state.getTarget());
   }
 
   public Command setDefualElevatorCommand() {
-    return this.runOnce(() -> setDefaultElevator());
+    return this.run(() -> setDefaultElevator());
   }
 
   public void changeState(Elevatorstates newstate) {
@@ -103,12 +104,12 @@ public class elevator extends SubsystemBase {
     return this.runOnce(() -> changeState(newstate));
   }
 
-  public void setToPos(double Pos) {
-    motor.setControl(motionMagicVoltage.withPosition(Pos).withSlot(0));
+  public void setToPos(DoubleSupplier Pos) {
+    motor.setControl(motionMagicVoltage.withPosition(Pos.getAsDouble()).withSlot(0));
   }
 
-  public Command setToPosCommand(double Pos) {
-    return this.run(() -> setToPos(Pos));
+  public Command setToPosCommand(DoubleSupplier Pos) {
+    return this.runOnce(() -> setToPos(Pos));
   }
 
   public double getHeight() {

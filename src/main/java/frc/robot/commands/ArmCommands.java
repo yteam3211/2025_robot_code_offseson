@@ -32,6 +32,6 @@ public class ArmCommands {
   public Command elevatorUpAfterPitchDwon() {
     return intakePitch
         .changestateCommand(IntakePitchstate.L1)
-        .andThen(elevator.changeStateCommand(Elevatorstates.INTAKE_MODE));
+        .alongWith(elevator.changeStateCommand(Elevatorstates.INTAKE_MODE));
   }
 }

@@ -23,7 +23,7 @@ import java.util.function.DoubleSupplier;
 public class IntakePitch extends SubsystemBase {
   public TalonFX m_spinintake = new TalonFX(IntakePitchConstants.PITCH_MOTOR_ID);
   public DigitalInput m_limiteswitch = new DigitalInput(IntakePitchConstants.CLOSE_SWITCH_PORT);
-  public IntakePitchstate state = IntakePitchstate.INTAKE_POSITION;
+  public IntakePitchstate state = IntakePitchstate.TEST;
   private final MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
 
   public IntakePitch() {

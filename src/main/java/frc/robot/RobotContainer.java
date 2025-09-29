@@ -22,6 +22,7 @@ import frc.robot.Buttons.defaultbutton;
 import frc.robot.commands.ArmCommands;
 import frc.robot.commands.IntakeCommands;
 import frc.robot.states.Elevatorstates;
+import frc.robot.states.armPitchState;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -73,13 +74,26 @@ public class RobotContainer {
     // controller.swervecontroller.cross().onTrue(intakeCommands.upTakeIndex());
     // controller.swervecontroller.square().onTrue(intakeCommands.scoreL1Command());
 
-    controller.swervecontroller.circle().onTrue(subsystems.elevator.setToPosCommand(50));
+    // controller.swervecontroller.circle().onTrue(subsystems.elevator.setToPosCommand(50));
+    // controller.swervecontroller.square().onTrue(armCommands.elevatorUpAfterPitchDwon());
     controller
         .swervecontroller
         .square()
+        .onTrue(subsystems.armpitch.setRotationCommand(armPitchState.COLLECT.getTarget()));
+    controller
+        .swervecontroller
+        .circle()
         .onTrue(subsystems.elevator.changeStateCommand(Elevatorstates.INTAKE_MODE));
+    controller
+        .swervecontroller
+        .cross()
+        .onTrue(subsystems.armpitch.setRotationCommand(armPitchState.rest.getTarget()));
+    controller
+        .swervecontroller
+        .triangle()
+        .onTrue(subsystems.elevator.changeStateCommand(Elevatorstates.REST_MODE));
 
-        SwerveButtons.loadButtons(controller, subsystems);
+    SwerveButtons.loadButtons(controller, subsystems);
     defaultbutton.loadButtons(controller, subsystems);
   }
   /**
