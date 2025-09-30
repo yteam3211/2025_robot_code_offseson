@@ -27,11 +27,11 @@ public class IntakeCommands {
         .alongWith(Intakegriper.changeStateCommand(inakegriperstate.Collect));
   }
 
-  public Command downTakeIndexunilCommand() {
-    return downTakeIndex();
+  public Command downTakeIndexunil() {
+    return downTakeIndex().until(() -> Intakegriper.isCoralIn());
   }
 
-  public Command upTakeIndex() {
+  public Command upNOTakeNOIndex() {
     return intakeIndexer
         .changestateCommand(IntakeIndexerState.STOP)
         .alongWith(Intakegriper.changeStateCommand(inakegriperstate.KeepItIn))
@@ -39,7 +39,7 @@ public class IntakeCommands {
   }
 
   public Command intakeCommand() {
-    return downTakeIndexunilCommand();
+    return downTakeIndexunil().andThen(upNOTakeNOIndex());
   }
 
   public Command scoreL1Command() {

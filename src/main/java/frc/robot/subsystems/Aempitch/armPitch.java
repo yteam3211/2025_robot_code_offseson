@@ -14,6 +14,7 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.states.armPitchState;
 
@@ -61,11 +62,15 @@ public class armPitch extends SubsystemBase {
     if (!status.isOK()) {
       System.out.println("Could not configure device. Error: " + status.toString());
     }
-    // this.setDefaultCommand(setDefualArmPitchCommand());
+    this.setDefaultCommand(setDefualArmPitchCommand());
+  }
+
+  public Command changestateCommandMustHaveUntil(armPitchState new_state) {
+    return Commands.run(() -> chengestate(new_state));
   }
 
   public void setdefualt() {
-    setRotationCommand(state.getTarget());
+    setRotation(state.getTarget());
   }
 
   public Command setDefualArmPitchCommand() {

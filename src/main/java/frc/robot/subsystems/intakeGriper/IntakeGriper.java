@@ -8,6 +8,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.states.inakegriperstate;
 
@@ -26,10 +27,15 @@ public class IntakeGriper extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     SmartDashboard.putBoolean("IntakeSubsytem has coral", isCoralIn());
+    SmartDashboard.putString("Intake griper state", gripertate.name() + gripertate.getTarget());
   }
 
   public Command SetDefualCommandGriperIntake() {
     return this.run(() -> setgriper(gripertate.getTarget()));
+  }
+
+  public Command changestateCommandMustHaveUntil(inakegriperstate new_state) {
+    return Commands.run(() -> changeState(new_state));
   }
 
   public void setgriper(double speed) {

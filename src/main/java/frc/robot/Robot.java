@@ -128,10 +128,11 @@ public class Robot extends LoggedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
+
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }
-
+    CommandScheduler.getInstance().schedule(robotContainer.test());
     // elevatorsubsystem.currentHeight = 0.1;
     CommandScheduler.getInstance().cancelAll();
   }
@@ -139,6 +140,7 @@ public class Robot extends LoggedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
+
     updateposes();
   }
 

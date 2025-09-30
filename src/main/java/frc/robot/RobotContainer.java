@@ -17,12 +17,9 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.PS5Controller;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Buttons.SwerveButtons;
-import frc.robot.Buttons.defaultbutton;
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.commands.ArmCommands;
 import frc.robot.commands.IntakeCommands;
-import frc.robot.states.Elevatorstates;
-import frc.robot.states.armPitchState;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -71,30 +68,15 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // controller.swervecontroller.circle().onTrue(intakeCommands.downTakeIndex());
-    // controller.swervecontroller.cross().onTrue(intakeCommands.upTakeIndex());
-    // controller.swervecontroller.square().onTrue(intakeCommands.scoreL1Command());
-
-    // controller.swervecontroller.circle().onTrue(subsystems.elevator.setToPosCommand(50));
-    // controller.swervecontroller.square().onTrue(armCommands.elevatorUpAfterPitchDwon());
-    controller
-        .swervecontroller
-        .square()
-        .onTrue(subsystems.armpitch.setRotationCommand(armPitchState.COLLECT.getTarget()));
-    controller
-        .swervecontroller
-        .circle()
-        .onTrue(subsystems.elevator.changeStateCommand(Elevatorstates.INTAKE_MODE));
-    controller
-        .swervecontroller
-        .cross()
-        .onTrue(subsystems.armpitch.setRotationCommand(armPitchState.rest.getTarget()));
-    controller
-        .swervecontroller
-        .triangle()
-        .onTrue(subsystems.elevator.changeStateCommand(Elevatorstates.REST_MODE));
-
-    SwerveButtons.loadButtons(controller, subsystems);
-    defaultbutton.loadButtons(controller, subsystems);
+    // controller.swervecontroller.cross().onTrue(intakeCommands.upNOTakeNOIndex());
+    // controller.swervecontroller.square().onTrue(armCommands.armAndelEvatorCommand());
+    // controller.swervecontroller.triangle().onTrue(armCommands.restArm());
+    // controller.swervecontroller.L1().onTrue(armCommands.restAfterPass());
+    controller.swervecontroller.square().onTrue(Commands.runOnce(() -> test = "1"));
+    controller.swervecontroller.circle().onTrue(Commands.runOnce(() -> test = "2"));
+    controller.swervecontroller.triangle().whileTrue(test());
+    // SwerveButtons.loadButtons(controller, subsystems);
+    // defaultbutton.loadButtons(controller, subsystems);
   }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -103,5 +85,11 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return autoChooser.get();
+  }
+
+  static String test = "0";
+
+  public Command test() {
+    return Commands.print(test).repeatedly();
   }
 }

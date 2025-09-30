@@ -8,12 +8,13 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.states.armgriperstate;
 
 public class ArmGriper extends SubsystemBase {
   public TalonFX m_griper = new TalonFX(ArmGriperConstants.m_grieprid, "rio");
-  public armgriperstate state = armgriperstate.KeepItIn;
+  public static armgriperstate state = armgriperstate.KeepItIn;
   public Pose3d Armpose = new Pose3d();
 
   // armioinputsautologged input = new armioinputsautolog;
@@ -22,16 +23,21 @@ public class ArmGriper extends SubsystemBase {
   /** Creates a new armsubsystem. */
   public ArmGriper(/* armio io*/ ) {
     // m_io = io;
+    this.setDefaultCommand(setGripperDefualtCommand());
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("Arm griper state", getholdercurrent());
+    SmartDashboard.putString("Arm griper state", state.name() + state.getTarget());
   }
 
   public double getholdercurrent() {
     return m_griper.get();
+  }
+
+  public Command setGripperDefualtCommand() {
+    return this.run(() -> setGriper(state.getTarget()));
   }
 
   public void setGriper(double speed) {
@@ -46,12 +52,12 @@ public class ArmGriper extends SubsystemBase {
     return this.run(() -> setGriper(speed));
   }
 
-  public Command setGripperDefualtCommand() {
-    return this.setGriperCommand(state.getTarget());
+  public Command changestateCommandMustHaveUntil(armgriperstate new_state) {
+    return Commands.run(() -> changestate(new_state));
   }
 
   public void changestate(armgriperstate newstate) {
-    this.state = newstate;
+    state = newstate;
   }
 
   public Command changestateCommand(armgriperstate newstate) {
