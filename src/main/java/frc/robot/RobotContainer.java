@@ -72,9 +72,7 @@ public class RobotContainer {
     // controller.swervecontroller.square().onTrue(armCommands.armAndelEvatorCommand());
     // controller.swervecontroller.triangle().onTrue(armCommands.restArm());
     // controller.swervecontroller.L1().onTrue(armCommands.restAfterPass());
-    controller.swervecontroller.square().onTrue(Commands.runOnce(() -> test = "1"));
-    controller.swervecontroller.circle().onTrue(Commands.runOnce(() -> test = "2"));
-    controller.swervecontroller.triangle().whileTrue(test());
+    
     // SwerveButtons.loadButtons(controller, subsystems);
     // defaultbutton.loadButtons(controller, subsystems);
   }
@@ -85,11 +83,5 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return autoChooser.get();
-  }
-
-  static String test = "0";
-
-  public Command test() {
-    return Commands.print(test).repeatedly();
   }
 }
