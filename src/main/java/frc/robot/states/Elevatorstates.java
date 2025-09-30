@@ -3,7 +3,7 @@ package frc.robot.states;
 import frc.lib.util.ITarget;
 
 public enum Elevatorstates implements ITarget {
-  INTAKE_MODE(100),
+  INTAKE_MODE(120),
   REST_MODE(0);
 
   private double m_hight;

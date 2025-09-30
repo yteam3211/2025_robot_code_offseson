@@ -69,16 +69,15 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     controller.swervecontroller.circle().onTrue(intakeCommands.downTakeIndex());
-    controller
-        .swervecontroller
-        .cross()
-        .onTrue(intakeCommands.upNOTakeNOIndex().andThen(armCommands.armAndelEvatorCommand()));
-    controller.swervecontroller.square().onTrue(armCommands.armAndelEvatorCommand());
-    controller.swervecontroller.triangle().onTrue(armCommands.restArm());
+    controller.swervecontroller.cross().onTrue(intakeCommands.upNOTakeNOIndex());
+    controller.swervecontroller.square().onTrue(armCommands.elevatorUpAfterPitchDwonArmTopos());
+    controller.swervecontroller.triangle().onTrue(armCommands.passToArmFromintake());
+    controller.swervecontroller.R1().onTrue(armCommands.restArm());
     controller.swervecontroller.L1().onTrue(armCommands.restAfterPass());
     SwerveButtons.loadButtons(controller, subsystems);
     defaultbutton.loadButtons(controller, subsystems);
   }
+
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
@@ -88,3 +87,4 @@ public class RobotContainer {
     return autoChooser.get();
   }
 }
+

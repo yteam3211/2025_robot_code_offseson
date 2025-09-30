@@ -28,7 +28,7 @@ public class IntakeCommands {
   }
 
   public Command downTakeIndexunil() {
-    return downTakeIndex().until(() -> Intakegriper.isCoralIn());
+    return downTakeIndex().until(() -> Intakegriper.isCoralIn()).andThen(upNOTakeNOIndex());
   }
 
   public Command upNOTakeNOIndex() {

@@ -75,7 +75,7 @@ public class elevator extends SubsystemBase {
     if (!status.isOK()) {
       System.out.println("Could not configure device. Error: " + status.toString());
     }
-    // this.setDefaultCommand(this.setDefualElevatorCommand());
+    this.setDefaultCommand(this.setDefualElevatorCommand());
   }
 
   @Override

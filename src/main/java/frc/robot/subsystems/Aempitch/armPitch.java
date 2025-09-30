@@ -30,7 +30,7 @@ public class armPitch extends SubsystemBase {
   /** Creates a new armsubsystem. */
   public armPitch(/* armio io*/ ) {
     // m_io = io;
-
+    m_Pitch.setPosition(0);
     TalonFXConfiguration talonFXConfigurationspin = new TalonFXConfiguration();
     FeedbackConfigs feedbackConfigsspin = talonFXConfigurationspin.Feedback;
     feedbackConfigsspin.SensorToMechanismRatio = ArmPItchConstants.POSITION_CONVERSION_FACTOR;
