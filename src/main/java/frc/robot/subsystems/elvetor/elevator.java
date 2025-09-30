@@ -17,7 +17,6 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.states.Elevatorstates;
 import frc.robot.subsystems.elvetor.elvetorconstants.MotorCurrentLimits;
@@ -102,7 +101,7 @@ public class elevator extends SubsystemBase {
   }
 
   public Command changestateCommandMustHaveUntil(Elevatorstates new_state) {
-    return Commands.run(() -> changeState(new_state));
+    return this.run(() -> changeState(new_state));
   }
 
   public Command changeStateCommand(Elevatorstates newstate) {

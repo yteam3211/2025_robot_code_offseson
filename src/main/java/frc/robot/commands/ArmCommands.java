@@ -39,14 +39,17 @@ public class ArmCommands {
   public Command elevatorUpAfterPitchDwon() {
     return intakePitch
         .changestateCommand(IntakePitchstate.L1)
-        .alongWith(elevator.changestateCommandMustHaveUntil(Elevatorstates.INTAKE_MODE))
-        .until(() -> elevator.getHeight() > 50)
-        .andThen(
-            armpitch
-                .chengestateCommand(armPitchState.COLLECT)
-                .alongWith(
-                    intakePitch.changestateCommandMustHaveUntil(IntakePitchstate.ZERO_POSITION)))
-        .until(() -> armpitch.getArmPosition() < 160);
+        .alongWith(
+            elevator
+                .changestateCommandMustHaveUntil(Elevatorstates.INTAKE_MODE)
+                .until(() -> elevator.getHeight() > 50)
+                .andThen(
+                    armpitch
+                        .chengestateCommand(armPitchState.COLLECT)
+                        .alongWith(
+                            intakePitch.changestateCommandMustHaveUntil(
+                                IntakePitchstate.ZERO_POSITION)))
+                .until(() -> armpitch.getArmPosition() < 160));
   }
 
   public Command passToArmFromintake() {

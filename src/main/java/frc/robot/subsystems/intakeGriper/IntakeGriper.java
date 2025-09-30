@@ -8,7 +8,6 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.states.inakegriperstate;
 
@@ -35,7 +34,7 @@ public class IntakeGriper extends SubsystemBase {
   }
 
   public Command changestateCommandMustHaveUntil(inakegriperstate new_state) {
-    return Commands.run(() -> changeState(new_state));
+    return this.run(() -> changeState(new_state));
   }
 
   public void setgriper(double speed) {

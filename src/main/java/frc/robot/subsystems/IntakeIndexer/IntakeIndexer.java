@@ -6,7 +6,6 @@ package frc.robot.subsystems.IntakeIndexer;
 
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.states.IntakeIndexerState;
 
@@ -19,7 +18,7 @@ public class IntakeIndexer extends SubsystemBase {
   }
 
   public Command changestateCommandMustHaveUntil(IntakeIndexerState new_state) {
-    return Commands.run(() -> changestate(new_state));
+    return this.run(() -> changestate(new_state));
   }
 
   @Override

@@ -8,7 +8,6 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.states.armgriperstate;
 
@@ -53,7 +52,7 @@ public class ArmGriper extends SubsystemBase {
   }
 
   public Command changestateCommandMustHaveUntil(armgriperstate new_state) {
-    return Commands.run(() -> changestate(new_state));
+    return this.run(() -> changestate(new_state));
   }
 
   public void changestate(armgriperstate newstate) {

@@ -17,7 +17,8 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.PS5Controller;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.Buttons.SwerveButtons;
+import frc.robot.Buttons.defaultbutton;
 import frc.robot.commands.ArmCommands;
 import frc.robot.commands.IntakeCommands;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -68,13 +69,16 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // controller.swervecontroller.circle().onTrue(intakeCommands.downTakeIndex());
-    // controller.swervecontroller.cross().onTrue(intakeCommands.upNOTakeNOIndex());
+    // controller
+    // .swervecontroller
+    // .cross()
+    // .onTrue(intakeCommands.upNOTakeNOIndex().andThen(armCommands.armAndelEvatorCommand()));
     // controller.swervecontroller.square().onTrue(armCommands.armAndelEvatorCommand());
     // controller.swervecontroller.triangle().onTrue(armCommands.restArm());
     // controller.swervecontroller.L1().onTrue(armCommands.restAfterPass());
-    
-    // SwerveButtons.loadButtons(controller, subsystems);
-    // defaultbutton.loadButtons(controller, subsystems);
+
+    SwerveButtons.loadButtons(controller, subsystems);
+    defaultbutton.loadButtons(controller, subsystems);
   }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

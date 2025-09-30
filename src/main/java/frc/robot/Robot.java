@@ -132,7 +132,7 @@ public class Robot extends LoggedRobot {
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }
-    
+
     // elevatorsubsystem.currentHeight = 0.1;
     CommandScheduler.getInstance().cancelAll();
   }
