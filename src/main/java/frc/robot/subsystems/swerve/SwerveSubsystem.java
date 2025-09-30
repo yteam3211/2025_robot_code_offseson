@@ -18,6 +18,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
+import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -28,17 +29,17 @@ import frc.lib.util.SwerveModule;
 import frc.robot.constants.SwerveConstants;
 import java.util.Optional;
 import org.littletonrobotics.junction.AutoLogOutput;
-import org.littletonrobotics.junction.Logger;
 
 public class SwerveSubsystem extends SubsystemBase {
 
   public SwerveDriveOdometry m_swerveOdometry;
   public SwerveModule[] m_swerveMods;
   public SwerveModuleState[] m_desiredStates;
-
+  private final SwerveDrivePoseEstimator m_PoseEstimator;
   public AHRS m_gyro;
   public StructArrayPublisher<SwerveModuleState> publisher;
   public StructArrayPublisher<SwerveModuleState> publisher2;
+  public StructPublisher<Pose2d> publisherPose;
 
   public SwerveSubsystem() {
     m_gyro = new AHRS(NavXComType.kMXP_SPI);
@@ -63,7 +64,16 @@ public class SwerveSubsystem extends SubsystemBase {
         NetworkTableInstance.getDefault()
             .getStructArrayTopic("MyDesiredStates", SwerveModuleState.struct)
             .publish();
-
+    publisherPose =
+        NetworkTableInstance.getDefault()
+            .getStructTopic("MyPose", m_swerveOdometry.getPoseMeters().struct)
+            .publish();
+    Rotation2d tempgyro;
+    if (SwerveConstants.INVERT_GYRO) tempgyro = Rotation2d.fromDegrees(m_gyro.getYaw());
+    else tempgyro = Rotation2d.fromDegrees(360 - m_gyro.getYaw());
+    m_PoseEstimator =
+        new SwerveDrivePoseEstimator(
+            SwerveConstants.SWERVE_KINEMATICS, tempgyro, getModulePositions(), getPose());
     RobotConfig config;
     try {
       config = RobotConfig.fromGUISettings();
@@ -102,6 +112,10 @@ public class SwerveSubsystem extends SubsystemBase {
       // Handle exception as needed
       e.printStackTrace();
     }
+    LimelightHelpers.SetRobotOrientation(
+        "limelight-right", getGyroYaw().getDegrees(), 0, 0, 0, 0, 0);
+    LimelightHelpers.SetRobotOrientation(
+        "limelight-left", getGyroYaw().getDegrees(), 0, 0, 0, 0, 0);
   }
 
   public void updateMegaTag2Pose(SwerveDrivePoseEstimator m_poseEstimator, AHRS m_gyro) {
@@ -243,9 +257,9 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   public Rotation2d getGyroYaw() {
-    return ((SwerveConstants.INVERT_GYRO)
+    return SwerveConstants.INVERT_GYRO
         ? Rotation2d.fromDegrees(360 - m_gyro.getYaw())
-        : Rotation2d.fromDegrees(m_gyro.getYaw()));
+        : Rotation2d.fromDegrees(m_gyro.getYaw());
   }
 
   public void resetModulesToAbsolute() {
@@ -329,6 +343,8 @@ public class SwerveSubsystem extends SubsystemBase {
       publisher2.set(m_desiredStates);
     }
     publisher.set(getModuleStates());
-    Logger.recordOutput("Odometry/2025_Robot", getPose());
+    updateMegaTag2Pose(m_PoseEstimator, m_gyro);
+    m_PoseEstimator.update(getGyroYaw(), getModulePositions());
+    publisherPose.set(m_PoseEstimator.getEstimatedPosition());
   }
 }

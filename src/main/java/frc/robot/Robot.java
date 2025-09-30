@@ -15,6 +15,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.lib.util.LimelightHelpers;
 import org.littletonrobotics.junction.LoggedRobot;
 
 /**
@@ -96,14 +97,23 @@ public class Robot extends LoggedRobot {
     // Threads.setCurrentThreadPriority(false, 10);
   }
 
+  // public static double lastdegrees = 0;
   /** This function is called once when the robot is disabled. */
   @Override
   public void disabledInit() {}
+
+  public void limelightclib() {
+    LimelightHelpers.PoseEstimate mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
+    {
+      // lastdegrees = mt1.pose.getRotation().getDegrees();
+    }
+  }
 
   /** This function is called periodically when disabled. */
   @Override
   public void disabledPeriodic() {
     // robotContainer.subsystems.elevator.resetHeight();
+    // limelightclib();
   }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */

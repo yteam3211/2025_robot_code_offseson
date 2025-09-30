@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.states.Elevatorstates;
 import frc.robot.states.IntakePitchstate;
 import frc.robot.states.armPitchState;
@@ -63,7 +64,7 @@ public class ArmCommands {
 
   public Command restAfterPass() {
     return restArm()
-        .withTimeout(5)
+        .alongWith(Commands.waitSeconds(3))
         .andThen(
             intakegriper
                 .changeStateCommand(inakegriperstate.KeepItIn)
