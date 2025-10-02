@@ -112,10 +112,30 @@ public class SwerveSubsystem extends SubsystemBase {
       // Handle exception as needed
       e.printStackTrace();
     }
-    LimelightHelpers.SetRobotOrientation(
-        "limelight-right", getGyroYaw().getDegrees(), 0, 0, 0, 0, 0);
-    LimelightHelpers.SetRobotOrientation(
-        "limelight-left", getGyroYaw().getDegrees(), 0, 0, 0, 0, 0);
+    LimelightHelpers.PoseEstimate mt1right =
+        LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-right");
+    if (mt1right != null && mt1right.tagCount > 0) {
+      LimelightHelpers.SetRobotOrientation(
+          "limelight-right",
+          mt1right.pose.getRotation().getDegrees() + getGyroYaw().getDegrees(),
+          0,
+          0,
+          0,
+          0,
+          0);
+    }
+    LimelightHelpers.PoseEstimate mt1left =
+        LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-left");
+    if (mt1left != null && mt1left.tagCount > 0) {
+      LimelightHelpers.SetRobotOrientation(
+          "limelight-left",
+          mt1left.pose.getRotation().getDegrees() + getGyroYaw().getDegrees(),
+          0,
+          0,
+          0,
+          0,
+          0);
+    }
   }
 
   public void updateMegaTag2Pose(SwerveDrivePoseEstimator m_poseEstimator, AHRS m_gyro) {
@@ -158,6 +178,47 @@ public class SwerveSubsystem extends SubsystemBase {
     if (mt2Right != null && mt2Right.tagCount > 0) {
       m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.7, 0.7, 9999999));
       m_poseEstimator.addVisionMeasurement(mt2Right.pose, mt2Right.timestampSeconds);
+    }
+  }
+
+  public void UpdateMegaTag1Pose(SwerveDrivePoseEstimator m_poseEstimator) {
+    LimelightHelpers.PoseEstimate mt1left =
+        LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-left");
+    boolean doRejectUpdate_left = false;
+    if (mt1left.tagCount == 1 && mt1left.rawFiducials.length == 1) {
+      if (mt1left.rawFiducials[0].ambiguity > .7) {
+        doRejectUpdate_left = true;
+      }
+      if (mt1left.rawFiducials[0].distToCamera > 3) {
+        doRejectUpdate_left = true;
+      }
+    }
+    if (mt1left.tagCount == 0) {
+      doRejectUpdate_left = true;
+    }
+
+    if (!doRejectUpdate_left) {
+      m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.5, .5, 9999999));
+      m_poseEstimator.addVisionMeasurement(mt1left.pose, mt1left.timestampSeconds);
+    }
+    LimelightHelpers.PoseEstimate mt1 =
+        LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-right");
+    boolean doRejectUpdate_right = false;
+    if (mt1.tagCount == 1 && mt1.rawFiducials.length == 1) {
+      if (mt1.rawFiducials[0].ambiguity > .7) {
+        doRejectUpdate_right = true;
+      }
+      if (mt1.rawFiducials[0].distToCamera > 3) {
+        doRejectUpdate_right = true;
+      }
+    }
+    if (mt1.tagCount == 0) {
+      doRejectUpdate_right = true;
+    }
+
+    if (!doRejectUpdate_right) {
+      m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.5, .5, 9999999));
+      m_poseEstimator.addVisionMeasurement(mt1.pose, mt1.timestampSeconds);
     }
   }
 
@@ -343,7 +404,7 @@ public class SwerveSubsystem extends SubsystemBase {
       publisher2.set(m_desiredStates);
     }
     publisher.set(getModuleStates());
-    updateMegaTag2Pose(m_PoseEstimator, m_gyro);
+    UpdateMegaTag1Pose(m_PoseEstimator);
     m_PoseEstimator.update(getGyroYaw(), getModulePositions());
     publisherPose.set(m_PoseEstimator.getEstimatedPosition());
   }

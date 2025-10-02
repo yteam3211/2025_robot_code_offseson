@@ -67,4 +67,10 @@ public final class Constants {
       public static final int MOTOR_KD = -0;
     }
   }
+
+  public static boolean disableHAL = false;
+
+  public static void disableHAL() {
+    disableHAL = true;
+  }
 }

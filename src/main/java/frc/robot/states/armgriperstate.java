@@ -4,8 +4,8 @@ import frc.lib.util.ITarget;
 
 public enum armgriperstate implements ITarget {
   KeepItIn(0),
-  Collect(0.4),
-  Eject(-0.6);
+  Collect(-0.4),
+  Eject(0.6);
 
   private double m_velocity;
 

@@ -15,6 +15,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.states.IntakePitchstate;
 import java.util.function.DoubleSupplier;
@@ -62,7 +63,7 @@ public class IntakePitch extends SubsystemBase {
     this.setDefaultCommand(SetIntakePitchDefualtCommand());
   }
 
-  public double intakeGetPos() {
+  public double getPos() {
     return m_spinintake.getPosition().getValueAsDouble();
   }
 
@@ -95,11 +96,11 @@ public class IntakePitch extends SubsystemBase {
   }
 
   public Command changestateCommand(IntakePitchstate new_state) {
-    return this.runOnce(() -> setstate(new_state));
+    return Commands.runOnce(() -> setstate(new_state));
   }
 
   public Command changestateCommandMustHaveUntil(IntakePitchstate new_state) {
-    return this.run(() -> setstate(new_state));
+    return Commands.run(() -> setstate(new_state));
   }
 
   public void setstate(IntakePitchstate new_state) {
@@ -123,6 +124,7 @@ public class IntakePitch extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putBoolean("IntakePitch: isClose", isClose());
+    SmartDashboard.putNumber("IntkePitch pos", getPos());
     // This method will be called once per scheduler run
     if (isClose()) {
       resetPos();

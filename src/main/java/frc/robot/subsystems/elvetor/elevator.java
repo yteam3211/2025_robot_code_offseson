@@ -17,9 +17,12 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.constants.SwerveConstants;
 import frc.robot.states.Elevatorstates;
 import frc.robot.subsystems.elvetor.elvetorconstants.MotorCurrentLimits;
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 public class elevator extends SubsystemBase {
@@ -31,7 +34,7 @@ public class elevator extends SubsystemBase {
       new DigitalInput(elvetorconstants.ELEVATOR_CLOSE_SWITCH_PORT);
 
   private final MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
-  ;
+  private boolean limitSwitchPressedAfterLestCommand = true;
   /** Creates a new elevatorsubsystem. */
   public elevator() {
     TalonFXConfiguration talonFXConfiguration = new TalonFXConfiguration();
@@ -84,8 +87,41 @@ public class elevator extends SubsystemBase {
     SmartDashboard.putNumber("ELEVATOR: distance", getHeight());
     SmartDashboard.putNumber("ELEVATOR velcoity", getVelocity());
     SmartDashboard.putString("ELEVATOR state", state.name() + state.getTarget());
+    SmartDashboard.putBoolean("isdown", isDown);
+    if (getCurrentCommand() != null) {
+      SmartDashboard.putString("command running on elevtor", getCurrentCommand().getName());
+    }
+    if (limitSwitchPressedAfterLestCommand) {
+      resetHeight();
+    }
+    limitSwerveDriveSpeed();
+  }
 
-    resetHeight();
+  public void setspeed(double speed) {
+    motor.set(speed);
+  }
+
+  public void limitSwerveDriveSpeed() {
+    if (getHeight() > Elevatorstates.SAFE_ZONE.getTarget()) {
+      SwerveConstants.SLOW_DRIVE = 2;
+    } else {
+      SwerveConstants.SLOW_DRIVE = 1;
+    }
+  }
+
+  public Command setSpeedCommand(double speed) {
+    return Commands.run(() -> setspeed(speed));
+  }
+
+  Boolean isDown = false;
+
+  public Command setToZeroPosion() {
+    return changeStateCommand(Elevatorstates.REST_MODE)
+        .alongWith(Commands.runOnce(() -> isDown = false))
+        .alongWith(
+            Commands.run(() -> setspeed(-0.1))
+                .until(() -> isElevatorDown())
+                .andThen(Commands.run(() -> setspeed(0)).until(() -> isDown)));
   }
 
   public void setDefaultElevator() {
@@ -97,15 +133,17 @@ public class elevator extends SubsystemBase {
   }
 
   public void changeState(Elevatorstates newstate) {
-    this.state = newstate;
+    limitSwitchPressedAfterLestCommand = true;
+    isDown = true;
+    state = newstate;
   }
 
   public Command changestateCommandMustHaveUntil(Elevatorstates new_state) {
-    return this.run(() -> changeState(new_state));
+    return Commands.run(() -> changeState(new_state));
   }
 
   public Command changeStateCommand(Elevatorstates newstate) {
-    return this.runOnce(() -> changeState(newstate));
+    return Commands.runOnce(() -> changeState(newstate));
   }
 
   public void setToPos(DoubleSupplier Pos) {
@@ -120,11 +158,16 @@ public class elevator extends SubsystemBase {
     return motor.getPosition().getValueAsDouble();
   }
 
+  public BooleanSupplier isAtLestHight(double height) {
+    return () -> getHeight() > height;
+  }
+
   public double getVelocity() {
     return motor.getVelocity().getValueAsDouble();
   }
 
   public void resetHeight() {
+    limitSwitchPressedAfterLestCommand = false;
     if (isElevatorDown()) {
       motor.setPosition(0);
     }

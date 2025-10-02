@@ -17,11 +17,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.states.armPitchState;
+import java.util.function.BooleanSupplier;
 
 public class armPitch extends SubsystemBase {
 
   public TalonFX m_Pitch = new TalonFX(ArmPItchConstants.m_PitchID, "rio");
-  public armPitchState state = armPitchState.rest;
+  public armPitchState state = armPitchState.firtstinit;
   private final MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
 
   // armioinputsautologged input = new armioinputsautolog;
@@ -82,6 +83,7 @@ public class armPitch extends SubsystemBase {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Arm Position", getArmPosition());
     SmartDashboard.putString("Arm Pitch", state.name() + state.getTarget());
+    SmartDashboard.putBoolean("arm al least 10 ", isAtLestpos(-10).getAsBoolean());
     // io.updateinputs(inputs);
   }
 
@@ -93,12 +95,20 @@ public class armPitch extends SubsystemBase {
     return m_Pitch.getPosition().getValueAsDouble();
   }
 
+  public BooleanSupplier isAtLestpos(double pos) {
+    return () -> getArmPosition() > pos;
+  }
+
   public void chengestate(armPitchState new_state) {
     state = new_state;
   }
 
   public Command chengestateCommand(armPitchState new_state) {
-    return this.runOnce(() -> chengestate(new_state));
+    return Commands.runOnce(() -> chengestate(new_state));
+  }
+
+  public Command chengestateCommandMustHaveUntil(armPitchState new_state) {
+    return Commands.run(() -> chengestate(new_state));
   }
 
   public void setRotation(Double targetPos) {

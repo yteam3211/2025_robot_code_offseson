@@ -3,7 +3,7 @@ package frc.robot;
 import frc.robot.subsystems.Aempitch.armPitch;
 import frc.robot.subsystems.IntakeIndexer.IntakeIndexer;
 import frc.robot.subsystems.IntakePitch.IntakePitch;
-import frc.robot.subsystems.arm.ArmGriper;
+import frc.robot.subsystems.armGruper.ArmGriper;
 import frc.robot.subsystems.elvetor.elevator;
 import frc.robot.subsystems.intakeGriper.IntakeGriper;
 import frc.robot.subsystems.swerve.SwerveSubsystem;

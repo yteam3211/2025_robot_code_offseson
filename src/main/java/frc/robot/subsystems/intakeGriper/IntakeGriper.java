@@ -5,20 +5,30 @@
 package frc.robot.subsystems.intakeGriper;
 
 import com.ctre.phoenix6.hardware.TalonFX;
-import edu.wpi.first.wpilibj.DigitalInput;
+import com.revrobotics.Rev2mDistanceSensor;
+import com.revrobotics.Rev2mDistanceSensor.RangeProfile;
+import com.revrobotics.Rev2mDistanceSensor.Unit;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.states.inakegriperstate;
 
 public class IntakeGriper extends SubsystemBase {
 
   TalonFX m_griperintake = new TalonFX(IntakeGriperConstants.griperid, "canv");
-  DigitalInput m_stop_DigitalInput = new DigitalInput(IntakeGriperConstants.INTAKE_IS_CORAL_IN);
+  Rev2mDistanceSensor IntakeSwich = new Rev2mDistanceSensor(Rev2mDistanceSensor.Port.kOnboard);
+
   inakegriperstate gripertate = inakegriperstate.KeepItIn;
 
   /** Creates a new intakesubsystem. */
   public IntakeGriper() {
+    IntakeSwich.setDistanceUnits(Unit.kMillimeters);
+    IntakeSwich.setRangeProfile(RangeProfile.kHighSpeed);
+    IntakeSwich.setEnabled(true);
+    IntakeSwich.isRangeValid();
+    IntakeSwich.setAutomaticMode(true);
+
     this.setDefaultCommand(SetDefualCommandGriperIntake());
   }
 
@@ -26,6 +36,8 @@ public class IntakeGriper extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     SmartDashboard.putBoolean("IntakeSubsytem has coral", isCoralIn());
+    SmartDashboard.putNumber(
+        "sensor distance", m_griperintake.getSupplyCurrent().getValueAsDouble());
     SmartDashboard.putString("Intake griper state", gripertate.name() + gripertate.getTarget());
   }
 
@@ -34,7 +46,7 @@ public class IntakeGriper extends SubsystemBase {
   }
 
   public Command changestateCommandMustHaveUntil(inakegriperstate new_state) {
-    return this.run(() -> changeState(new_state));
+    return Commands.run(() -> changeState(new_state));
   }
 
   public void setgriper(double speed) {
@@ -42,7 +54,7 @@ public class IntakeGriper extends SubsystemBase {
   }
 
   public boolean isCoralIn() {
-    return m_stop_DigitalInput.get();
+    return m_griperintake.getSupplyCurrent().getValueAsDouble() > 11;
   }
 
   public void changeState(inakegriperstate newstate) {
@@ -50,6 +62,6 @@ public class IntakeGriper extends SubsystemBase {
   }
 
   public Command changeStateCommand(inakegriperstate newstate) {
-    return this.runOnce(() -> changeState(newstate));
+    return Commands.runOnce(() -> changeState(newstate));
   }
 }

@@ -24,11 +24,11 @@ public class IntakeCommands {
     return intakePitch
         .changestateCommand(IntakePitchstate.INTAKE_POSITION)
         .alongWith(intakeIndexer.changestateCommand(IntakeIndexerState.RUN))
-        .alongWith(Intakegriper.changeStateCommand(inakegriperstate.Collect));
+        .alongWith(Intakegriper.changestateCommandMustHaveUntil(inakegriperstate.Collect));
   }
 
   public Command downTakeIndexunil() {
-    return downTakeIndex().until(() -> Intakegriper.isCoralIn()).andThen(upNOTakeNOIndex());
+    return downTakeIndex().until(() -> Intakegriper.isCoralIn());
   }
 
   public Command upNOTakeNOIndex() {
@@ -38,8 +38,17 @@ public class IntakeCommands {
         .alongWith(intakePitch.changestateCommand(IntakePitchstate.ZERO_POSITION));
   }
 
+  public Command upTakeIndex() {
+    return intakeIndexer
+        .changestateCommand(IntakeIndexerState.RUN)
+        .alongWith(Intakegriper.changeStateCommand(inakegriperstate.Collect))
+        .alongWith(intakePitch.changestateCommandMustHaveUntil(IntakePitchstate.ZERO_POSITION));
+  }
+
   public Command intakeCommand() {
-    return downTakeIndexunil().andThen(upNOTakeNOIndex());
+    return downTakeIndexunil()
+        .andThen(upTakeIndex().until(() -> intakePitch.getPos() < 10))
+        .andThen(upNOTakeNOIndex());
   }
 
   public Command scoreL1Command() {

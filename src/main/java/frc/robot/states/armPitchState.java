@@ -4,8 +4,9 @@ import frc.lib.util.ITarget;
 
 public enum armPitchState implements ITarget {
   COLLECT(-180),
-  L2(46),
-  rest(0);
+  L2(-46),
+  rest(2.5),
+  firtstinit(0);
 
   private double m_degreeds;
 

@@ -9,7 +9,7 @@ import frc.robot.states.armgriperstate;
 import frc.robot.states.inakegriperstate;
 import frc.robot.subsystems.Aempitch.armPitch;
 import frc.robot.subsystems.IntakePitch.IntakePitch;
-import frc.robot.subsystems.arm.ArmGriper;
+import frc.robot.subsystems.armGruper.ArmGriper;
 import frc.robot.subsystems.elvetor.elevator;
 import frc.robot.subsystems.intakeGriper.IntakeGriper;
 
@@ -34,29 +34,25 @@ public class ArmCommands {
   }
 
   public Command armAndelEvatorCommand() {
-    return elevatorUpAfterPitchDwon().andThen(passToArmFromintake());
+    return elevatorUpDwon().andThen(passToArmFromintake());
   }
 
-  public Command elevatorUpAfterPitchDwon() {
-    return intakePitch
-        .changestateCommand(IntakePitchstate.L1)
-        .alongWith(elevator.changestateCommandMustHaveUntil(Elevatorstates.INTAKE_MODE))
-        .until(() -> elevator.getHeight() > 50);
+  public Command elevatorUpDwon() {
+    return elevator
+        .changestateCommandMustHaveUntil(Elevatorstates.INTAKE_MODE)
+        .until(elevator.isAtLestHight(50));
   }
 
-  public Command elevatorUpAfterPitchDwonArmTopos() {
-    return elevatorUpAfterPitchDwon()
-        .andThen(
-            armpitch
-                .chengestateCommand(armPitchState.COLLECT)
-                .alongWith(
-                    intakePitch.changestateCommandMustHaveUntil(IntakePitchstate.ZERO_POSITION)))
-        .until(() -> armpitch.getArmPosition() < 160);
+  public Command elevatorUphDwonArmTopos() {
+    return elevatorUpDwon()
+        .andThen(armpitch.chengestateCommand(armPitchState.COLLECT))
+        .alongWith(intakePitch.changestateCommand(IntakePitchstate.ZERO_POSITION));
   }
 
   public Command passToArmFromintake() {
     return Armgriper.changestateCommand(armgriperstate.Collect)
-        .alongWith(intakegriper.changeStateCommand(inakegriperstate.Eject));
+        .alongWith(intakegriper.changeStateCommand(inakegriperstate.Eject))
+        .until(Armgriper.isCorakIn());
   }
 
   public Command restArm() {
@@ -64,12 +60,23 @@ public class ArmCommands {
   }
 
   public Command restAfterPass() {
-    return restArm()
-        .andThen(Commands.waitSeconds(1))
+    Commands.runOnce(() -> System.out.println("restAfterPass")).repeatedly();
+    return armpitch
+        .chengestateCommandMustHaveUntil(armPitchState.rest)
+        .until(armpitch.isAtLestpos(-10))
         .andThen(
-            intakegriper
-                .changeStateCommand(inakegriperstate.KeepItIn)
-                .alongWith(Armgriper.changestateCommand(armgriperstate.KeepItIn))
-                .andThen(elevator.changeStateCommand(Elevatorstates.REST_MODE)));
+            elevator
+                .setToZeroPosion()
+                .alongWith(
+                    intakegriper
+                        .changeStateCommand(inakegriperstate.KeepItIn)
+                        .alongWith(Armgriper.changestateCommand(armgriperstate.KeepItIn))));
+  }
+
+  public Command fullArmMotion() {
+    return elevatorUpDwon()
+        .andThen(passToArmFromintake())
+        .until(Armgriper.isCorakIn())
+        .andThen(restAfterPass());
   }
 }

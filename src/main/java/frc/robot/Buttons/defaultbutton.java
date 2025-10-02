@@ -17,7 +17,7 @@ public class defaultbutton {
             robotSubsystems.swerve,
             () -> -driverController.getLeftY(),
             () -> -driverController.getLeftX(),
-            () -> driverController.getRightX(),
+            () -> -driverController.getRightX(),
             () -> false));
   }
 }

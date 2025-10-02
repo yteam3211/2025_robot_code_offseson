@@ -17,10 +17,12 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.PS5Controller;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.lib.util.DriveToPointFactory;
 import frc.robot.Buttons.SwerveButtons;
 import frc.robot.Buttons.defaultbutton;
 import frc.robot.commands.ArmCommands;
 import frc.robot.commands.IntakeCommands;
+import frc.robot.commands.ScoreCommands;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -37,7 +39,7 @@ public class RobotContainer {
   private final Controller controller;
   private final IntakeCommands intakeCommands;
   private final ArmCommands armCommands;
-
+  private final ScoreCommands scoreCommands;
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
 
@@ -55,6 +57,7 @@ public class RobotContainer {
             subsystems.elevator,
             subsystems.IntakeGriper,
             subsystems.intakepitch);
+    scoreCommands = new ScoreCommands(armCommands, intakeCommands);
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
     // Configure the button bindings
@@ -68,12 +71,13 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    controller.swervecontroller.circle().onTrue(intakeCommands.downTakeIndex());
-    controller.swervecontroller.cross().onTrue(intakeCommands.upNOTakeNOIndex());
-    controller.swervecontroller.square().onTrue(armCommands.elevatorUpAfterPitchDwonArmTopos());
-    controller.swervecontroller.triangle().onTrue(armCommands.passToArmFromintake());
-    controller.swervecontroller.R1().onTrue(armCommands.restArm());
+    DriveToPointFactory driveToPointFactory = new DriveToPointFactory(subsystems.swerve);
+    controller.swervecontroller.circle().onTrue(scoreCommands.intakeStraitToArm());
+    controller.swervecontroller.cross().onTrue(armCommands.elevatorUphDwonArmTopos());
+    controller.swervecontroller.triangle().onTrue(intakeCommands.intakeCommand());
+    controller.swervecontroller.square().onTrue(armCommands.passToArmFromintake());
     controller.swervecontroller.L1().onTrue(armCommands.restAfterPass());
+
     SwerveButtons.loadButtons(controller, subsystems);
     defaultbutton.loadButtons(controller, subsystems);
   }
@@ -87,4 +91,3 @@ public class RobotContainer {
     return autoChooser.get();
   }
 }
-
