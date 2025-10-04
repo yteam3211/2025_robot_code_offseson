@@ -1,6 +1,6 @@
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
+// the WPILib BSD license file in the root directory of Commands project.
 
 package frc.robot.subsystems.armGruper;
 
@@ -24,12 +24,12 @@ public class ArmGriper extends SubsystemBase {
   /** Creates a new armsubsystem. */
   public ArmGriper(/* armio io*/ ) {
     // m_io = io;
-    this.setDefaultCommand(setGripperDefualtCommand());
+    this.setDefaultCommand(this.setGripperDefualtCommand());
   }
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    // Commands method will be called once per scheduler run
     SmartDashboard.putString("Arm griper state", state.name() + state.getTarget());
   }
 
@@ -38,7 +38,7 @@ public class ArmGriper extends SubsystemBase {
   }
 
   public BooleanSupplier isCorakIn() {
-    return () -> m_griper.getStatorCurrent().getValueAsDouble() > 7;
+    return () -> m_griper.getStatorCurrent().getValueAsDouble() > 9;
   }
 
   public Command setGripperDefualtCommand() {
@@ -54,7 +54,7 @@ public class ArmGriper extends SubsystemBase {
   }
 
   public Command setGriperCommand(double speed) {
-    return this.run(() -> setGriper(speed));
+    return Commands.run(() -> setGriper(speed));
   }
 
   public Command changestateCommandMustHaveUntil(armgriperstate new_state) {

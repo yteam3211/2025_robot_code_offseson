@@ -32,7 +32,7 @@ public class IntakeIndexer extends SubsystemBase {
   }
 
   public void changestate(IntakeIndexerState newstate) {
-    this.indexerstate = newstate;
+    indexerstate = newstate;
   }
 
   public Command changestateCommand(IntakeIndexerState newstate) {
@@ -40,6 +40,6 @@ public class IntakeIndexer extends SubsystemBase {
   }
 
   public Command SetDefualCommandIntakeIndexer() {
-    return this.runOnce(() -> setspeed(indexerstate.getTarget()));
+    return Commands.runOnce(() -> setspeed(indexerstate.getTarget()));
   }
 }

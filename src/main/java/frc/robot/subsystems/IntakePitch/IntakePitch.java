@@ -76,7 +76,7 @@ public class IntakePitch extends SubsystemBase {
   }
 
   public Command SetIntakePitchDefualtCommand() {
-    return this.runOnce(() -> setdefualt());
+    return Commands.runOnce(() -> setdefualt());
   }
 
   public boolean isClose() {
@@ -88,11 +88,11 @@ public class IntakePitch extends SubsystemBase {
   }
 
   public Command stopIntakeCommand() {
-    return this.runOnce(this::stopIntake);
+    return Commands.runOnce(this::stopIntake);
   }
 
   public Command setIntakePositionCommand(DoubleSupplier position) {
-    return this.run(() -> setIntakePosition(position.getAsDouble()));
+    return Commands.run(() -> setIntakePosition(position.getAsDouble()));
   }
 
   public Command changestateCommand(IntakePitchstate new_state) {
@@ -118,7 +118,7 @@ public class IntakePitch extends SubsystemBase {
   }
 
   public Command setspeddCommand(DoubleSupplier speed) {
-    return this.runOnce(() -> setSpeed(speed.getAsDouble()));
+    return Commands.runOnce(() -> setSpeed(speed.getAsDouble()));
   }
 
   @Override

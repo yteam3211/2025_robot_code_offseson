@@ -78,7 +78,8 @@ public class elevator extends SubsystemBase {
     if (!status.isOK()) {
       System.out.println("Could not configure device. Error: " + status.toString());
     }
-    this.setDefaultCommand(this.setDefualElevatorCommand());
+    setToZeroPosion();
+    this.setDefaultCommand(setDefualElevatorCommand());
   }
 
   @Override
@@ -121,15 +122,18 @@ public class elevator extends SubsystemBase {
         .alongWith(
             Commands.run(() -> setspeed(-0.1))
                 .until(() -> isElevatorDown())
-                .andThen(Commands.run(() -> setspeed(0)).until(() -> isDown)));
+                .andThen(Commands.run(() -> setspeed(0)).until(() -> isDown())));
   }
 
+  public Boolean isDown() {
+    return isDown;
+  }
   public void setDefaultElevator() {
     setToPos(() -> state.getTarget());
   }
 
   public Command setDefualElevatorCommand() {
-    return this.run(() -> setDefaultElevator());
+    return Commands.run(() -> setDefaultElevator());
   }
 
   public void changeState(Elevatorstates newstate) {
@@ -139,10 +143,12 @@ public class elevator extends SubsystemBase {
   }
 
   public Command changestateCommandMustHaveUntil(Elevatorstates new_state) {
+    isDown = true;
     return Commands.run(() -> changeState(new_state));
   }
 
   public Command changeStateCommand(Elevatorstates newstate) {
+    isDown = true;
     return Commands.runOnce(() -> changeState(newstate));
   }
 
@@ -151,7 +157,7 @@ public class elevator extends SubsystemBase {
   }
 
   public Command setToPosCommand(DoubleSupplier Pos) {
-    return this.runOnce(() -> setToPos(Pos));
+    return Commands.runOnce(() -> setToPos(Pos));
   }
 
   public double getHeight() {

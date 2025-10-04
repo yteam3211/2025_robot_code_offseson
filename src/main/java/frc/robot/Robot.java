@@ -13,6 +13,7 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.commands.PathfindingCommand;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.lib.util.LimelightHelpers;
@@ -30,6 +31,7 @@ public class Robot extends LoggedRobot {
   public static final CTREConfigs ctreConfigs = new CTREConfigs();
 
   public Robot() {
+
     // Record metadata
     // Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
     // Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
@@ -68,6 +70,12 @@ public class Robot extends LoggedRobot {
     //     Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim")));
     //     break;
     robotContainer = new RobotContainer();
+  }
+
+  @Override
+  public void robotInit() {
+    // Instantiate our RobotContainer. This will perform all our button bindings, and put our
+    PathfindingCommand.warmupCommand().schedule();
   }
 
   // Start AdvantageKit logger

@@ -75,7 +75,7 @@ public class armPitch extends SubsystemBase {
   }
 
   public Command setDefualArmPitchCommand() {
-    return this.runOnce(() -> setdefualt());
+    return Commands.runOnce(() -> setdefualt());
   }
 
   @Override
@@ -116,7 +116,7 @@ public class armPitch extends SubsystemBase {
   }
 
   public Command setRotationCommand(Double targetPos) {
-    return this.runOnce(() -> setRotation(targetPos));
+    return Commands.runOnce(() -> setRotation(targetPos));
   }
 
   public double getarmspin() {

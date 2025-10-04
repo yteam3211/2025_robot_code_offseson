@@ -39,7 +39,7 @@ public class ArmCommands {
 
   public Command elevatorUpDwon() {
     return elevator
-        .changestateCommandMustHaveUntil(Elevatorstates.INTAKE_MODE)
+        .changestateCommandMustHaveUntil(Elevatorstates.INTAKE_MODE_FIRST)
         .until(elevator.isAtLestHight(50));
   }
 
@@ -49,10 +49,17 @@ public class ArmCommands {
         .alongWith(intakePitch.changestateCommand(IntakePitchstate.ZERO_POSITION));
   }
 
+  public Command passToArmFromintakeUntil() {
+    return elevator
+        .changeStateCommand(Elevatorstates.INTAKE_MODE_SECOND)
+        .alongWith(
+            Armgriper.changestateCommand(armgriperstate.Collect)
+                .alongWith(intakegriper.changestateCommandMustHaveUntil(inakegriperstate.Eject)))
+        .until(() -> elevator.getHeight() < 102 || Armgriper.isCorakIn().getAsBoolean());
+  }
+
   public Command passToArmFromintake() {
-    return Armgriper.changestateCommand(armgriperstate.Collect)
-        .alongWith(intakegriper.changeStateCommand(inakegriperstate.Eject))
-        .until(Armgriper.isCorakIn());
+    return passToArmFromintakeUntil().until(Armgriper.isCorakIn());
   }
 
   public Command restArm() {
@@ -78,5 +85,21 @@ public class ArmCommands {
         .andThen(passToArmFromintake())
         .until(Armgriper.isCorakIn())
         .andThen(restAfterPass());
+  }
+
+  public Command scoreL2() {
+    return elevator
+        .changeStateCommand(Elevatorstates.L2)
+        .alongWith(armpitch.chengestateCommand(armPitchState.L2));
+  }
+
+  public Command resetcommand() {
+    return armpitch
+        .chengestateCommandMustHaveUntil(armPitchState.rest)
+        .until(() -> armpitch.getArmPosition() > -30)
+        .andThen(
+            elevator
+                .setToZeroPosion()
+                .alongWith(Armgriper.changestateCommand(armgriperstate.KeepItIn)));
   }
 }

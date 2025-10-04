@@ -3,7 +3,7 @@ package frc.robot.states;
 import frc.lib.util.ITarget;
 
 public enum IntakeIndexerState implements ITarget {
-  RUN(-0.5),
+  RUN(-0.7),
   STOP(0);
 
   double velocity;

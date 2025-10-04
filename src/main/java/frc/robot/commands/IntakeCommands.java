@@ -7,6 +7,7 @@ import frc.robot.states.inakegriperstate;
 import frc.robot.subsystems.IntakeIndexer.IntakeIndexer;
 import frc.robot.subsystems.IntakePitch.IntakePitch;
 import frc.robot.subsystems.intakeGriper.IntakeGriper;
+import java.util.function.BooleanSupplier;
 
 public class IntakeCommands {
   private IntakePitch intakePitch;
@@ -27,13 +28,20 @@ public class IntakeCommands {
         .alongWith(Intakegriper.changestateCommandMustHaveUntil(inakegriperstate.Collect));
   }
 
-  public Command downTakeIndexunil() {
-    return downTakeIndex().until(() -> Intakegriper.isCoralIn());
+  public Command downTakeIndexunil(BooleanSupplier intkaeup) {
+    return downTakeIndex().until(() -> intkaeup.getAsBoolean() && intakePitch.getPos() > 80);
   }
 
   public Command upNOTakeNOIndex() {
     return intakeIndexer
         .changestateCommand(IntakeIndexerState.STOP)
+        .alongWith(Intakegriper.changeStateCommand(inakegriperstate.KeepItIn))
+        .alongWith(intakePitch.changestateCommand(IntakePitchstate.ZERO_POSITION));
+  }
+
+  public Command upNOTakeIndex() {
+    return intakeIndexer
+        .changestateCommand(IntakeIndexerState.RUN)
         .alongWith(Intakegriper.changeStateCommand(inakegriperstate.KeepItIn))
         .alongWith(intakePitch.changestateCommand(IntakePitchstate.ZERO_POSITION));
   }
@@ -45,10 +53,8 @@ public class IntakeCommands {
         .alongWith(intakePitch.changestateCommandMustHaveUntil(IntakePitchstate.ZERO_POSITION));
   }
 
-  public Command intakeCommand() {
-    return downTakeIndexunil()
-        .andThen(upTakeIndex().until(() -> intakePitch.getPos() < 10))
-        .andThen(upNOTakeNOIndex());
+  public Command intakeCommand(BooleanSupplier intkaeup) {
+    return downTakeIndexunil(intkaeup).andThen(upTakeIndex().until(() -> intakePitch.getPos() < 6));
   }
 
   public Command scoreL1Command() {
@@ -57,5 +63,12 @@ public class IntakeCommands {
         .alongWith(intakeIndexer.changestateCommand(IntakeIndexerState.STOP))
         .withTimeout(5)
         .andThen(Intakegriper.changeStateCommand(inakegriperstate.Eject));
+  }
+
+  public Command resetCommand() {
+    return intakePitch
+        .changestateCommand(IntakePitchstate.ZERO_POSITION)
+        .alongWith(intakeIndexer.changestateCommand(IntakeIndexerState.STOP))
+        .andThen(Intakegriper.changeStateCommand(inakegriperstate.KeepItIn));
   }
 }

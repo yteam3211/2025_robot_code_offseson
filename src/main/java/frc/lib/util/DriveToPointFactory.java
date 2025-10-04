@@ -64,4 +64,10 @@ public class DriveToPointFactory {
 
     return pathfind.andThen(fineAlign(targetPose));
   }
+
+  public Command driveToPosesimple(Pose2d targetPose) {
+    System.out.println("driveto called");
+    Command pathfind = AutoBuilder.pathfindToPose(targetPose, getConstraints());
+    return pathfind;
+  }
 }
