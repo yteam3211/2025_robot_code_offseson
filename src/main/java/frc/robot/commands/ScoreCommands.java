@@ -1,23 +1,27 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.lib.util.DriveToPointFactory;
-import frc.robot.FieldConstants;
+import frc.robot.subsystems.swerve.SwerveSubsystem;
 
 public class ScoreCommands {
+  public static final Command ScoreL4 = null;
   private ArmCommands armCommands;
   private IntakeCommands intakeCommands;
   private DriveToPointFactory driveToPointFactory;
+  private SwerveSubsystem swerveSubsystem;
 
   public ScoreCommands(
       ArmCommands armCommands,
       IntakeCommands intakeCommands,
-      DriveToPointFactory driveToPointFactory) {
+      DriveToPointFactory driveToPointFactory,
+      SwerveSubsystem swerveSubsystem) {
     this.armCommands = armCommands;
     this.intakeCommands = intakeCommands;
     this.driveToPointFactory = driveToPointFactory;
+    this.swerveSubsystem = swerveSubsystem;
   }
 
   public Command intakeStraitToArm() {
@@ -34,12 +38,28 @@ public class ScoreCommands {
   // }
 
   public Command ScoreL2() {
-    return intakeStraitToArm()
-        .andThen(
-            driveToPointFactory.driveToPose(
-                new Pose2d(-999999, -9999, new Rotation2d())
-                    .nearest(FieldConstants.Reef.centerFacesList)))
-        .andThen(armCommands.scoreL2());
+    return armCommands.scoreL2().andThen(resetCommand());
+  }
+
+  public enum sideScore {
+    left,
+    right;
+  }
+
+  public Command centreToWitchPos(sideScore side) {
+    return driveToPointFactory.fineAlign(swerveSubsystem.getClosestLeftRightPose(side));
+  }
+
+  public Command testPidAuto(Pose2d newpose) {
+    return driveToPointFactory.fineAlign(newpose);
+  }
+
+  public Command alegelowCommand() {
+    return armCommands.alegeCommanLow().andThen(Commands.waitSeconds(1)).andThen(resetCommand());
+  }
+
+  public Command alegehighCommand() {
+    return armCommands.alegeCommanhgih().andThen(Commands.waitSeconds(1)).andThen(resetCommand());
   }
 
   public Command resetCommand() {
@@ -47,11 +67,7 @@ public class ScoreCommands {
   }
 
   public Command ScoreL3() {
-    // return driveToPointFactory
-    // .driveToPose(
-    // new Pose2d(-999999, -9999, new Rotation2d())
-    // .nearest(FieldConstants.Reef.centerFacesList))
-    return armCommands.scoreL3();
+    return armCommands.scoreL3().andThen(resetCommand());
   }
 
   private boolean isCommandWOrking = false;
@@ -62,5 +78,9 @@ public class ScoreCommands {
       return true;
     }
     return false;
+  }
+
+  public Command ScoreL4() {
+    return armCommands.scoreL4().andThen(resetCommand());
   }
 }

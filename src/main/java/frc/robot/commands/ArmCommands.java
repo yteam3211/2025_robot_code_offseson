@@ -90,8 +90,13 @@ public class ArmCommands {
 
   public Command scoreL2() {
     return elevator
-        .changeStateCommand(Elevatorstates.L2)
-        .alongWith(armpitch.chengestateCommand(armPitchState.L2));
+        .changestateCommandMustHaveUntil(Elevatorstates.L2)
+        .until(elevator.isAtLestHight(3))
+        .alongWith(
+            armpitch
+                .chengestateCommandMustHaveUntil(armPitchState.L2)
+                .until(armpitch.isLesspos(-45))
+                .andThen(Armgriper.changestateCommand(armgriperstate.Eject)));
   }
 
   public Command resetcommand() {
@@ -118,7 +123,50 @@ public class ArmCommands {
         .alongWith(
             armpitch
                 .chengestateCommandMustHaveUntil(armPitchState.L3)
-                .until(armpitch.isLesspos(-45)))
-        .andThen(Armgriper.changestateCommand(armgriperstate.Eject));
+                .until(armpitch.isLesspos(-45))
+                .andThen(Armgriper.changestateCommand(armgriperstate.Eject)));
+  }
+
+  public Command scoreL4() {
+    return elevator
+        .changestateCommandMustHaveUntil(Elevatorstates.L4)
+        .until(elevator.isAtLestHight(106))
+        .andThen(
+            armpitch
+                .chengestateCommandMustHaveUntil(armPitchState.L4)
+                .until(armpitch.isLesspos(-45))
+                .andThen(Armgriper.changestateCommand(armgriperstate.Eject)));
+  }
+
+  public Command alegeCommanLow() {
+    return elevator
+        .changestateCommandMustHaveUntil(Elevatorstates.algelow)
+        .until(elevator.isAtLestHight(50))
+        .andThen(
+            armpitch
+                .chengestateCommandMustHaveUntil(armPitchState.alge)
+                .until(armpitch.isLesspos(-80))
+                .andThen(
+                    Armgriper.changestateCommandMustHaveUntil(armgriperstate.Collect)
+                        .until(
+                            () ->
+                                Armgriper.isCorakIn().getAsBoolean()
+                                    && armpitch.getArmPosition() < 40)));
+  }
+
+  public Command alegeCommanhgih() {
+    return elevator
+        .changestateCommandMustHaveUntil(Elevatorstates.algehigh)
+        .until(elevator.isAtLestHight(50))
+        .andThen(
+            armpitch
+                .chengestateCommandMustHaveUntil(armPitchState.alge)
+                .until(armpitch.isLesspos(-80))
+                .andThen(
+                    Armgriper.changestateCommandMustHaveUntil(armgriperstate.Collect)
+                        .until(
+                            () ->
+                                Armgriper.isCorakIn().getAsBoolean()
+                                    && armpitch.getArmPosition() < 40)));
   }
 }

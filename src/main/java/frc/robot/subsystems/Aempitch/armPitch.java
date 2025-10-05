@@ -98,6 +98,7 @@ public class armPitch extends SubsystemBase {
   public BooleanSupplier isLesspos(double pos) {
     return () -> getArmPosition() < pos;
   }
+
   public BooleanSupplier isAtLestpos(double pos) {
     return () -> getArmPosition() > pos;
   }

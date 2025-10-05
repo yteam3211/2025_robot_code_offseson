@@ -25,9 +25,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.math.Conversions;
 import frc.lib.util.LimelightHelpers;
+import frc.lib.util.ReefPositions;
+import frc.lib.util.ReefSidePosition;
 import frc.lib.util.SwerveModule;
+import frc.robot.commands.ScoreCommands.sideScore;
 import frc.robot.constants.SwerveConstants;
 import java.util.Optional;
+import java.util.function.Function;
 import org.littletonrobotics.junction.AutoLogOutput;
 
 public class SwerveSubsystem extends SubsystemBase {
@@ -136,6 +140,63 @@ public class SwerveSubsystem extends SubsystemBase {
           0,
           0);
     }
+  }
+
+  /**
+   * Finds the closest reef center position relative to the robot's current position.
+   *
+   * @return A Pose2d representing the closest reef center, including its heading.
+   */
+  public Pose2d getClosestTagPose() {
+    Pose2d robotPose = getPose();
+    Translation2d robotTranslation = robotPose.getTranslation();
+
+    ReefSidePosition[] reefPoses = ReefPositions.getReefPositions();
+
+    if (reefPoses.length == 0) {
+      return Pose2d.kZero;
+    }
+
+    ReefSidePosition closestReef = reefPoses[0];
+    double minDistance = robotTranslation.getDistance(closestReef.getCenter());
+
+    for (ReefSidePosition reef : reefPoses) {
+      double distance = robotTranslation.getDistance(reef.getCenter());
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestReef = reef;
+      }
+    }
+
+    return new Pose2d(closestReef.getCenter(), closestReef.getAngle());
+  }
+
+  public Pose2d getClosestLeftRightPose(sideScore side) {
+    Pose2d robotPose = getPose();
+    Translation2d robotTranslation = robotPose.getTranslation();
+
+    Function<ReefSidePosition, Translation2d> leftOrRightTranslation =
+        (ReefSidePosition closestReef) ->
+            side == sideScore.left ? closestReef.getLeft() : closestReef.getRight();
+
+    ReefSidePosition[] reefPoses = ReefPositions.getReefPositions();
+
+    if (reefPoses.length == 0) {
+      return Pose2d.kZero;
+    }
+
+    ReefSidePosition closestReef = reefPoses[0];
+    double minDistance = robotTranslation.getDistance(leftOrRightTranslation.apply(closestReef));
+
+    for (ReefSidePosition reef : reefPoses) {
+      double distance = robotTranslation.getDistance(leftOrRightTranslation.apply(reef));
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestReef = reef;
+      }
+    }
+
+    return new Pose2d(leftOrRightTranslation.apply(closestReef), closestReef.getAngle());
   }
 
   public void updateMegaTag2Pose(SwerveDrivePoseEstimator m_poseEstimator, AHRS m_gyro) {
@@ -298,11 +359,11 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   public void resetPose() {
-    m_swerveOdometry.resetPose(Pose2d.kZero);
+    m_PoseEstimator.resetPose(Pose2d.kZero);
   }
 
   public void setPose(Pose2d pose) {
-    m_swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(), pose);
+    m_PoseEstimator.resetPosition(getGyroYaw(), getModulePositions(), pose);
   }
 
   public void lockWheels() {
@@ -317,12 +378,12 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   public void setHeading(Rotation2d heading) {
-    m_swerveOdometry.resetPosition(
+    m_PoseEstimator.resetPosition(
         getGyroYaw(), getModulePositions(), new Pose2d(getPose().getTranslation(), heading));
   }
 
   public void zeroHeading() {
-    m_swerveOdometry.resetPosition(
+    m_PoseEstimator.resetPosition(
         getGyroYaw(),
         getModulePositions(),
         new Pose2d(getPose().getTranslation(), new Rotation2d()));
@@ -345,7 +406,7 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   public void resetOdometry(Pose2d pose) {
-    m_swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(), pose);
+    m_PoseEstimator.resetPosition(getGyroYaw(), getModulePositions(), pose);
   }
 
   public void driveRobotRelative(ChassisSpeeds chassisSpeeds) {
@@ -393,7 +454,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    m_swerveOdometry.update(getGyroYaw(), getModulePositions());
+    m_PoseEstimator.update(getGyroYaw(), getModulePositions());
     for (SwerveModule mod : m_swerveMods) {
       SmartDashboard.putNumber(
           "Mod " + mod.moduleNumber + " CANcoder", mod.getCANcoder().getDegrees());

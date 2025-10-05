@@ -77,6 +77,7 @@ public class elevator extends SubsystemBase {
     if (!status.isOK()) {
       System.out.println("Could not configure device. Error: " + status.toString());
     }
+    motor.setPosition(0);
     this.setDefaultCommand(this.setDefualElevatorCommand());
   }
 
@@ -85,14 +86,12 @@ public class elevator extends SubsystemBase {
     SmartDashboard.putBoolean("ELevatordown", isElevatorDown());
     SmartDashboard.putNumber("ELEVATOR: distance", getHeight());
     SmartDashboard.putNumber("ELEVATOR velcoity", getVelocity());
-    SmartDashboard.putString("ELEVATOR state", state.name() + state.getTarget());
+    SmartDashboard.putString("ELEVATOR state", state.name() + "   " + state.getTarget());
     SmartDashboard.putBoolean("isdown", isDown);
     if (getCurrentCommand() != null) {
       SmartDashboard.putString("command running on elevtor", getCurrentCommand().getName());
     }
-    if (limitSwitchPressedAfterLestCommand) {
-      resetHeight();
-    }
+    resetHeight();
     limitSwerveDriveSpeed();
   }
 
@@ -116,20 +115,13 @@ public class elevator extends SubsystemBase {
 
   public Command setToZeroPosionCommand() {
     return changeStateCommand(Elevatorstates.REST_MODE)
-        .alongWith(Commands.runOnce(() -> isDown = false))
-        .alongWith(
-            Commands.run(() -> setspeed(-0.1))
-                .until(() -> isElevatorDown())
-                .andThen(Commands.run(() -> setspeed(0)).until(() -> isDown())));
+        .until(() -> getHeight() < 5)
+        .andThen(() -> setspeed(0.025))
+        .until(() -> isElevatorDown());
   }
 
   public void setToZeroPosion() {
-    changeStateCommand(Elevatorstates.REST_MODE)
-        .alongWith(Commands.runOnce(() -> isDown = false))
-        .alongWith(
-            Commands.run(() -> setspeed(-0.1))
-                .until(() -> isElevatorDown())
-                .andThen(Commands.run(() -> setspeed(0)).until(() -> isDown())));
+    motor.setControl(motionMagicVoltage.withPosition(0).withSlot(1));
   }
 
   //     public void closeSystemHelper(){
@@ -152,10 +144,7 @@ public class elevator extends SubsystemBase {
   }
 
   public Command setDefualElevatorCommand() {
-    if (isFirstResetOccurred()) return this.run(() -> setDefaultElevator());
-    else {
-      return this.runOnce(() -> setToZeroPosion());
-    }
+    return this.run(() -> setDefaultElevator());
   }
 
   public void changeState(Elevatorstates newstate) {
@@ -200,7 +189,6 @@ public class elevator extends SubsystemBase {
   }
 
   public void resetHeight() {
-    limitSwitchPressedAfterLestCommand = false;
     if (isElevatorDown()) {
       motor.setPosition(0);
     }

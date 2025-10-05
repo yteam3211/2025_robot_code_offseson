@@ -6,8 +6,6 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.Units;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 
@@ -21,22 +19,22 @@ public class DriveToPointFactory {
   /** PathPlanner constraints for auto-driving */
   private PathConstraints getConstraints() {
     return new PathConstraints(
-        3.0,
-        4.0, // max vel, accel (m/s, m/s^2)
+        2, // 3.0
+        3, // 4.0 // max vel, accel (m/s, m/s^2)
         Units.Degrees.of(540).in(Units.Radians), // max ang vel rad/s
         Units.Degrees.of(720).in(Units.Radians) // max ang accel rad/s^2
         );
   }
 
   /** Builds a fine PID settle command after pathfinding */
-  private Command fineAlign(Pose2d Target) {
+  public Command fineAlign(Pose2d Target) {
     final Pose2d target = Target;
-    if (DriverStation.getAlliance().get() == Alliance.Red) {
-      Target = Target.div(-1);
-    }
-    PIDController xPID = new PIDController(5, 0, 0);
-    PIDController yPID = new PIDController(5, 0, 0);
-    PIDController rotPID = new PIDController(5, 0, 0);
+    // if (DriverStation.getAlliance().get() == Alliance.Red) {
+    //   Target = Target.div(-1);
+    // }
+    PIDController xPID = new PIDController(1.5, 0, 0);
+    PIDController yPID = new PIDController(0, 0, 0);
+    PIDController rotPID = new PIDController(0, 0, 0);
     rotPID.enableContinuousInput(-Math.PI, Math.PI);
 
     return swerve
@@ -72,7 +70,7 @@ public class DriveToPointFactory {
   }
 
   public Command driveToPosesimple(Pose2d targetPose) {
-    Command pathfind = AutoBuilder.pathfindToPose(targetPose, getConstraints());
+    Command pathfind = AutoBuilder.pathfindToPose(targetPose, getConstraints(), 0.0);
     return pathfind;
   }
 }

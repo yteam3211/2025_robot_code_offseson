@@ -14,8 +14,6 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.PS5Controller;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -62,7 +60,8 @@ public class RobotContainer {
             subsystems.elevator,
             subsystems.IntakeGriper,
             subsystems.intakepitch);
-    scoreCommands = new ScoreCommands(armCommands, intakeCommands, driveToPointFactory);
+    scoreCommands =
+        new ScoreCommands(armCommands, intakeCommands, driveToPointFactory, subsystems.swerve);
 
     // Set up auto routines
     autoChooser = AutoBuilder.buildAutoChooser();
@@ -78,16 +77,12 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    // controller.subcontroller.square().onTrue(scoreCommands.intakeStraitToArm());
-    // controller.subcontroller.cross().onTrue(scoreCommands.resetCommand());
-    controller.swervecontroller.square().onTrue(scoreCommands.intakeStraitToArm());
+    controller.swervecontroller.square().onTrue(scoreCommands.alegehighCommand());
     controller.swervecontroller.cross().onTrue(scoreCommands.ScoreL3());
-    controller.swervecontroller.L1().whileTrue(scoreCommands.resetCommand());
-    controller
-        .swervecontroller
-        .L2()
-        .onTrue(driveToPointFactory.driveToPose(new Pose2d(10, 5, Rotation2d.fromDegrees(180))));
-
+    controller.swervecontroller.circle().onTrue(scoreCommands.intakeStraitToArm());
+    controller.swervecontroller.L1().onTrue(scoreCommands.ScoreL2());
+    controller.swervecontroller.R1().onTrue(intakeCommands.scoreL1Command());
+    controller.swervecontroller.triangle().onTrue(intakeCommands.intakeCommand());
     SwerveButtons.loadButtons(controller, subsystems);
     defaultbutton.loadButtons(controller, subsystems);
   }

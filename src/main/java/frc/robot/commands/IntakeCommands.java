@@ -70,9 +70,15 @@ public class IntakeCommands {
   public Command scoreL1Command() {
     return intakePitch
         .changestateCommand(IntakePitchstate.L1)
-        .alongWith(intakeIndexer.changestateCommand(IntakeIndexerState.STOP))
-        .withTimeout(5)
-        .andThen(Intakegriper.changeStateCommand(inakegriperstate.Eject));
+        .alongWith(
+            intakeIndexer
+                .changestateCommandMustHaveUntil(IntakeIndexerState.STOP)
+                .until(() -> intakePitch.getPos() > 30))
+        .andThen(
+            Intakegriper.changestateCommandMustHaveUntil(inakegriperstate.Eject)
+                .until(() -> !intakePitch.isClose())
+                .andThen(Commands.waitSeconds(0.5))
+                .andThen(resetCommand()));
   }
 
   public Command resetCommand() {

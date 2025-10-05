@@ -5,9 +5,6 @@
 package frc.robot.subsystems.intakeGriper;
 
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.revrobotics.Rev2mDistanceSensor;
-import com.revrobotics.Rev2mDistanceSensor.RangeProfile;
-import com.revrobotics.Rev2mDistanceSensor.Unit;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -17,17 +14,11 @@ import frc.robot.states.inakegriperstate;
 public class IntakeGriper extends SubsystemBase {
 
   TalonFX m_griperintake = new TalonFX(IntakeGriperConstants.griperid, "canv");
-  Rev2mDistanceSensor IntakeSwich = new Rev2mDistanceSensor(Rev2mDistanceSensor.Port.kOnboard);
 
   inakegriperstate gripertate = inakegriperstate.KeepItIn;
 
   /** Creates a new intakesubsystem. */
   public IntakeGriper() {
-    IntakeSwich.setDistanceUnits(Unit.kMillimeters);
-    IntakeSwich.setRangeProfile(RangeProfile.kHighSpeed);
-    IntakeSwich.setEnabled(true);
-    IntakeSwich.isRangeValid();
-    IntakeSwich.setAutomaticMode(true);
 
     this.setDefaultCommand(SetDefualCommandGriperIntake());
   }
