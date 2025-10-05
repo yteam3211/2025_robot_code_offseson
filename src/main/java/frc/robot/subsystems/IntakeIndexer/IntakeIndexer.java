@@ -5,6 +5,7 @@
 package frc.robot.subsystems.IntakeIndexer;
 
 import com.ctre.phoenix6.hardware.TalonFX;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -40,6 +41,12 @@ public class IntakeIndexer extends SubsystemBase {
   }
 
   public Command SetDefualCommandIntakeIndexer() {
-    return Commands.runOnce(() -> setspeed(indexerstate.getTarget()));
+    return this.runOnce(() -> setspeed(indexerstate.getTarget()));
+  }
+
+  public DigitalInput m_isCoralIn = new DigitalInput(IntakeIndexerConstants.IsCoralInID);
+
+  public boolean isCorakIn() {
+    return m_isCoralIn.get();
   }
 }

@@ -75,7 +75,7 @@ public class armPitch extends SubsystemBase {
   }
 
   public Command setDefualArmPitchCommand() {
-    return Commands.runOnce(() -> setdefualt());
+    return this.runOnce(() -> setdefualt());
   }
 
   @Override
@@ -95,6 +95,9 @@ public class armPitch extends SubsystemBase {
     return m_Pitch.getPosition().getValueAsDouble();
   }
 
+  public BooleanSupplier isLesspos(double pos) {
+    return () -> getArmPosition() < pos;
+  }
   public BooleanSupplier isAtLestpos(double pos) {
     return () -> getArmPosition() > pos;
   }

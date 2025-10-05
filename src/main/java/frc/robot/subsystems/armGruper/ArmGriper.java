@@ -38,7 +38,7 @@ public class ArmGriper extends SubsystemBase {
   }
 
   public BooleanSupplier isCorakIn() {
-    return () -> m_griper.getStatorCurrent().getValueAsDouble() > 9;
+    return () -> m_griper.getStatorCurrent().getValueAsDouble() > 13;
   }
 
   public Command setGripperDefualtCommand() {

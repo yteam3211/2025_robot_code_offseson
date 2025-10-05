@@ -23,7 +23,6 @@ import frc.robot.constants.SwerveConstants;
 import frc.robot.states.Elevatorstates;
 import frc.robot.subsystems.elvetor.elvetorconstants.MotorCurrentLimits;
 import java.util.function.BooleanSupplier;
-import java.util.function.DoubleSupplier;
 
 public class elevator extends SubsystemBase {
   public Elevatorstates state = Elevatorstates.REST_MODE;
@@ -78,8 +77,7 @@ public class elevator extends SubsystemBase {
     if (!status.isOK()) {
       System.out.println("Could not configure device. Error: " + status.toString());
     }
-    setToZeroPosion();
-    this.setDefaultCommand(setDefualElevatorCommand());
+    this.setDefaultCommand(this.setDefualElevatorCommand());
   }
 
   @Override
@@ -116,7 +114,7 @@ public class elevator extends SubsystemBase {
 
   Boolean isDown = false;
 
-  public Command setToZeroPosion() {
+  public Command setToZeroPosionCommand() {
     return changeStateCommand(Elevatorstates.REST_MODE)
         .alongWith(Commands.runOnce(() -> isDown = false))
         .alongWith(
@@ -125,15 +123,39 @@ public class elevator extends SubsystemBase {
                 .andThen(Commands.run(() -> setspeed(0)).until(() -> isDown())));
   }
 
+  public void setToZeroPosion() {
+    changeStateCommand(Elevatorstates.REST_MODE)
+        .alongWith(Commands.runOnce(() -> isDown = false))
+        .alongWith(
+            Commands.run(() -> setspeed(-0.1))
+                .until(() -> isElevatorDown())
+                .andThen(Commands.run(() -> setspeed(0)).until(() -> isDown())));
+  }
+
+  //     public void closeSystemHelper(){
+  //     double elevatorDiff = Math.abs(RobotState.elevatorPosition.getTarget() - getHeight());
+  //   if(RobotState.elevatorPosition == ElevatorPosition.Close && elevatorDiff <
+  // ElevatorPosition.Threshold.getTarget() && !isElevatorDown()){
+  //     set(-0.08);
+  //   }
+  //   if (RobotState.elevatorPosition == ElevatorPosition.Close && isElevatorDown()) {
+  //     set(0);
+  //   }
+
+  // }
   public Boolean isDown() {
     return isDown;
   }
+
   public void setDefaultElevator() {
-    setToPos(() -> state.getTarget());
+    setToPos(state.getTarget());
   }
 
   public Command setDefualElevatorCommand() {
-    return Commands.run(() -> setDefaultElevator());
+    if (isFirstResetOccurred()) return this.run(() -> setDefaultElevator());
+    else {
+      return this.runOnce(() -> setToZeroPosion());
+    }
   }
 
   public void changeState(Elevatorstates newstate) {
@@ -147,16 +169,21 @@ public class elevator extends SubsystemBase {
     return Commands.run(() -> changeState(new_state));
   }
 
+  public void stopElevatorcommand() {
+    this.getCurrentCommand().cancel();
+  }
+
   public Command changeStateCommand(Elevatorstates newstate) {
     isDown = true;
     return Commands.runOnce(() -> changeState(newstate));
   }
 
-  public void setToPos(DoubleSupplier Pos) {
-    motor.setControl(motionMagicVoltage.withPosition(Pos.getAsDouble()).withSlot(0));
+  public void setToPos(Double Pos) {
+    double m_Pos = Math.min(200, Math.max(0, Pos));
+    motor.setControl(motionMagicVoltage.withPosition(m_Pos).withSlot(0));
   }
 
-  public Command setToPosCommand(DoubleSupplier Pos) {
+  public Command setToPosCommand(Double Pos) {
     return Commands.runOnce(() -> setToPos(Pos));
   }
 

@@ -291,7 +291,10 @@ public class SwerveSubsystem extends SubsystemBase {
 
   @AutoLogOutput
   public Pose2d getPose() {
-    return m_swerveOdometry.getPoseMeters();
+    if (m_PoseEstimator != null) {
+      return m_PoseEstimator.getEstimatedPosition();
+    }
+    return Pose2d.kZero;
   }
 
   public void resetPose() {

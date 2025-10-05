@@ -89,6 +89,7 @@ public class FieldConstants {
     public static final List<Map<ReefLevel, Pose3d>> branchPositions =
         new ArrayList<>(); // Starting at the right branch facing the driver station in clockwise
     public static final List<Map<ReefLevel, Pose2d>> branchPositions2d = new ArrayList<>();
+    public static final List<Pose2d> centerFacesList = new ArrayList<>();
 
     static {
       // Initialize faces
@@ -99,6 +100,9 @@ public class FieldConstants {
       centerFaces[3] = aprilTagLayout.getTagPose(21).get().toPose2d();
       centerFaces[4] = aprilTagLayout.getTagPose(22).get().toPose2d();
       centerFaces[5] = aprilTagLayout.getTagPose(17).get().toPose2d();
+      for (int face = 0; face < 6; face++) {
+        centerFacesList.add(centerFaces[face]);
+      }
 
       // Initialize branch positions
       for (int face = 0; face < 6; face++) {

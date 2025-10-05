@@ -1,13 +1,13 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.states.IntakeIndexerState;
 import frc.robot.states.IntakePitchstate;
 import frc.robot.states.inakegriperstate;
 import frc.robot.subsystems.IntakeIndexer.IntakeIndexer;
 import frc.robot.subsystems.IntakePitch.IntakePitch;
 import frc.robot.subsystems.intakeGriper.IntakeGriper;
-import java.util.function.BooleanSupplier;
 
 public class IntakeCommands {
   private IntakePitch intakePitch;
@@ -28,8 +28,8 @@ public class IntakeCommands {
         .alongWith(Intakegriper.changestateCommandMustHaveUntil(inakegriperstate.Collect));
   }
 
-  public Command downTakeIndexunil(BooleanSupplier intkaeup) {
-    return downTakeIndex().until(() -> intkaeup.getAsBoolean() && intakePitch.getPos() > 80);
+  public Command downTakeIndexunil() {
+    return downTakeIndex().until(() -> intakeIndexer.isCorakIn() && intakePitch.getPos() > 60);
   }
 
   public Command upNOTakeNOIndex() {
@@ -37,6 +37,13 @@ public class IntakeCommands {
         .changestateCommand(IntakeIndexerState.STOP)
         .alongWith(Intakegriper.changeStateCommand(inakegriperstate.KeepItIn))
         .alongWith(intakePitch.changestateCommand(IntakePitchstate.ZERO_POSITION));
+  }
+
+  public Command upNOTakeNOIndexuntil() {
+    return intakeIndexer
+        .changestateCommand(IntakeIndexerState.STOP)
+        .alongWith(Intakegriper.changeStateCommand(inakegriperstate.KeepItIn))
+        .alongWith(intakePitch.changestateCommandMustHaveUntil(IntakePitchstate.ZERO_POSITION));
   }
 
   public Command upNOTakeIndex() {
@@ -48,13 +55,16 @@ public class IntakeCommands {
 
   public Command upTakeIndex() {
     return intakeIndexer
-        .changestateCommand(IntakeIndexerState.RUN)
+        .changestateCommandMustHaveUntil(IntakeIndexerState.RUN)
         .alongWith(Intakegriper.changeStateCommand(inakegriperstate.Collect))
-        .alongWith(intakePitch.changestateCommandMustHaveUntil(IntakePitchstate.ZERO_POSITION));
+        .alongWith(intakePitch.changestateCommand(IntakePitchstate.ZERO_POSITION));
   }
 
-  public Command intakeCommand(BooleanSupplier intkaeup) {
-    return downTakeIndexunil(intkaeup).andThen(upTakeIndex().until(() -> intakePitch.getPos() < 6));
+  public Command intakeCommand() {
+
+    return downTakeIndexunil()
+        .andThen(upTakeIndex().until(() -> intakePitch.getPos() < 90))
+        .andThen(upNOTakeNOIndexuntil().until(() -> intakePitch.getPos() < 20));
   }
 
   public Command scoreL1Command() {
@@ -66,9 +76,17 @@ public class IntakeCommands {
   }
 
   public Command resetCommand() {
-    return intakePitch
-        .changestateCommand(IntakePitchstate.ZERO_POSITION)
-        .alongWith(intakeIndexer.changestateCommand(IntakeIndexerState.STOP))
-        .andThen(Intakegriper.changeStateCommand(inakegriperstate.KeepItIn));
+    return Commands.runOnce(() -> stop())
+        .andThen(
+            intakePitch
+                .changestateCommand(IntakePitchstate.ZERO_POSITION)
+                .alongWith(intakeIndexer.changestateCommand(IntakeIndexerState.STOP))
+                .andThen(Intakegriper.changeStateCommand(inakegriperstate.KeepItIn)));
+  }
+
+  public void stop() {
+    intakePitch.getCurrentCommand().cancel();
+    intakeIndexer.getCurrentCommand().cancel();
+    Intakegriper.getCurrentCommand().cancel();
   }
 }

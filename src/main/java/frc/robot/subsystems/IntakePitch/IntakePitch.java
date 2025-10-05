@@ -76,7 +76,7 @@ public class IntakePitch extends SubsystemBase {
   }
 
   public Command SetIntakePitchDefualtCommand() {
-    return Commands.runOnce(() -> setdefualt());
+    return this.runOnce(() -> setdefualt());
   }
 
   public boolean isClose() {

@@ -6,6 +6,8 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 
@@ -27,17 +29,21 @@ public class DriveToPointFactory {
   }
 
   /** Builds a fine PID settle command after pathfinding */
-  private Command fineAlign(Pose2d target) {
-    PIDController xPID = new PIDController(0, 0, 0);
-    PIDController yPID = new PIDController(0, 0, 0);
-    PIDController rotPID = new PIDController(0, 0, 0);
+  private Command fineAlign(Pose2d Target) {
+    final Pose2d target = Target;
+    if (DriverStation.getAlliance().get() == Alliance.Red) {
+      Target = Target.div(-1);
+    }
+    PIDController xPID = new PIDController(5, 0, 0);
+    PIDController yPID = new PIDController(5, 0, 0);
+    PIDController rotPID = new PIDController(5, 0, 0);
     rotPID.enableContinuousInput(-Math.PI, Math.PI);
 
     return swerve
         .run(
             () -> {
               Pose2d current = swerve.getPose();
-              double xOut = xPID.calculate(current.getX(), target.getX());
+              double xOut = xPID.calculate(current.getX(), target.getY());
               double yOut = yPID.calculate(current.getY(), target.getY());
               double rotOut =
                   rotPID.calculate(
@@ -66,7 +72,6 @@ public class DriveToPointFactory {
   }
 
   public Command driveToPosesimple(Pose2d targetPose) {
-    System.out.println("driveto called");
     Command pathfind = AutoBuilder.pathfindToPose(targetPose, getConstraints());
     return pathfind;
   }

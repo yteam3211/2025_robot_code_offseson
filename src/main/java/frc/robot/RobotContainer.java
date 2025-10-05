@@ -14,17 +14,19 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.PS5Controller;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import frc.lib.util.DriveToPointFactory;
 import frc.robot.Buttons.SwerveButtons;
 import frc.robot.Buttons.defaultbutton;
 import frc.robot.commands.ArmCommands;
 import frc.robot.commands.IntakeCommands;
 import frc.robot.commands.ScoreCommands;
-import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -43,7 +45,7 @@ public class RobotContainer {
   private final ScoreCommands scoreCommands;
   private final DriveToPointFactory driveToPointFactory;
   // Dashboard inputs
-  private final LoggedDashboardChooser<Command> autoChooser;
+  private final SendableChooser<Command> autoChooser;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -52,6 +54,7 @@ public class RobotContainer {
     intakeCommands =
         new IntakeCommands(
             subsystems.IntakeGriper, subsystems.intakepitch, subsystems.intakeindexer);
+    driveToPointFactory = new DriveToPointFactory(subsystems.swerve);
     armCommands =
         new ArmCommands(
             subsystems.ArmGriper,
@@ -59,10 +62,11 @@ public class RobotContainer {
             subsystems.elevator,
             subsystems.IntakeGriper,
             subsystems.intakepitch);
-    scoreCommands = new ScoreCommands(armCommands, intakeCommands);
-    driveToPointFactory = new DriveToPointFactory(subsystems.swerve);
+    scoreCommands = new ScoreCommands(armCommands, intakeCommands, driveToPointFactory);
+
     // Set up auto routines
-    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+    autoChooser = AutoBuilder.buildAutoChooser();
+    SmartDashboard.putData("autoChooser", autoChooser);
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -74,13 +78,16 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+    // controller.subcontroller.square().onTrue(scoreCommands.intakeStraitToArm());
+    // controller.subcontroller.cross().onTrue(scoreCommands.resetCommand());
+    controller.swervecontroller.square().onTrue(scoreCommands.intakeStraitToArm());
+    controller.swervecontroller.cross().onTrue(scoreCommands.ScoreL3());
+    controller.swervecontroller.L1().whileTrue(scoreCommands.resetCommand());
     controller
         .swervecontroller
-        .square()
-        .onTrue(
-            scoreCommands.intakeStraitToArm(
-                controller.swervecontroller.square().onTrue(Commands.runOnce(() -> {}))));
-    controller.swervecontroller.cross().onTrue(scoreCommands.resetCommand());
+        .L2()
+        .onTrue(driveToPointFactory.driveToPose(new Pose2d(10, 5, Rotation2d.fromDegrees(180))));
+
     SwerveButtons.loadButtons(controller, subsystems);
     defaultbutton.loadButtons(controller, subsystems);
   }
@@ -90,6 +97,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autoChooser.get();
+    return autoChooser.getSelected();
   }
 }

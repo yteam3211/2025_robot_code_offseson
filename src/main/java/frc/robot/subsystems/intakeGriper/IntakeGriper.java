@@ -42,7 +42,7 @@ public class IntakeGriper extends SubsystemBase {
   }
 
   public Command SetDefualCommandGriperIntake() {
-    return Commands.run(() -> setgriper(gripertate.getTarget()));
+    return this.run(() -> setgriper(gripertate.getTarget()));
   }
 
   public Command changestateCommandMustHaveUntil(inakegriperstate new_state) {
@@ -54,7 +54,7 @@ public class IntakeGriper extends SubsystemBase {
   }
 
   public boolean isCoralIn() {
-    return m_griperintake.getSupplyCurrent().getValueAsDouble() > 7;
+    return m_griperintake.getStatorCurrent().getValueAsDouble() > 50;
   }
 
   public void changeState(inakegriperstate newstate) {

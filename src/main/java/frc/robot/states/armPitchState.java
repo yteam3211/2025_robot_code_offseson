@@ -5,6 +5,7 @@ import frc.lib.util.ITarget;
 public enum armPitchState implements ITarget {
   COLLECT(-180),
   L2(-46),
+  L3(-57),
   rest(2.5),
   firtstinit(0);
 

@@ -14,11 +14,11 @@ import frc.robot.subsystems.elvetor.elevator;
 import frc.robot.subsystems.intakeGriper.IntakeGriper;
 
 public class ArmCommands {
-  private ArmGriper Armgriper;
-  private armPitch armpitch;
-  private elevator elevator;
-  private IntakeGriper intakegriper;
-  private IntakePitch intakePitch;
+  public ArmGriper Armgriper;
+  public armPitch armpitch;
+  public elevator elevator;
+  public IntakeGriper intakegriper;
+  public IntakePitch intakePitch;
 
   public ArmCommands(
       ArmGriper armSubsystem,
@@ -38,13 +38,15 @@ public class ArmCommands {
   }
 
   public Command elevatorUpDwon() {
+    elevator.changeStateCommand(Elevatorstates.INTAKE_MODE_FIRST);
     return elevator
         .changestateCommandMustHaveUntil(Elevatorstates.INTAKE_MODE_FIRST)
         .until(elevator.isAtLestHight(50));
   }
 
   public Command elevatorUphDwonArmTopos() {
-    return elevatorUpDwon()
+    return /*Commands.runOnce(() -> elevator.stopElevatorcommand())
+           .andThen( */ elevatorUpDwon()
         .andThen(armpitch.chengestateCommand(armPitchState.COLLECT))
         .alongWith(intakePitch.changestateCommand(IntakePitchstate.ZERO_POSITION));
   }
@@ -67,13 +69,12 @@ public class ArmCommands {
   }
 
   public Command restAfterPass() {
-    Commands.runOnce(() -> System.out.println("restAfterPass")).repeatedly();
     return armpitch
         .chengestateCommandMustHaveUntil(armPitchState.rest)
         .until(armpitch.isAtLestpos(-10))
         .andThen(
             elevator
-                .setToZeroPosion()
+                .changeStateCommand(Elevatorstates.REST_MODE)
                 .alongWith(
                     intakegriper
                         .changeStateCommand(inakegriperstate.KeepItIn)
@@ -94,12 +95,30 @@ public class ArmCommands {
   }
 
   public Command resetcommand() {
-    return armpitch
-        .chengestateCommandMustHaveUntil(armPitchState.rest)
-        .until(() -> armpitch.getArmPosition() > -30)
+    return Commands.runOnce(() -> stop())
         .andThen(
-            elevator
-                .setToZeroPosion()
-                .alongWith(Armgriper.changestateCommand(armgriperstate.KeepItIn)));
+            armpitch
+                .chengestateCommandMustHaveUntil(armPitchState.rest)
+                .until(() -> armpitch.getArmPosition() > -30)
+                .andThen(
+                    Armgriper.changestateCommand(armgriperstate.KeepItIn)
+                        .andThen(elevator.setToZeroPosionCommand())));
+  }
+
+  public void stop() {
+    armpitch.getCurrentCommand().cancel();
+    Armgriper.getCurrentCommand().cancel();
+    elevator.getCurrentCommand().cancel();
+  }
+
+  public Command scoreL3() {
+    return elevator
+        .changestateCommandMustHaveUntil(Elevatorstates.L3)
+        .until(elevator.isAtLestHight(43))
+        .alongWith(
+            armpitch
+                .chengestateCommandMustHaveUntil(armPitchState.L3)
+                .until(armpitch.isLesspos(-45)))
+        .andThen(Armgriper.changestateCommand(armgriperstate.Eject));
   }
 }
