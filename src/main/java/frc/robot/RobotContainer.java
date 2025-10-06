@@ -77,12 +77,16 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    controller.swervecontroller.square().onTrue(scoreCommands.alegehighCommand());
+
+    // controller.swervecontroller.square().onTrue(scoreCommands.alegehighCommand());
     controller.swervecontroller.cross().onTrue(scoreCommands.ScoreL3());
-    controller.swervecontroller.circle().onTrue(scoreCommands.intakeStraitToArm());
-    controller.swervecontroller.L1().onTrue(scoreCommands.ScoreL2());
-    controller.swervecontroller.R1().onTrue(intakeCommands.scoreL1Command());
-    controller.swervecontroller.triangle().onTrue(intakeCommands.intakeCommand());
+    controller.swervecontroller.circle().onTrue(scoreCommands.resetCommand());
+
+    // controller
+    //     .swervecontroller
+    //     .cross()
+    //     .onTrue(scoreCommands.netScore(controller.swervecontroller.triangle()));
+    // controller.swervecontroller.triangle().onTrue(intakeCommands.intakeCommand());
     SwerveButtons.loadButtons(controller, subsystems);
     defaultbutton.loadButtons(controller, subsystems);
   }

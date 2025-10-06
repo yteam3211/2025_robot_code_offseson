@@ -9,7 +9,8 @@ public enum armPitchState implements ITarget {
   rest(2.5),
   firtstinit(0),
   L4(-57),
-  alge(-90);
+  alge(-90),
+  net(45);
 
   private double m_degreeds;
 

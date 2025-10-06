@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.lib.util.DriveToPointFactory;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
+import java.util.function.BooleanSupplier;
 
 public class ScoreCommands {
   public static final Command ScoreL4 = null;
@@ -55,11 +56,25 @@ public class ScoreCommands {
   }
 
   public Command alegelowCommand() {
-    return armCommands.alegeCommanLow().andThen(Commands.waitSeconds(1)).andThen(resetCommand());
+    return armCommands
+        .alegeCommanLow()
+        .andThen(Commands.waitSeconds(1))
+        .andThen(resetCommandalge());
   }
 
   public Command alegehighCommand() {
-    return armCommands.alegeCommanhgih().andThen(Commands.waitSeconds(1)).andThen(resetCommand());
+    return armCommands
+        .alegeCommanhgih()
+        .andThen(Commands.waitSeconds(1))
+        .andThen(resetCommandalge());
+  }
+
+  public Command netScore(BooleanSupplier plot) {
+    return armCommands.netScore(plot);
+  }
+
+  public Command resetCommandalge() {
+    return armCommands.resetcommandalge().alongWith(intakeCommands.resetCommand());
   }
 
   public Command resetCommand() {

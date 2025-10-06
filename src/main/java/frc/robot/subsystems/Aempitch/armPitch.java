@@ -16,8 +16,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.lib.util.LimelightHelpers;
 import frc.robot.states.armPitchState;
 import java.util.function.BooleanSupplier;
+import java.util.function.IntSupplier;
 
 public class armPitch extends SubsystemBase {
 
@@ -70,20 +72,22 @@ public class armPitch extends SubsystemBase {
     return Commands.run(() -> chengestate(new_state));
   }
 
-  public void setdefualt() {
-    setRotation(state.getTarget());
+  public void setdefualt(IntSupplier flip) {
+    setRotation(state.getTarget() * -flip.getAsInt());
   }
 
   public Command setDefualArmPitchCommand() {
-    return this.runOnce(() -> setdefualt());
+    return this.runOnce(() -> setdefualt(flip()));
   }
 
   @Override
   public void periodic() {
+    needflipreef();
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Arm Position", getArmPosition());
     SmartDashboard.putString("Arm Pitch", state.name() + state.getTarget());
     SmartDashboard.putBoolean("arm al least 10 ", isAtLestpos(-10).getAsBoolean());
+    SmartDashboard.putNumber("flip", flip.getAsInt());
     // io.updateinputs(inputs);
   }
 
@@ -99,7 +103,63 @@ public class armPitch extends SubsystemBase {
     return () -> getArmPosition() < pos;
   }
 
+  public void needflipreef() {
+    LimelightHelpers.PoseEstimate mt1right =
+        LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-left");
+    boolean doRejectUpdate_right = false;
+    if (mt1right != null) {
+      if (mt1right.tagCount >= 1) {
+        if (mt1right.rawFiducials[0].ambiguity > .7) {
+          doRejectUpdate_right = true;
+        }
+        if (mt1right.rawFiducials[0].distToCamera > 3) {
+          doRejectUpdate_right = true;
+        }
+      }
+      if (mt1right.tagCount == 0) {
+        doRejectUpdate_right = true;
+      }
+
+      if (!doRejectUpdate_right) {
+        flip = () -> 1;
+      }
+    }
+    LimelightHelpers.PoseEstimate mt1left =
+        LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-right");
+    boolean doRejectUpdate_left = false;
+    if (mt1left != null) {
+      if (mt1left.tagCount >= 1) {
+        if (mt1left.rawFiducials[0].ambiguity > .7) {
+          doRejectUpdate_left = true;
+        }
+        if (mt1left.rawFiducials[0].distToCamera > 3) {
+          doRejectUpdate_left = true;
+        }
+      }
+      if (mt1left.tagCount == 0) {
+        doRejectUpdate_left = true;
+      }
+
+      if (!doRejectUpdate_left) {
+        flip = () -> -1;
+      }
+    }
+  }
+
+  IntSupplier flip = () -> 1;
+
+  public IntSupplier flip() {
+    return flip;
+  }
+
   public BooleanSupplier isAtLestpos(double pos) {
+    return () -> getArmPosition() > pos;
+  }
+
+  public BooleanSupplier isAtLestPosdouble(double pos) {
+    if (flip.getAsInt() == -1) {
+      return () -> getArmPosition() < pos;
+    }
     return () -> getArmPosition() > pos;
   }
 

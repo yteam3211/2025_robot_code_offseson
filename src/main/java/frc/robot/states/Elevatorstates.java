@@ -13,7 +13,8 @@ public enum Elevatorstates implements ITarget {
   L3(47.0),
   L4(120),
   algelow(60),
-  algehigh(105);
+  algehigh(105),
+  net(200);
 
   private double m_hight;
 
