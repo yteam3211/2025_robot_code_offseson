@@ -1,9 +1,14 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.lib.util.DriveToPointFactory;
+import frc.lib.util.LimelightHelpers;
+import frc.lib.util.ReefPositions;
+import frc.lib.util.ReefSidePosition;
 import frc.robot.states.ClimbPosition;
 import frc.robot.subsystems.climb.ClimbSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
@@ -39,9 +44,16 @@ public class ScoreCommands {
                 .andThen(armCommands.passToArmFromintake().andThen(resetCommand())));
   }
 
+  public Command intakeStayOnIntake() {
+    return intakeCommands.intakeCommand().andThen(resetCommand());
+  }
+
   // public Command intkeToArmUpSide() {
   // return armCommands.elevatorUpDwon().andThen(intakeCommands.downTakeIndexunil());
   // }
+  public Command ScoreL1() {
+    return intakeCommands.scoreL1Command().andThen(resetCommand());
+  }
 
   public Command ScoreL2() {
     return armCommands.scoreL2().andThen(resetCommand());
@@ -52,8 +64,46 @@ public class ScoreCommands {
     right;
   }
 
-  public Command centreToWitchPos(sideScore side) {
-    return driveToPointFactory.fineAlign(swerveSubsystem.getClosestLeftRightPose(side));
+  public Command getClosestLeftRightPose(sideScore side) {
+    int checkarr;
+    if (DriverStation.getAlliance().get() == Alliance.Blue) {
+      checkarr = -17;
+    } else {
+      checkarr = -6;
+    }
+    Pose2d targetPose2d = new Pose2d();
+    ReefSidePosition reefSidePosition[] = ReefPositions.getReefPositions();
+    double rightTag = LimelightHelpers.getFiducialID("limelight-right");
+    double leftTag = LimelightHelpers.getFiducialID("limelight-left");
+    if (side == sideScore.left) {
+      if (rightTag != -1) {
+        targetPose2d =
+            new Pose2d(
+                reefSidePosition[(int) rightTag - checkarr].getLeft(),
+                swerveSubsystem.getPose().getRotation());
+      }
+      if (leftTag != -1) {
+        targetPose2d =
+            new Pose2d(
+                reefSidePosition[(int) rightTag - checkarr].getLeft(),
+                swerveSubsystem.getPose().getRotation());
+      }
+    }
+    if (side == sideScore.right) {
+      if (rightTag != -1) {
+        targetPose2d =
+            new Pose2d(
+                reefSidePosition[(int) rightTag - checkarr].getRight(),
+                swerveSubsystem.getPose().getRotation());
+      }
+      if (leftTag != -1) {
+        targetPose2d =
+            new Pose2d(
+                reefSidePosition[(int) rightTag - checkarr].getRight(),
+                swerveSubsystem.getPose().getRotation());
+      }
+    }
+    return driveToPointFactory.fineAlign(targetPose2d);
   }
 
   public Command testPidAuto(Pose2d newpose) {

@@ -97,7 +97,9 @@ public class ArmCommands {
             armpitch
                 .chengestateCommandMustHaveUntil(armPitchState.L2)
                 .until(armpitch.isLesspos(-45))
-                .andThen(Armgriper.changestateCommand(armgriperstate.Eject)));
+                .andThen(
+                    Armgriper.changestateCommandMustHaveUntil(armgriperstate.Eject)
+                        .until(() -> !Armgriper.isCorakIn().getAsBoolean())));
   }
 
   public Command resetcommand() {
@@ -105,10 +107,10 @@ public class ArmCommands {
         .andThen(
             armpitch
                 .chengestateCommandMustHaveUntil(armPitchState.rest)
-                .until(() -> armpitch.getArmPosition() > -30)
-                .andThen(
-                    Armgriper.changestateCommand(armgriperstate.KeepItIn)
-                        .andThen(elevator.setToZeroPosionCommand())));
+                .until(armpitch.islessthenPosdouble(30)))
+        .andThen(
+            Armgriper.changestateCommand(armgriperstate.KeepItIn)
+                .andThen(elevator.setToZeroPosionCommand()));
   }
 
   public Command resetcommandalge() {
@@ -136,7 +138,9 @@ public class ArmCommands {
             armpitch
                 .chengestateCommandMustHaveUntil(armPitchState.L3)
                 .until(armpitch.isAtLestPosdouble(45))
-                .andThen(Armgriper.changestateCommand(armgriperstate.Eject)));
+                .andThen(
+                    Armgriper.changestateCommandMustHaveUntil(armgriperstate.Eject)
+                        .until(() -> !Armgriper.isCorakIn().getAsBoolean())));
   }
 
   public Command scoreL4() {
@@ -146,8 +150,10 @@ public class ArmCommands {
         .andThen(
             armpitch
                 .chengestateCommandMustHaveUntil(armPitchState.L4)
-                .until(armpitch.isAtLestPosdouble(-45))
-                .andThen(Armgriper.changestateCommand(armgriperstate.Eject)));
+                .until(armpitch.isAtLestPosdouble(-40))
+                .andThen(
+                    Armgriper.changestateCommand(armgriperstate.Eject)
+                        .andThen(Commands.waitSeconds(0.2))));
   }
 
   public Command alegeCommanLow() {

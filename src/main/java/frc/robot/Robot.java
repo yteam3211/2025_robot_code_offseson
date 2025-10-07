@@ -78,14 +78,8 @@ public class Robot extends LoggedRobot {
     PathfindingCommand.warmupCommand().schedule();
   }
 
-  // Start AdvantageKit logger
-  // Logger.start();
-
   // Instantiate our RobotContainer. This will perform all our button bindings,
   // and put our autonomous chooser on the dashboard.
-  // Pose3d components = new Pose3d();
-
-  // Logger.recordOutput("components", components);
 
   /** This function is called periodically during all modes. */
   @Override

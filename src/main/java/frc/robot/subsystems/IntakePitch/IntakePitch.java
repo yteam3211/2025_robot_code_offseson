@@ -132,7 +132,6 @@ public class IntakePitch extends SubsystemBase {
   }
 
   public void resetPos() {
-
     m_spinintake.setPosition(0);
   }
 }

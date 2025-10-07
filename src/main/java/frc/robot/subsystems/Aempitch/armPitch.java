@@ -73,7 +73,7 @@ public class armPitch extends SubsystemBase {
   }
 
   public void setdefualt(IntSupplier flip) {
-    setRotation(state.getTarget() * -flip.getAsInt());
+    setRotation(state.getTarget() * flip.getAsInt());
   }
 
   public Command setDefualArmPitchCommand() {
@@ -105,7 +105,7 @@ public class armPitch extends SubsystemBase {
 
   public void needflipreef() {
     LimelightHelpers.PoseEstimate mt1right =
-        LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-left");
+        LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-right");
     boolean doRejectUpdate_right = false;
     if (mt1right != null) {
       if (mt1right.tagCount >= 1) {
@@ -125,7 +125,7 @@ public class armPitch extends SubsystemBase {
       }
     }
     LimelightHelpers.PoseEstimate mt1left =
-        LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-right");
+        LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-left");
     boolean doRejectUpdate_left = false;
     if (mt1left != null) {
       if (mt1left.tagCount >= 1) {
@@ -139,7 +139,6 @@ public class armPitch extends SubsystemBase {
       if (mt1left.tagCount == 0) {
         doRejectUpdate_left = true;
       }
-
       if (!doRejectUpdate_left) {
         flip = () -> -1;
       }
@@ -157,10 +156,11 @@ public class armPitch extends SubsystemBase {
   }
 
   public BooleanSupplier isAtLestPosdouble(double pos) {
-    if (flip.getAsInt() == -1) {
-      return () -> getArmPosition() < pos;
-    }
-    return () -> getArmPosition() > pos;
+    return () -> Math.abs(getArmPosition()) > Math.abs(pos);
+  }
+
+  public BooleanSupplier islessthenPosdouble(double pos) {
+    return () -> Math.abs(getArmPosition()) < Math.abs(pos);
   }
 
   public void chengestate(armPitchState new_state) {

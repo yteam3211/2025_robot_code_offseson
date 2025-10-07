@@ -28,10 +28,8 @@ import frc.lib.util.LimelightHelpers;
 import frc.lib.util.ReefPositions;
 import frc.lib.util.ReefSidePosition;
 import frc.lib.util.SwerveModule;
-import frc.robot.commands.ScoreCommands.sideScore;
 import frc.robot.constants.SwerveConstants;
 import java.util.Optional;
-import java.util.function.Function;
 import org.littletonrobotics.junction.AutoLogOutput;
 
 public class SwerveSubsystem extends SubsystemBase {
@@ -169,34 +167,6 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     return new Pose2d(closestReef.getCenter(), closestReef.getAngle());
-  }
-
-  public Pose2d getClosestLeftRightPose(sideScore side) {
-    Pose2d robotPose = getPose();
-    Translation2d robotTranslation = robotPose.getTranslation();
-
-    Function<ReefSidePosition, Translation2d> leftOrRightTranslation =
-        (ReefSidePosition closestReef) ->
-            side == sideScore.left ? closestReef.getLeft() : closestReef.getRight();
-
-    ReefSidePosition[] reefPoses = ReefPositions.getReefPositions();
-
-    if (reefPoses.length == 0) {
-      return Pose2d.kZero;
-    }
-
-    ReefSidePosition closestReef = reefPoses[0];
-    double minDistance = robotTranslation.getDistance(leftOrRightTranslation.apply(closestReef));
-
-    for (ReefSidePosition reef : reefPoses) {
-      double distance = robotTranslation.getDistance(leftOrRightTranslation.apply(reef));
-      if (distance < minDistance) {
-        minDistance = distance;
-        closestReef = reef;
-      }
-    }
-
-    return new Pose2d(leftOrRightTranslation.apply(closestReef), closestReef.getAngle());
   }
 
   public void updateMegaTag2Pose(SwerveDrivePoseEstimator m_poseEstimator, AHRS m_gyro) {

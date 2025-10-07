@@ -59,10 +59,19 @@ public class ReefPositions {
 
         // Blue Alliance South
         new ReefSidePosition(
+            new Translation2d(3.715, 2.722),
+            new Translation2d(offset - 13.77, 2.91), // AprilTag Center
+            new Translation2d(3.673, 2.978), // Left
+            new Translation2d(3.957, 2.814), // Right
+            Rotation2d.fromDegrees(60), // Mirrored Facing Angle
+            "Blue North-East"),
+        new ReefSidePosition(
             // new Translation2d(offset - 14.76, 4),
             // new Translation2d(offset - 14.76, 4),
             // new Translation2d(offset - 14.76, 4),
             // new Translation2d(offset - 14.76, 4),
+
+            // is first one
             new Translation2d(2.96, 4.03),
             new Translation2d(offset - 14.439, 3.99), // AprilTag Center
             new Translation2d(3.16, 4.194), // Left
@@ -97,13 +106,6 @@ public class ReefPositions {
             new Translation2d(5.267, 2.978), // Right
             Rotation2d.fromDegrees(120), // Mirrored Facing Angle
             "Blue South-East"),
-        new ReefSidePosition(
-            new Translation2d(3.715, 2.722),
-            new Translation2d(offset - 13.77, 2.91), // AprilTag Center
-            new Translation2d(3.673, 2.978), // Left
-            new Translation2d(3.957, 2.814), // Right
-            Rotation2d.fromDegrees(60), // Mirrored Facing Angle
-            "Blue North-East"),
 
         // Red Alliance South
         new ReefSidePosition(

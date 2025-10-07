@@ -20,8 +20,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.lib.util.DriveToPointFactory;
+import frc.robot.Buttons.SubButton;
 import frc.robot.Buttons.SwerveButtons;
 import frc.robot.Buttons.defaultbutton;
+import frc.robot.Buttons.driverButtom;
 import frc.robot.commands.ArmCommands;
 import frc.robot.commands.IntakeCommands;
 import frc.robot.commands.ScoreCommands;
@@ -83,18 +85,8 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-
-    // controller.swervecontroller.square().onTrue(scoreCommands.alegehighCommand());
-    // controller.swervecontroller.cross().whileTrue(scoreCommands.climbslow());
-    // controller.swervecontroller.triangle().whileTrue(scoreCommands.climbfast());
-
-    // controller.swervecontroller.circle().onTrue(scoreCommands.resetCommand());
-
-    // controller
-    //     .swervecontroller
-    //     .cross()
-    //     .onTrue(scoreCommands.netScore(controller.swervecontroller.triangle()));
-    // controller.swervecontroller.triangle().onTrue(intakeCommands.intakeCommand());
+    driverButtom.loadButtons(controller, scoreCommands);
+    SubButton.loadButtons(controller, scoreCommands);
     SwerveButtons.loadButtons(controller, subsystems);
     defaultbutton.loadButtons(controller, subsystems);
   }
