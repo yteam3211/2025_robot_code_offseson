@@ -4,6 +4,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.lib.util.DriveToPointFactory;
+import frc.robot.states.ClimbPosition;
+import frc.robot.subsystems.climb.ClimbSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import java.util.function.BooleanSupplier;
 
@@ -13,16 +15,19 @@ public class ScoreCommands {
   private IntakeCommands intakeCommands;
   private DriveToPointFactory driveToPointFactory;
   private SwerveSubsystem swerveSubsystem;
+  private ClimbSubsystem ClimbSubsystem;
 
   public ScoreCommands(
       ArmCommands armCommands,
       IntakeCommands intakeCommands,
       DriveToPointFactory driveToPointFactory,
-      SwerveSubsystem swerveSubsystem) {
+      SwerveSubsystem swerveSubsystem,
+      ClimbSubsystem ClimbSubsystem) {
     this.armCommands = armCommands;
     this.intakeCommands = intakeCommands;
     this.driveToPointFactory = driveToPointFactory;
     this.swerveSubsystem = swerveSubsystem;
+    this.ClimbSubsystem = ClimbSubsystem;
   }
 
   public Command intakeStraitToArm() {
@@ -83,6 +88,18 @@ public class ScoreCommands {
 
   public Command ScoreL3() {
     return armCommands.scoreL3().andThen(resetCommand());
+  }
+
+  public Command climbslow() {
+    return Commands.run(() -> ClimbSubsystem.setOutput(ClimbPosition.Move.getTarget()));
+  }
+
+  public Command climbfast() {
+    return Commands.run(() -> ClimbSubsystem.setOutput(ClimbPosition.MoveFast.getTarget()));
+  }
+
+  public Command climbstop() {
+    return Commands.run(() -> ClimbSubsystem.setOutput(ClimbPosition.Hold.getTarget()));
   }
 
   private boolean isCommandWOrking = false;

@@ -38,6 +38,7 @@ public class RobotContainer {
   public final RobotSubsystems subsystems;
   // Controller
   private final Controller controller;
+
   private final IntakeCommands intakeCommands;
   private final ArmCommands armCommands;
   private final ScoreCommands scoreCommands;
@@ -49,6 +50,7 @@ public class RobotContainer {
   public RobotContainer() {
     subsystems = new RobotSubsystems();
     controller = new Controller();
+
     intakeCommands =
         new IntakeCommands(
             subsystems.IntakeGriper, subsystems.intakepitch, subsystems.intakeindexer);
@@ -61,8 +63,12 @@ public class RobotContainer {
             subsystems.IntakeGriper,
             subsystems.intakepitch);
     scoreCommands =
-        new ScoreCommands(armCommands, intakeCommands, driveToPointFactory, subsystems.swerve);
-
+        new ScoreCommands(
+            armCommands,
+            intakeCommands,
+            driveToPointFactory,
+            subsystems.swerve,
+            subsystems.ClimbSubsystem);
     // Set up auto routines
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("autoChooser", autoChooser);
@@ -79,8 +85,10 @@ public class RobotContainer {
   private void configureButtonBindings() {
 
     // controller.swervecontroller.square().onTrue(scoreCommands.alegehighCommand());
-    controller.swervecontroller.cross().onTrue(scoreCommands.ScoreL3());
-    controller.swervecontroller.circle().onTrue(scoreCommands.resetCommand());
+    // controller.swervecontroller.cross().whileTrue(scoreCommands.climbslow());
+    // controller.swervecontroller.triangle().whileTrue(scoreCommands.climbfast());
+
+    // controller.swervecontroller.circle().onTrue(scoreCommands.resetCommand());
 
     // controller
     //     .swervecontroller
