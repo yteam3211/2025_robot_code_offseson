@@ -14,6 +14,7 @@
 package frc.robot;
 
 import com.pathplanner.lib.commands.PathfindingCommand;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.lib.util.LimelightHelpers;
@@ -84,6 +85,10 @@ public class Robot extends LoggedRobot {
   /** This function is called periodically during all modes. */
   @Override
   public void robotPeriodic() {
+    double rightTag = LimelightHelpers.getFiducialID("limelight-right");
+    double leftTag = LimelightHelpers.getFiducialID("limelight-left");
+    SmartDashboard.putNumber("left tag", leftTag);
+    SmartDashboard.putNumber("right tag", rightTag);
     // Optionally switch the thread to high priority to improve loop
     // timing (see the template project documentation for details)
     // Threads.setCurrentThreadPriority(true, 99);

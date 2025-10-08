@@ -30,7 +30,7 @@ public class elvetorconstants {
     public static final double MOTOR_KS = 0; // TODO INITILIZE THESE VALUES
     public static final double MOTOR_KA = 0.0003;
     public static final double MOTOR_KV = 0.05;
-    public static final double MOTOR_KG = 0.3;
+    public static final double MOTOR_KG = 0.4;
     public static final double MOTOR_KP = 0.19;
     public static final double MOTOR_KI = 0.015;
     public static final double MOTOR_KD = 0.015;

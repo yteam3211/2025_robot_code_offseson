@@ -75,7 +75,7 @@ public class ReefPositions {
             new Translation2d(2.96, 4.03),
             new Translation2d(offset - 14.439, 3.99), // AprilTag Center
             new Translation2d(3.16, 4.194), // Left
-            new Translation2d(3.16, 3.866), // Right
+            new Translation2d(3.16, 3.866 + 0.1), // Right
             Rotation2d.fromDegrees(0), // Mirrored Facing Angle
             "Blue North"),
         new ReefSidePosition(

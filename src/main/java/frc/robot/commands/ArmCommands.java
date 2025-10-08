@@ -89,17 +89,21 @@ public class ArmCommands {
         .andThen(restAfterPass());
   }
 
-  public Command scoreL2() {
+  public Command scoreL2(BooleanSupplier isatpose) {
     return elevator
         .changestateCommandMustHaveUntil(Elevatorstates.L2)
         .until(elevator.isAtLestHight(3))
-        .alongWith(
+        .andThen(
             armpitch
-                .chengestateCommandMustHaveUntil(armPitchState.L2)
-                .until(armpitch.isLesspos(-45))
+                .chengestateCommandMustHaveUntil(armPitchState.L2first)
+                .until(isatpose)
                 .andThen(
-                    Armgriper.changestateCommandMustHaveUntil(armgriperstate.Eject)
-                        .until(() -> !Armgriper.isCorakIn().getAsBoolean())));
+                    armpitch
+                        .chengestateCommandMustHaveUntil(armPitchState.L2)
+                        .until(armpitch.isAtLestPosdouble(-45))
+                        .andThen(
+                            Armgriper.changestateCommandMustHaveUntil(armgriperstate.Eject)
+                                .until(() -> !Armgriper.isCorakIn().getAsBoolean()))));
   }
 
   public Command resetcommand() {
@@ -107,10 +111,10 @@ public class ArmCommands {
         .andThen(
             armpitch
                 .chengestateCommandMustHaveUntil(armPitchState.rest)
-                .until(armpitch.islessthenPosdouble(30)))
-        .andThen(
-            Armgriper.changestateCommand(armgriperstate.KeepItIn)
-                .andThen(elevator.setToZeroPosionCommand()));
+                .until(armpitch.islessthenPosdouble(30))
+                .andThen(
+                    Armgriper.changestateCommand(armgriperstate.KeepItIn)
+                        .alongWith(elevator.setToZeroPosionCommand())));
   }
 
   public Command resetcommandalge() {
@@ -130,30 +134,38 @@ public class ArmCommands {
     elevator.getCurrentCommand().cancel();
   }
 
-  public Command scoreL3() {
+  public Command scoreL3(BooleanSupplier isatpose) {
     return elevator
         .changestateCommandMustHaveUntil(Elevatorstates.L3)
         .until(elevator.isAtLestHight(43))
-        .alongWith(
+        .andThen(
             armpitch
-                .chengestateCommandMustHaveUntil(armPitchState.L3)
-                .until(armpitch.isAtLestPosdouble(45))
+                .chengestateCommandMustHaveUntil(armPitchState.L3first)
+                .until(isatpose)
                 .andThen(
-                    Armgriper.changestateCommandMustHaveUntil(armgriperstate.Eject)
-                        .until(() -> !Armgriper.isCorakIn().getAsBoolean())));
+                    armpitch
+                        .chengestateCommandMustHaveUntil(armPitchState.L3)
+                        .until(armpitch.isAtLestPosdouble(-45))
+                        .andThen(
+                            Armgriper.changestateCommandMustHaveUntil(armgriperstate.Eject)
+                                .until(() -> !Armgriper.isCorakIn().getAsBoolean()))));
   }
 
-  public Command scoreL4() {
+  public Command scoreL4(BooleanSupplier isatpose) {
     return elevator
         .changestateCommandMustHaveUntil(Elevatorstates.L4)
         .until(elevator.isAtLestHight(106))
         .andThen(
             armpitch
-                .chengestateCommandMustHaveUntil(armPitchState.L4)
-                .until(armpitch.isAtLestPosdouble(-40))
+                .chengestateCommandMustHaveUntil(armPitchState.L4first)
+                .until(isatpose)
                 .andThen(
-                    Armgriper.changestateCommand(armgriperstate.Eject)
-                        .andThen(Commands.waitSeconds(0.2))));
+                    armpitch
+                        .chengestateCommandMustHaveUntil(armPitchState.L4)
+                        .until(armpitch.isAtLestPosdouble(-45))
+                        .andThen(
+                            Armgriper.changestateCommand(armgriperstate.Eject)
+                                .andThen(Commands.waitSeconds(0.2)))));
   }
 
   public Command alegeCommanLow() {
@@ -169,7 +181,7 @@ public class ArmCommands {
                         .until(
                             () ->
                                 Armgriper.isCorakIn().getAsBoolean()
-                                    && armpitch.getArmPosition() < 40)));
+                                    && armpitch.isAtLestPosdouble(40).getAsBoolean())));
   }
 
   public Command alegeCommanhgih() {
@@ -179,13 +191,13 @@ public class ArmCommands {
         .andThen(
             armpitch
                 .chengestateCommandMustHaveUntil(armPitchState.alge)
-                .until(armpitch.isLesspos(-80))
+                .until(armpitch.isAtLestPosdouble(-80))
                 .andThen(
                     Armgriper.changestateCommandMustHaveUntil(armgriperstate.Collect)
                         .until(
                             () ->
                                 Armgriper.isCorakIn().getAsBoolean()
-                                    && armpitch.getArmPosition() < 40)));
+                                    && armpitch.isAtLestPosdouble(40).getAsBoolean())));
   }
 
   public Command netScore(BooleanSupplier plot) {

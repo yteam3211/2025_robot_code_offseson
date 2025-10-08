@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.lib.util.DriveToPointFactory;
+import frc.lib.util.ITarget;
 import frc.lib.util.LimelightHelpers;
 import frc.lib.util.ReefPositions;
 import frc.lib.util.ReefSidePosition;
@@ -55,27 +56,40 @@ public class ScoreCommands {
     return intakeCommands.scoreL1Command().andThen(resetCommand());
   }
 
-  public Command ScoreL2() {
-    return armCommands.scoreL2().andThen(resetCommand());
+  public Command ScoreL2(BooleanSupplier isatpose) {
+    return armCommands.scoreL2(isatpose).andThen(resetCommand());
   }
 
-  public enum sideScore {
-    left,
-    right;
+  public enum sideScore implements ITarget {
+    left(1),
+    right(-1);
+    int side;
+
+    private sideScore(int side) {
+      this.side = side;
+    }
+
+    @Override
+    public double getTarget() {
+      return side;
+    }
   }
 
   public Command getClosestLeftRightPose(sideScore side) {
     int checkarr;
     if (DriverStation.getAlliance().get() == Alliance.Blue) {
-      checkarr = -17;
+      checkarr = 17;
     } else {
-      checkarr = -6;
+      checkarr = 0;
     }
     Pose2d targetPose2d = new Pose2d();
     ReefSidePosition reefSidePosition[] = ReefPositions.getReefPositions();
     double rightTag = LimelightHelpers.getFiducialID("limelight-right");
     double leftTag = LimelightHelpers.getFiducialID("limelight-left");
-    if (side == sideScore.left) {
+    if (rightTag == 0 || leftTag == 0) {
+      return Commands.runOnce(() -> {});
+    }
+    if (side.getTarget() == sideScore.left.getTarget()) {
       if (rightTag != -1) {
         targetPose2d =
             new Pose2d(
@@ -85,11 +99,11 @@ public class ScoreCommands {
       if (leftTag != -1) {
         targetPose2d =
             new Pose2d(
-                reefSidePosition[(int) rightTag - checkarr].getLeft(),
+                reefSidePosition[(int) leftTag - checkarr].getLeft(),
                 swerveSubsystem.getPose().getRotation());
       }
     }
-    if (side == sideScore.right) {
+    if (side.getTarget() == sideScore.right.getTarget()) {
       if (rightTag != -1) {
         targetPose2d =
             new Pose2d(
@@ -99,7 +113,7 @@ public class ScoreCommands {
       if (leftTag != -1) {
         targetPose2d =
             new Pose2d(
-                reefSidePosition[(int) rightTag - checkarr].getRight(),
+                reefSidePosition[(int) leftTag - checkarr].getRight(),
                 swerveSubsystem.getPose().getRotation());
       }
     }
@@ -125,7 +139,7 @@ public class ScoreCommands {
   }
 
   public Command netScore(BooleanSupplier plot) {
-    return armCommands.netScore(plot);
+    return Commands.waitSeconds(0.3).andThen(armCommands.netScore(plot));
   }
 
   public Command resetCommandalge() {
@@ -136,8 +150,8 @@ public class ScoreCommands {
     return armCommands.resetcommand().alongWith(intakeCommands.resetCommand());
   }
 
-  public Command ScoreL3() {
-    return armCommands.scoreL3().andThen(resetCommand());
+  public Command ScoreL3(BooleanSupplier isatpose) {
+    return armCommands.scoreL3(isatpose).andThen(resetCommand());
   }
 
   public Command climbslow() {
@@ -162,7 +176,7 @@ public class ScoreCommands {
     return false;
   }
 
-  public Command ScoreL4() {
-    return armCommands.scoreL4().andThen(resetCommand());
+  public Command ScoreL4(BooleanSupplier isatpose) {
+    return armCommands.scoreL4(isatpose).andThen(resetCommand());
   }
 }

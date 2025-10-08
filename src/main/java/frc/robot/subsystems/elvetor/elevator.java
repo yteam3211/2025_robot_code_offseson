@@ -114,27 +114,11 @@ public class elevator extends SubsystemBase {
   Boolean isDown = false;
 
   public Command setToZeroPosionCommand() {
-    return changeStateCommand(Elevatorstates.REST_MODE)
+    return changestateCommandMustHaveUntil(Elevatorstates.REST_MODE)
         .until(() -> getHeight() < 5)
-        .andThen(() -> setspeed(0.025))
-        .until(() -> isElevatorDown());
+        .andThen(setSpeedCommand(-0.1).until(() -> isElevatorDown()));
   }
 
-  public void setToZeroPosion() {
-    motor.setControl(motionMagicVoltage.withPosition(0).withSlot(1));
-  }
-
-  //     public void closeSystemHelper(){
-  //     double elevatorDiff = Math.abs(RobotState.elevatorPosition.getTarget() - getHeight());
-  //   if(RobotState.elevatorPosition == ElevatorPosition.Close && elevatorDiff <
-  // ElevatorPosition.Threshold.getTarget() && !isElevatorDown()){
-  //     set(-0.08);
-  //   }
-  //   if (RobotState.elevatorPosition == ElevatorPosition.Close && isElevatorDown()) {
-  //     set(0);
-  //   }
-
-  // }
   public Boolean isDown() {
     return isDown;
   }
@@ -189,7 +173,7 @@ public class elevator extends SubsystemBase {
   }
 
   public void resetHeight() {
-    if (isElevatorDown()) {
+    if (isElevatorDown() && state.getTarget() == 0) {
       motor.setPosition(0);
     }
   }
