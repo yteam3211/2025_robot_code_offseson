@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -34,6 +35,9 @@ public class ScoreCommands {
     this.driveToPointFactory = driveToPointFactory;
     this.swerveSubsystem = swerveSubsystem;
     this.ClimbSubsystem = ClimbSubsystem;
+
+    NamedCommands.registerCommand("score_L4", scoreL4auto());
+    NamedCommands.registerCommand("score_intke", ScoreL1());
   }
 
   public Command intakeStraitToArm() {
@@ -150,6 +154,10 @@ public class ScoreCommands {
     return armCommands.resetcommand().alongWith(intakeCommands.resetCommand());
   }
 
+  public Command resetCommandsuper() {
+    return armCommands.resetCommandsuper().alongWith(intakeCommands.resetCommand());
+  }
+
   public Command ScoreL3(BooleanSupplier isatpose) {
     return armCommands.scoreL3(isatpose).andThen(resetCommand());
   }
@@ -178,5 +186,9 @@ public class ScoreCommands {
 
   public Command ScoreL4(BooleanSupplier isatpose) {
     return armCommands.scoreL4(isatpose).andThen(resetCommand());
+  }
+
+  public Command scoreL4auto() {
+    return armCommands.scoreL4auto().andThen(resetCommand());
   }
 }

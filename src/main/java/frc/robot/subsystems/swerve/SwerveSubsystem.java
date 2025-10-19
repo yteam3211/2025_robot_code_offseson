@@ -277,13 +277,13 @@ public class SwerveSubsystem extends SubsystemBase {
     }
   }
 
-  private void initialHeadingReset() {
+  public void initialHeadingReset() {
     try {
       Thread.sleep(1000);
     } catch (Exception e) {
     }
-
     m_gyro.reset();
+    m_gyro.setAngleAdjustment(180);
   }
 
   public void resetGyro() {
@@ -353,6 +353,7 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   public void zeroHeading() {
+    System.out.println("***********zero Heading**************");
     m_PoseEstimator.resetPosition(
         getGyroYaw(),
         getModulePositions(),
@@ -446,7 +447,6 @@ public class SwerveSubsystem extends SubsystemBase {
       publisher2.set(m_desiredStates);
     }
     publisher.set(getModuleStates());
-    UpdateMegaTag1Pose(m_PoseEstimator);
     m_PoseEstimator.update(getGyroYaw(), getModulePositions());
     publisherPose.set(m_PoseEstimator.getEstimatedPosition());
     if (this.getCurrentCommand() != null) {

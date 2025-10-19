@@ -168,6 +168,19 @@ public class ArmCommands {
                                 .andThen(Commands.waitSeconds(0.2)))));
   }
 
+  public Command scoreL4auto() {
+    return elevator
+        .changestateCommandMustHaveUntil(Elevatorstates.L4)
+        .until(elevator.isAtLestHight(106))
+        .andThen(
+            armpitch
+                .chengestateCommandMustHaveUntil(armPitchState.L4)
+                .until(armpitch.isAtLestPosdouble(-45))
+                .andThen(
+                    Armgriper.changestateCommand(armgriperstate.Eject)
+                        .andThen(Commands.waitSeconds(0.7))));
+  }
+
   public Command alegeCommanLow() {
     return elevator
         .changestateCommandMustHaveUntil(Elevatorstates.algelow)
@@ -200,19 +213,36 @@ public class ArmCommands {
                                     && armpitch.isAtLestPosdouble(40).getAsBoolean())));
   }
 
+  boolean ishardreset = false;
+
+  public boolean ishardreset() {
+    return ishardreset;
+  }
+
   public Command netScore(BooleanSupplier plot) {
-    return elevator
-        .changestateCommandMustHaveUntil(Elevatorstates.net)
-        .until(elevator.isAtLestHight(160))
-        .andThen(armpitch.chengestateCommandMustHaveUntil(armPitchState.net))
-        .until(plot)
-        .andThen(Armgriper.changestateCommand(armgriperstate.Eject))
-        .andThen(Commands.waitSeconds(0.5))
+    return Commands.runOnce(() -> ishardreset = false)
         .andThen(
-            armpitch
-                .changestateCommandMustHaveUntil(armPitchState.rest)
-                .until(armpitch.isAtLestpos(-20))
-                .andThen(elevator.changeStateCommand(Elevatorstates.REST_MODE))
-                .alongWith(Armgriper.changestateCommand(armgriperstate.KeepItIn)));
+            elevator
+                .changestateCommandMustHaveUntil(Elevatorstates.net)
+                .until(elevator.isAtLestHight(160))
+                .andThen(armpitch.chengestateCommandMustHaveUntil(armPitchState.net))
+                .until(() -> plot.getAsBoolean() || ishardreset())
+                .andThen(Armgriper.changestateCommand(armgriperstate.Eject))
+                .andThen(Commands.waitSeconds(0.5))
+                .andThen(
+                    armpitch
+                        .changestateCommandMustHaveUntil(armPitchState.rest)
+                        .until(armpitch.isAtLestpos(-20))
+                        .andThen(elevator.changeStateCommand(Elevatorstates.REST_MODE))
+                        .alongWith(Armgriper.changestateCommand(armgriperstate.KeepItIn))));
+  }
+
+  public Command resetCommandsuper() {
+    ishardreset = true;
+    return armpitch
+        .settoZeroSuper()
+        .until(armpitch.islessthenPosdouble(10))
+        .andThen(elevator.setToZeroPosionCommandsuper())
+        .alongWith(Armgriper.resetSuper());
   }
 }

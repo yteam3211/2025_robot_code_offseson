@@ -7,7 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "right blue"
+            "pathName": "middle blue score"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "score_intke"
           }
         }
       ]

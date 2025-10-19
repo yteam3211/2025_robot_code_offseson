@@ -7,13 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "right blue"
+            "pathName": "right red"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "blue",
+  "folder": "red",
   "choreoAuto": false
 }

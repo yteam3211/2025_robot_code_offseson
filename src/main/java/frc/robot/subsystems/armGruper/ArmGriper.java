@@ -37,7 +37,13 @@ public class ArmGriper extends SubsystemBase {
     return m_griper.get();
   }
 
+  Boolean resetSuper = false;
+
   public BooleanSupplier isCorakIn() {
+    if (resetSuper) {
+      resetSuper = false;
+      return () -> true;
+    }
     return () -> m_griper.getStatorCurrent().getValueAsDouble() > 13;
   }
 
@@ -67,5 +73,14 @@ public class ArmGriper extends SubsystemBase {
 
   public Command changestateCommand(armgriperstate newstate) {
     return Commands.runOnce(() -> changestate(newstate));
+  }
+
+  public Command changestateCommandsuper(armgriperstate newstate) {
+    return this.runOnce(() -> changestate(newstate));
+  }
+
+  public Command resetSuper() {
+    return this.runOnce(() -> resetSuper = true)
+        .andThen(this.runOnce(() -> changestate(armgriperstate.KeepItIn)));
   }
 }

@@ -119,6 +119,11 @@ public class elevator extends SubsystemBase {
         .andThen(setSpeedCommand(-0.1).until(() -> isElevatorDown()));
   }
 
+  public Command setToZeroPosionCommandsuper() {
+    return changeStateCommand(Elevatorstates.REST_MODE)
+        .andThen(this.run(() -> motor.set(-0.2)).until(() -> this.isElevatorDown()));
+  }
+
   public Boolean isDown() {
     return isDown;
   }

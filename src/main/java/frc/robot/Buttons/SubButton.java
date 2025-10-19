@@ -19,7 +19,7 @@ public class SubButton {
         .subcontroller
         .triangle()
         .onTrue(scoreCommands.ScoreL4(controller.subcontroller.triangle()));
-    controller.subcontroller.L1().onTrue(scoreCommands.resetCommand());
+    controller.subcontroller.L1().onTrue(scoreCommands.resetCommandsuper());
     controller.subcontroller.povUp().onTrue(scoreCommands.alegehighCommand());
     controller.subcontroller.povDown().onTrue(scoreCommands.alegelowCommand());
     controller

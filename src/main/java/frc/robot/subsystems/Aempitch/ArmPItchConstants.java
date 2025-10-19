@@ -17,7 +17,7 @@ public class ArmPItchConstants {
     public static final double MOTOR_KS = 0; // TODO INITILIZE THESE VALUES
     public static final double MOTOR_KA = 0;
     public static final double MOTOR_KV = 0.025;
-    public static final double MOTOR_KG = 0.2;
+    public static final double MOTOR_KG = 0.3;
     public static final double MOTOR_KP = 0.1011;
     public static final double MOTOR_KI = 0;
     public static final double MOTOR_KD = 0;

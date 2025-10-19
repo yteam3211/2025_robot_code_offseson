@@ -186,4 +186,8 @@ public class armPitch extends SubsystemBase {
   public double getarmspin() {
     return m_Pitch.getPosition().getValueAsDouble();
   }
+
+  public Command settoZeroSuper() {
+    return chengestateCommand(armPitchState.rest).andThen(this.run(() -> setRotation(0.0)));
+  }
 }

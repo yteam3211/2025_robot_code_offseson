@@ -6,8 +6,8 @@ import frc.robot.commands.ScoreCommands;
 public class driverButtom {
 
   public static void loadButtons(Controller controller, ScoreCommands scoreCommands) {
-    controller.swervecontroller.R2().onTrue(scoreCommands.intakeStraitToArm());
-    controller.swervecontroller.L2().onTrue(scoreCommands.intakeStayOnIntake());
+    controller.swervecontroller.povUp().onTrue(scoreCommands.intakeStraitToArm());
+    controller.swervecontroller.povDown().onTrue(scoreCommands.intakeStayOnIntake());
     // controller
     //     .swervecontroller
     //     .povRight()

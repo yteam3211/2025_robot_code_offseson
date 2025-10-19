@@ -7,13 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "right blue"
+            "pathName": "middle red score"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "score_intke"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "blue",
+  "folder": "red",
   "choreoAuto": false
 }
