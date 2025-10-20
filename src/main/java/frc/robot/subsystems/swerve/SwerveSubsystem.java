@@ -443,6 +443,8 @@ public class SwerveSubsystem extends SubsystemBase {
     SmartDashboard.putString("POSITION", getPose().toString());
     SmartDashboard.putString("Module positions", getDriveMotorDistances());
     SmartDashboard.putNumber("Front Left Mod Distance", getFrontLeftMotorDistance());
+    SmartDashboard.putNumber("right tag", LimelightHelpers.getFiducialID("limelight-right"));
+    SmartDashboard.putNumber("left tag", LimelightHelpers.getFiducialID("limelight-left"));
     if (m_desiredStates != null) {
       publisher2.set(m_desiredStates);
     }

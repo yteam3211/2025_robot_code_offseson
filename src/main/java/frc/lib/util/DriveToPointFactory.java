@@ -32,8 +32,8 @@ public class DriveToPointFactory {
     // if (DriverStation.getAlliance().get() == Alliance.Red) {
     //   Target = Target.div(-1);
     // }
-    PIDController xPID = new PIDController(1, 0, 0);
-    PIDController yPID = new PIDController(1, 0, 0);
+    PIDController xPID = new PIDController(5, 0, 0);
+    PIDController yPID = new PIDController(5, 0, 0);
     PIDController rotPID = new PIDController(5, 0, 0);
     rotPID.enableContinuousInput(-Math.PI, Math.PI);
 

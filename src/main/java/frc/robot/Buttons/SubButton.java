@@ -2,6 +2,7 @@ package frc.robot.Buttons;
 
 import frc.robot.Controller;
 import frc.robot.commands.ScoreCommands;
+import frc.robot.commands.ScoreCommands.sideScore;
 
 public class SubButton {
 
@@ -11,6 +12,14 @@ public class SubButton {
         .subcontroller
         .cross()
         .onTrue(scoreCommands.ScoreL2(controller.subcontroller.cross()));
+    controller
+        .subcontroller
+        .povLeft()
+        .whileTrue(scoreCommands.getClosestLeftRightPose(sideScore.left));
+    controller
+        .subcontroller
+        .povRight()
+        .whileTrue(scoreCommands.getClosestLeftRightPose(sideScore.right));
     controller
         .subcontroller
         .circle()
@@ -24,7 +33,7 @@ public class SubButton {
     controller.subcontroller.povDown().onTrue(scoreCommands.alegelowCommand());
     controller
         .subcontroller
-        .povRight()
+        .povUp()
         .onTrue(scoreCommands.netScore(controller.subcontroller.povRight()));
   }
 }

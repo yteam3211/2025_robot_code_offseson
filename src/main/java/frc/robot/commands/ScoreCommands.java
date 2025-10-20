@@ -80,48 +80,52 @@ public class ScoreCommands {
   }
 
   public Command getClosestLeftRightPose(sideScore side) {
-    int checkarr;
-    if (DriverStation.getAlliance().get() == Alliance.Blue) {
-      checkarr = 17;
-    } else {
-      checkarr = 0;
-    }
-    Pose2d targetPose2d = new Pose2d();
-    ReefSidePosition reefSidePosition[] = ReefPositions.getReefPositions();
-    double rightTag = LimelightHelpers.getFiducialID("limelight-right");
-    double leftTag = LimelightHelpers.getFiducialID("limelight-left");
-    if (rightTag == 0 || leftTag == 0) {
-      return Commands.runOnce(() -> {});
-    }
-    if (side.getTarget() == sideScore.left.getTarget()) {
-      if (rightTag != -1) {
-        targetPose2d =
-            new Pose2d(
-                reefSidePosition[(int) rightTag - checkarr].getLeft(),
-                swerveSubsystem.getPose().getRotation());
-      }
-      if (leftTag != -1) {
-        targetPose2d =
-            new Pose2d(
-                reefSidePosition[(int) leftTag - checkarr].getLeft(),
-                swerveSubsystem.getPose().getRotation());
-      }
-    }
-    if (side.getTarget() == sideScore.right.getTarget()) {
-      if (rightTag != -1) {
-        targetPose2d =
-            new Pose2d(
-                reefSidePosition[(int) rightTag - checkarr].getRight(),
-                swerveSubsystem.getPose().getRotation());
-      }
-      if (leftTag != -1) {
-        targetPose2d =
-            new Pose2d(
-                reefSidePosition[(int) leftTag - checkarr].getRight(),
-                swerveSubsystem.getPose().getRotation());
-      }
-    }
-    return driveToPointFactory.fineAlign(targetPose2d);
+    Runnable m_callback =
+        new Runnable() {
+          public void run() {
+            int checkarr;
+            if (DriverStation.getAlliance().get() == Alliance.Blue) {
+              checkarr = 17;
+              
+            } else {
+              checkarr = 0;
+            }
+            Pose2d targetPose2d = Pose2d.kZero;
+            ReefSidePosition reefSidePosition[] = ReefPositions.getReefPositions();
+            double rightTag = LimelightHelpers.getFiducialID("limelight-right");
+            double leftTag = LimelightHelpers.getFiducialID("limelight-left");
+            if (side.getTarget() == sideScore.left.getTarget()) {
+              if (rightTag != -1 && rightTag != 0) {
+                targetPose2d =
+                    new Pose2d(
+                        reefSidePosition[(int) rightTag - checkarr].getLeft(),
+                        swerveSubsystem.getPose().getRotation());
+              }
+              if (leftTag != -1 && leftTag != 0) {
+                targetPose2d =
+                    new Pose2d(
+                        reefSidePosition[(int) leftTag - checkarr].getLeft(),
+                        swerveSubsystem.getPose().getRotation());
+              }
+            }
+            if (side.getTarget() == sideScore.right.getTarget()) {
+              if (rightTag != -1 && rightTag != 0) {
+                targetPose2d =
+                    new Pose2d(
+                        reefSidePosition[(int) rightTag - checkarr].getRight(),
+                        swerveSubsystem.getPose().getRotation());
+              }
+              if (leftTag != -1 && leftTag != 0) {
+                targetPose2d =
+                    new Pose2d(
+                        reefSidePosition[(int) leftTag - checkarr].getRight(),
+                        swerveSubsystem.getPose().getRotation());
+              }
+            }
+            driveToPointFactory.driveToPose(targetPose2d);
+          }
+        };
+    return Commands.runOnce(m_callback);
   }
 
   public Command testPidAuto(Pose2d newpose) {
