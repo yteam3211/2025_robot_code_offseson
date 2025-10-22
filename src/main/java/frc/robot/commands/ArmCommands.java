@@ -58,7 +58,7 @@ public class ArmCommands {
         .alongWith(
             Armgriper.changestateCommand(armgriperstate.Collect)
                 .alongWith(intakegriper.changestateCommandMustHaveUntil(inakegriperstate.Eject)))
-        .until(() -> elevator.getHeight() < 102 || Armgriper.isCorakIn().getAsBoolean());
+        .until(() -> elevator.getHeight() < 104 || Armgriper.isCorakIn().getAsBoolean());
   }
 
   public Command passToArmFromintake() {
@@ -238,11 +238,12 @@ public class ArmCommands {
   }
 
   public Command resetCommandsuper() {
-    ishardreset = true;
-    return armpitch
-        .settoZeroSuper()
-        .until(armpitch.islessthenPosdouble(10))
-        .andThen(elevator.setToZeroPosionCommandsuper())
-        .alongWith(Armgriper.resetSuper());
+    return Commands.runOnce(() -> ishardreset = true)
+        .andThen(
+            armpitch
+                .settoZeroSuper()
+                .until(armpitch.islessthenPosdouble(10))
+                .andThen(elevator.setToZeroPosionCommandsuper())
+                .alongWith(Armgriper.resetSuper()));
   }
 }

@@ -79,6 +79,8 @@ public class ScoreCommands {
     }
   }
 
+  private Pose2d targetPose2d = Pose2d.kZero;
+
   public Command getClosestLeftRightPose(sideScore side) {
     Runnable m_callback =
         new Runnable() {
@@ -86,11 +88,11 @@ public class ScoreCommands {
             int checkarr;
             if (DriverStation.getAlliance().get() == Alliance.Blue) {
               checkarr = 17;
-              
+
             } else {
               checkarr = 0;
             }
-            Pose2d targetPose2d = Pose2d.kZero;
+            targetPose2d = Pose2d.kZero;
             ReefSidePosition reefSidePosition[] = ReefPositions.getReefPositions();
             double rightTag = LimelightHelpers.getFiducialID("limelight-right");
             double leftTag = LimelightHelpers.getFiducialID("limelight-left");
@@ -122,10 +124,9 @@ public class ScoreCommands {
                         swerveSubsystem.getPose().getRotation());
               }
             }
-            driveToPointFactory.driveToPose(targetPose2d);
           }
         };
-    return Commands.runOnce(m_callback);
+    return Commands.runOnce(m_callback).andThen(driveToPointFactory.fineAlign(targetPose2d));
   }
 
   public Command testPidAuto(Pose2d newpose) {

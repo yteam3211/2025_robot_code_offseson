@@ -82,17 +82,9 @@ public class IntakeCommands {
   }
 
   public Command resetCommand() {
-    return Commands.runOnce(() -> stop())
-        .andThen(
-            intakePitch
-                .changestateCommand(IntakePitchstate.ZERO_POSITION)
-                .alongWith(intakeIndexer.changestateCommand(IntakeIndexerState.STOP))
-                .andThen(Intakegriper.changeStateCommand(inakegriperstate.KeepItIn)));
-  }
-
-  public void stop() {
-    intakePitch.getCurrentCommand().cancel();
-    intakeIndexer.getCurrentCommand().cancel();
-    Intakegriper.getCurrentCommand().cancel();
+    return intakePitch
+        .changestateCommand(IntakePitchstate.ZERO_POSITION)
+        .alongWith(intakeIndexer.changestateCommand(IntakeIndexerState.STOP))
+        .andThen(Intakegriper.changeStateCommand(inakegriperstate.KeepItIn));
   }
 }
