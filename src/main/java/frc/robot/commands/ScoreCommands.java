@@ -15,6 +15,7 @@ import frc.robot.states.ClimbPosition;
 import frc.robot.subsystems.climb.ClimbSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import java.util.function.BooleanSupplier;
+import java.util.function.Supplier;
 
 public class ScoreCommands {
   public static final Command ScoreL4 = null;
@@ -35,6 +36,7 @@ public class ScoreCommands {
     this.driveToPointFactory = driveToPointFactory;
     this.swerveSubsystem = swerveSubsystem;
     this.ClimbSubsystem = ClimbSubsystem;
+    this.targetPose2d = swerveSubsystem.getPose();
 
     NamedCommands.registerCommand("score_L4", scoreL4auto());
     NamedCommands.registerCommand("score_intke", ScoreL1());
@@ -78,7 +80,7 @@ public class ScoreCommands {
       return side;
     }
   }
-
+  private Pose2d targetPose2d;
   public Command getClosestLeftRightPose(sideScore side) {
     Runnable m_callback =
         new Runnable() {
@@ -90,11 +92,11 @@ public class ScoreCommands {
             } else {
               checkarr = 0;
             }
-            Pose2d targetPose2d = Pose2d.kZero;
+            targetPose2d = Pose2d.kZero;
             ReefSidePosition reefSidePosition[] = ReefPositions.getReefPositions();
             double rightTag = LimelightHelpers.getFiducialID("limelight-right");
             double leftTag = LimelightHelpers.getFiducialID("limelight-left");
-            if (side.getTarget() == sideScore.left.getTarget()) {
+            if (side == sideScore.left) {
               if (rightTag != -1 && rightTag != 0) {
                 targetPose2d =
                     new Pose2d(
@@ -122,13 +124,12 @@ public class ScoreCommands {
                         swerveSubsystem.getPose().getRotation());
               }
             }
-            driveToPointFactory.driveToPose(targetPose2d);
           }
         };
-    return Commands.runOnce(m_callback);
+    return Commands.runOnce(m_callback).andThen(driveToPointFactory.fineAlign(()->targetPose2d));
   }
 
-  public Command testPidAuto(Pose2d newpose) {
+  public Command testPidAuto(Supplier<Pose2d> newpose) {
     return driveToPointFactory.fineAlign(newpose);
   }
 
