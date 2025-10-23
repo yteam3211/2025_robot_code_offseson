@@ -5,7 +5,7 @@ import frc.lib.util.ITarget;
 public enum inakegriperstate implements ITarget {
   KeepItIn(0),
   Collect(-0.4),
-  Eject(0.5);
+  Eject(0.4);
 
   private double m_velocity;
 

@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -92,22 +93,22 @@ public class ScoreCommands {
             } else {
               checkarr = 0;
             }
-            targetPose2d = Pose2d.kZero;
+            targetPose2d = swerveSubsystem.getPose();
             ReefSidePosition reefSidePosition[] = ReefPositions.getReefPositions();
             double rightTag = LimelightHelpers.getFiducialID("limelight-right");
             double leftTag = LimelightHelpers.getFiducialID("limelight-left");
             if (side.getTarget() == sideScore.left.getTarget()) {
               if (rightTag != -1 && rightTag != 0) {
                 targetPose2d =
-                    new Pose2d(
+                    new Pose2d  (
                         reefSidePosition[(int) rightTag - checkarr].getLeft(),
-                        swerveSubsystem.getPose().getRotation());
+                        reefSidePosition[(int) rightTag - checkarr].getAngle().plus(new Rotation2d(90)));
               }
               if (leftTag != -1 && leftTag != 0) {
                 targetPose2d =
                     new Pose2d(
                         reefSidePosition[(int) leftTag - checkarr].getLeft(),
-                        swerveSubsystem.getPose().getRotation());
+                        reefSidePosition[(int) leftTag - checkarr].getAngle().plus(new Rotation2d(90)));
               }
             }
             if (side.getTarget() == sideScore.right.getTarget()) {
@@ -115,18 +116,18 @@ public class ScoreCommands {
                 targetPose2d =
                     new Pose2d(
                         reefSidePosition[(int) rightTag - checkarr].getRight(),
-                        swerveSubsystem.getPose().getRotation());
+                        reefSidePosition[(int) rightTag - checkarr].getAngle().plus(new Rotation2d(90)));
               }
               if (leftTag != -1 && leftTag != 0) {
                 targetPose2d =
                     new Pose2d(
                         reefSidePosition[(int) leftTag - checkarr].getRight(),
-                        swerveSubsystem.getPose().getRotation());
+                        reefSidePosition[(int) rightTag - checkarr].getAngle().plus(new Rotation2d(90)));
               }
             }
           }
         };
-    return Commands.runOnce(m_callback).andThen(driveToPointFactory.fineAlign(targetPose2d));
+    return Commands.runOnce(m_callback).andThen(driveToPointFactory.fineAlign(() -> targetPose2d));
   }
 
   public Command testPidAuto(Pose2d newpose) {

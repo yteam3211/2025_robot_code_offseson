@@ -1,5 +1,7 @@
 package frc.lib.util;
 
+import java.util.function.Supplier;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.controller.PIDController;
@@ -52,6 +54,38 @@ public class DriveToPointFactory {
         .until(
             () -> {
               Pose2d error = target.relativeTo(swerve.getPose());
+              return Math.abs(error.getX()) < 0.2
+                  && Math.abs(error.getY()) < 0.2
+                  && Math.abs(error.getRotation().getRadians()) < Math.toRadians(3);
+            })
+        .finallyDo(() -> swerve.stop());
+  }
+
+
+  public Command fineAlign(Supplier<Pose2d> Target) {
+    // if (DriverStation.getAlliance().get() == Alliance.Red) {
+    //   Target = Target.div(-1);
+    // }
+    PIDController xPID = new PIDController(5, 0, 0);
+    PIDController yPID = new PIDController(5, 0, 0);
+    PIDController rotPID = new PIDController(5, 0, 0);
+    rotPID.enableContinuousInput(-Math.PI, Math.PI);
+
+    return swerve
+        .run(
+            () -> {
+              Pose2d current = swerve.getPose();
+              double xOut = xPID.calculate(current.getX(), Target.get().getY());
+              double yOut = yPID.calculate(current.getY(), Target.get().getY());
+              double rotOut =
+                  rotPID.calculate(
+                      current.getRotation().getRadians(), Target.get().getRotation().getRadians());
+
+              swerve.drive(new Translation2d(xOut, yOut), rotOut, true, true);
+            })
+        .until(
+            () -> {
+              Pose2d error = Target.get().relativeTo(swerve.getPose());
               return Math.abs(error.getX()) < 0.2
                   && Math.abs(error.getY()) < 0.2
                   && Math.abs(error.getRotation().getRadians()) < Math.toRadians(3);

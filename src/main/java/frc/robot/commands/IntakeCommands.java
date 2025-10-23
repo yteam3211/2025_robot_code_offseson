@@ -63,7 +63,7 @@ public class IntakeCommands {
   public Command intakeCommand() {
 
     return downTakeIndexunil()
-        .andThen(upTakeIndex().until(() -> intakePitch.getPos() < 90))
+        .andThen(upTakeIndex().until(() -> intakePitch.getPos() < 40))
         .andThen(upNOTakeNOIndexuntil().until(() -> intakePitch.getPos() < 20));
   }
 
