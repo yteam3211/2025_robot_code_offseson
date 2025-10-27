@@ -80,8 +80,8 @@ public class elevatorIOsim implements elevatorIO {
 
   @Override
   public void updateinputs(elevatorInputs inputs) {
-    inputs.height = dcMotorSim.getAngularPositionRotations();
-    inputs.speed = dcMotorSim.getAngularVelocityRPM();
+    inputs.height = m_master.getPosition().getValueAsDouble();
+    inputs.speed = m_master.get();
     if (dcMotorSim.getAngularPositionRotations() < 0.05) {
       inputs.is_close = true;
     } else {
