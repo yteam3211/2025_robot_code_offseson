@@ -9,7 +9,7 @@ public interface elevatorIO {
   public static class elevatorInputs {
     public double height = 0.0;
     public double speed = 0.0;
-    public boolean is_close = true;
+    public boolean is_close = false;
 
     public elevatorInputs() {}
   }

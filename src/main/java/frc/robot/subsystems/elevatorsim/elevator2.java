@@ -22,7 +22,7 @@ public class elevator2 extends SubsystemBase {
   /** Creates a new elevatorsubsystem. */
   public elevator2(elevatorIO io) {
     this.io = io;
-    // this.setDefaultCommand(this.setDefualElevatorCommand());
+    this.setDefaultCommand(this.setDefualElevatorCommand());
   }
 
   @Override

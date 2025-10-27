@@ -16,7 +16,6 @@ import frc.robot.subsystems.elvetor.elvetorconstants.MotorCurrentLimits;
 import java.util.function.DoubleSupplier;
 
 public class elevatorIOreal implements elevatorIO {
-
   private TalonFX motor = new TalonFX(elvetorconstants.masterid, "canv");
   private TalonFX m_slave = new TalonFX(elvetorconstants.slaveid, "canv");
   private DigitalInput m_closeSwitch =
@@ -71,7 +70,14 @@ public class elevatorIOreal implements elevatorIO {
   }
 
   @Override
-  public void updateinputs(elevatorInputs new_Inputs) {}
+  public void updateinputs(elevatorInputs new_Inputs) {
+    new_Inputs.height = motor.getPosition().getValueAsDouble();
+    new_Inputs.speed = motor.get();
+    new_Inputs.is_close = m_closeSwitch.get();
+  }
+
+  @Override
+  public void updateElevator() {}
 
   @Override
   public void setheight(DoubleSupplier height) {

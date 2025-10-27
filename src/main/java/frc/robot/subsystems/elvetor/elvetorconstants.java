@@ -10,8 +10,8 @@ public class elvetorconstants {
   public static int masterid = 41;
   public static int slaveid = 42;
   public static final double POSITION_CONVERSION_FACTOR = 0.3024;
-  public static final double GEAR_RATIO = 0;
-  public static final double DRUM_RADIOS = 0;
+  public static final double GEAR_RATIO = 8.03;
+  public static final double DRUM_RADIOS = 54.2 * Math.PI;
   public static final FeedbackSensorSourceValue SensorSource =
       FeedbackSensorSourceValue.RotorSensor;
   public static final NeutralModeValue NeutralMode = NeutralModeValue.Brake;
