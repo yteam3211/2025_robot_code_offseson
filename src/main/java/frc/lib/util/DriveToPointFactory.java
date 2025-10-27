@@ -1,7 +1,5 @@
 package frc.lib.util;
 
-import java.util.function.Supplier;
-
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.controller.PIDController;
@@ -10,6 +8,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
+import java.util.function.Supplier;
 
 public class DriveToPointFactory {
   private final SwerveSubsystem swerve;
@@ -66,7 +65,7 @@ public class DriveToPointFactory {
             targetPose, getConstraints(), 0.0 // end velocity
             );
 
-    return pathfind.andThen(fineAlign(()-> targetPose));
+    return pathfind.andThen(fineAlign(() -> targetPose));
   }
 
   public Command driveToPosesimple(Pose2d targetPose) {
