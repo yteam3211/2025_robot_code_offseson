@@ -14,22 +14,24 @@ import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.hal.SimDevice;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
+import frc.robot.states.Elevatorstates;
 import frc.robot.subsystems.elvetor.elvetorconstants;
 import frc.robot.subsystems.elvetor.elvetorconstants.MotorCurrentLimits;
 import java.util.function.DoubleSupplier;
 
 public class elevatorIOsim implements elevatorIO {
-
-  private ElevatorSim ElevatorSim;
+  private ElevatorSim elevatorSim;
   private final DCMotor elevatorMotor = DCMotor.getKrakenX60(2);
-  //   private final DCMotorSim dcMotorSim =
-  //       new DCMotorSim(LinearSystemId.createDCMotorSystem(elevatorMotor,
-  //        0, 0), elevatorMotor);
-  TalonFX talonFX = new TalonFX(00);
+  private final DCMotorSim dcMotorSim =
+      new DCMotorSim(LinearSystemId.createElevatorSystem(elevatorMotor, 9.5+4, 0, 0),elevatorMotor);
+  private TalonFX m_master = new TalonFX(elvetorconstants.masterid);
 
-  TalonFXSimState motorSim;
-  MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
+  private TalonFXSimState m_master_sim;
+  private MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
 
   public elevatorIOsim() {
 
@@ -66,30 +68,21 @@ public class elevatorIOsim implements elevatorIO {
 
     StatusCode status = StatusCode.StatusCodeNotInitialized;
     for (int i = 0; i < 5; ++i) {
-      status = talonFX.getConfigurator().apply(talonFXConfiguration);
+      status = m_master.getConfigurator().apply(talonFXConfiguration);
       if (status.isOK()) break;
     }
     if (!status.isOK()) {
       System.out.println("Could not configure device. Error: " + status.toString());
     }
-    ElevatorSim =
-        new ElevatorSim(
-            elevatorMotor,
-            elvetorconstants.POSITION_CONVERSION_FACTOR * 2,
-            4.271 + 9.5,
-            0.5,
-            0,
-            2.7,
-            true,
-            0);
-    motorSim = talonFX.getSimState();
+    elevatorSim = new ElevatorSim(LinearSystemId.createElevatorSystem(elevatorMotor, 9.5+4, 0, 0)
+    , elevatorMotor, 0, 2.5, true, 0);
   }
 
   @Override
   public void updateinputs(elevatorInputs inputs) {
-    inputs.height = ElevatorSim.getPositionMeters();
-    inputs.speed = ElevatorSim.getVelocityMetersPerSecond();
-    if (ElevatorSim.getPositionMeters() < 0.05) {
+    inputs.height = dcMotorSim.getOutput(2);
+    inputs.speed = dcMotorSim.getOutput(1);
+    if (dcMotorSim.getOutput(2) < 0.05) {
       inputs.is_close = true;
     } else {
       inputs.is_close = false;
@@ -98,18 +91,24 @@ public class elevatorIOsim implements elevatorIO {
 
   @Override
   public void updateElevator() {
-    motorSim.setRawRotorPosition(
-        (ElevatorSim.getPositionMeters() / 100) * elvetorconstants.POSITION_CONVERSION_FACTOR);
-    ElevatorSim.setInputVoltage(motorSim.getMotorVoltage());
+    m_master_sim = m_master.getSimState();
+
+    m_master_sim.setSupplyVoltage(RobotController.getBatteryVoltage());
+    elevatorSim.setInputVoltage(m_master_sim.getMotorVoltage());
+    elevatorSim.update(0.02);
+
+    m_master_sim.setRawRotorPosition((elevatorSim.getPositionMeters()/100)* elvetorconstants.GEAR_RATIO);
+    m_master_sim.setRotorVelocity((elevatorSim.getVelocityMetersPerSecond()/100)* elvetorconstants.GEAR_RATIO);
+
   }
 
   @Override
   public void setheight(DoubleSupplier height) {
-    talonFX.setControl(motionMagicVoltage.withPosition(height.getAsDouble()).withSlot(0));
+    m_master.setControl(motionMagicVoltage.withPosition(height.getAsDouble()).withSlot(0));
   }
 
   @Override
   public void setSpeed(DoubleSupplier speed) {
-    talonFX.set(speed.getAsDouble());
+    m_master.set(speed.getAsDouble());
   }
 }
