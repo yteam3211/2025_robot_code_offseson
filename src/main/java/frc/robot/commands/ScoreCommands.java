@@ -99,15 +99,19 @@ public class ScoreCommands {
             if (side == sideScore.left) {
               if (rightTag != -1 && rightTag != 0) {
                 targetPose2d =
-                    new Pose2d  (
+                    new Pose2d(
                         reefSidePosition[(int) rightTag - checkarr].getLeft(),
-                        reefSidePosition[(int) rightTag - checkarr].getAngle().plus(new Rotation2d(90)));
+                        reefSidePosition[(int) rightTag - checkarr]
+                            .getAngle()
+                            .plus(new Rotation2d(90)));
               }
               if (leftTag != -1 && leftTag != 0) {
                 targetPose2d =
                     new Pose2d(
                         reefSidePosition[(int) leftTag - checkarr].getLeft(),
-                        reefSidePosition[(int) leftTag - checkarr].getAngle().plus(new Rotation2d(90)));
+                        reefSidePosition[(int) leftTag - checkarr]
+                            .getAngle()
+                            .plus(new Rotation2d(90)));
               }
             }
             if (side.getTarget() == sideScore.right.getTarget()) {
@@ -115,13 +119,17 @@ public class ScoreCommands {
                 targetPose2d =
                     new Pose2d(
                         reefSidePosition[(int) rightTag - checkarr].getRight(),
-                        reefSidePosition[(int) rightTag - checkarr].getAngle().plus(new Rotation2d(90)));
+                        reefSidePosition[(int) rightTag - checkarr]
+                            .getAngle()
+                            .plus(new Rotation2d(90)));
               }
               if (leftTag != -1 && leftTag != 0) {
                 targetPose2d =
                     new Pose2d(
                         reefSidePosition[(int) leftTag - checkarr].getRight(),
-                        reefSidePosition[(int) rightTag - checkarr].getAngle().plus(new Rotation2d(90)));
+                        reefSidePosition[(int) rightTag - checkarr]
+                            .getAngle()
+                            .plus(new Rotation2d(90)));
               }
             }
           }
