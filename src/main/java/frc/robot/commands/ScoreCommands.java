@@ -16,6 +16,7 @@ import frc.robot.states.ClimbPosition;
 import frc.robot.subsystems.climb.ClimbSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import java.util.function.BooleanSupplier;
+import java.util.function.Supplier;
 
 public class ScoreCommands {
   public static final Command ScoreL4 = null;
@@ -80,8 +81,6 @@ public class ScoreCommands {
     }
   }
 
-  private Pose2d targetPose2d = Pose2d.kZero;
-
   public Command getClosestLeftRightPose(sideScore side) {
     Runnable m_callback =
         new Runnable() {
@@ -93,11 +92,11 @@ public class ScoreCommands {
             } else {
               checkarr = 0;
             }
-            targetPose2d = swerveSubsystem.getPose();
+            Pose2d targetPose2d = Pose2d.kZero;
             ReefSidePosition reefSidePosition[] = ReefPositions.getReefPositions();
             double rightTag = LimelightHelpers.getFiducialID("limelight-right");
             double leftTag = LimelightHelpers.getFiducialID("limelight-left");
-            if (side.getTarget() == sideScore.left.getTarget()) {
+            if (side == sideScore.left) {
               if (rightTag != -1 && rightTag != 0) {
                 targetPose2d =
                     new Pose2d  (
@@ -127,10 +126,10 @@ public class ScoreCommands {
             }
           }
         };
-    return Commands.runOnce(m_callback).andThen(driveToPointFactory.fineAlign(() -> targetPose2d));
+    return Commands.runOnce(m_callback);
   }
 
-  public Command testPidAuto(Pose2d newpose) {
+  public Command testPidAuto(Supplier<Pose2d> newpose) {
     return driveToPointFactory.fineAlign(newpose);
   }
 

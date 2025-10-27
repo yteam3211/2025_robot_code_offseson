@@ -28,40 +28,6 @@ public class DriveToPointFactory {
         );
   }
 
-  /** Builds a fine PID settle command after pathfinding */
-  public Command fineAlign(Pose2d Target) {
-    final Pose2d target = Target;
-    // if (DriverStation.getAlliance().get() == Alliance.Red) {
-    //   Target = Target.div(-1);
-    // }
-    PIDController xPID = new PIDController(5, 0, 0);
-    PIDController yPID = new PIDController(5, 0, 0);
-    PIDController rotPID = new PIDController(5, 0, 0);
-    rotPID.enableContinuousInput(-Math.PI, Math.PI);
-
-    return swerve
-        .run(
-            () -> {
-              Pose2d current = swerve.getPose();
-              double xOut = xPID.calculate(current.getX(), target.getY());
-              double yOut = yPID.calculate(current.getY(), target.getY());
-              double rotOut =
-                  rotPID.calculate(
-                      current.getRotation().getRadians(), target.getRotation().getRadians());
-
-              swerve.drive(new Translation2d(xOut, yOut), rotOut, true, true);
-            })
-        .until(
-            () -> {
-              Pose2d error = target.relativeTo(swerve.getPose());
-              return Math.abs(error.getX()) < 0.2
-                  && Math.abs(error.getY()) < 0.2
-                  && Math.abs(error.getRotation().getRadians()) < Math.toRadians(3);
-            })
-        .finallyDo(() -> swerve.stop());
-  }
-
-
   public Command fineAlign(Supplier<Pose2d> Target) {
     // if (DriverStation.getAlliance().get() == Alliance.Red) {
     //   Target = Target.div(-1);
@@ -100,7 +66,7 @@ public class DriveToPointFactory {
             targetPose, getConstraints(), 0.0 // end velocity
             );
 
-    return pathfind.andThen(fineAlign(targetPose));
+    return pathfind.andThen(fineAlign(()-> targetPose));
   }
 
   public Command driveToPosesimple(Pose2d targetPose) {
