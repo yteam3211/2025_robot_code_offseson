@@ -3,8 +3,8 @@ package frc.robot.states;
 import frc.lib.util.ITarget;
 
 public enum ClimbPosition implements ITarget {
-  Move(0.2),
-  MoveFast(0.5),
+  Move(85),
+  MoveFast(10),
   Hold(0);
 
   private double m_angle;

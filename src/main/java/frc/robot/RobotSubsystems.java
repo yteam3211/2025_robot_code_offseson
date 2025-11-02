@@ -6,16 +6,13 @@ import frc.robot.subsystems.IntakeIndexer.IntakeIndexer;
 import frc.robot.subsystems.IntakePitch.IntakePitch;
 import frc.robot.subsystems.armGruper.ArmGriper;
 import frc.robot.subsystems.climb.ClimbSubsystem;
-import frc.robot.subsystems.elevatorsim.elevator2;
-import frc.robot.subsystems.elevatorsim.elevatorIOreal;
-import frc.robot.subsystems.elevatorsim.elevatorIOsim;
 import frc.robot.subsystems.elvetor.elevator;
 import frc.robot.subsystems.intakeGriper.IntakeGriper;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 
 public class RobotSubsystems {
   // subsystems
-  public final elevator2 elevator;
+  public final elevator elevator;
   public final ArmGriper ArmGriper;
   public final armPitch armpitch;
   public final IntakeGriper IntakeGriper;
@@ -32,7 +29,7 @@ public class RobotSubsystems {
       IntakeGriper = new IntakeGriper();
       intakepitch = new IntakePitch();
       intakeindexer = new IntakeIndexer();
-      elevator = new elevator2(new elevatorIOreal());
+      elevator = new elevator();
       ClimbSubsystem = new ClimbSubsystem();
     } else {
       ArmGriper = new ArmGriper();
@@ -41,7 +38,7 @@ public class RobotSubsystems {
       IntakeGriper = new IntakeGriper();
       intakepitch = new IntakePitch();
       intakeindexer = new IntakeIndexer();
-      elevator = new elevator2(new elevatorIOsim());
+      elevator = new elevator();
       ClimbSubsystem = new ClimbSubsystem();
     }
   }

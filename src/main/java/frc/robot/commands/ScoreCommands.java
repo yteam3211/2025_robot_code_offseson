@@ -52,14 +52,14 @@ public class ScoreCommands {
   }
 
   public Command intakeStayOnIntake() {
-    return intakeCommands.intakeCommand().andThen(resetCommand());
+    return intakeCommands.intakeCommand() /*.andThen(resetCommand())*/;
   }
 
   // public Command intkeToArmUpSide() {
   // return armCommands.elevatorUpDwon().andThen(intakeCommands.downTakeIndexunil());
   // }
   public Command ScoreL1() {
-    return intakeCommands.scoreL1Command().andThen(resetCommand());
+    return intakeCommands.scoreL1Command() /* .andThen(resetCommand())*/;
   }
 
   public Command ScoreL2(BooleanSupplier isatpose) {
@@ -164,7 +164,10 @@ public class ScoreCommands {
   }
 
   public Command resetCommand() {
-    return armCommands.resetcommand().alongWith(intakeCommands.resetCommand());
+    return /*Commands.runOnce(() -> CommandScheduler.getInstance().cancelAll())
+           .andThen(*/ armCommands
+        .resetcommand()
+        .alongWith(intakeCommands.resetCommand());
   }
 
   public Command resetCommandsuper() {

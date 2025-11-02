@@ -169,33 +169,19 @@ public class SwerveSubsystem extends SubsystemBase {
     return new Pose2d(closestReef.getCenter(), closestReef.getAngle());
   }
 
-  public void updateMegaTag2Pose(SwerveDrivePoseEstimator m_poseEstimator, AHRS m_gyro) {
+  public void updateMegaTag2Pose(SwerveDrivePoseEstimator m_poseEstimator, AHRS gyro) {
     // --- LIMELIGHT LEFT ---
-    LimelightHelpers.SetRobotOrientation(
-        "limelight-left",
-        m_poseEstimator.getEstimatedPosition().getRotation().getDegrees(),
-        0,
-        0,
-        0,
-        0,
-        0);
+    LimelightHelpers.SetRobotOrientation("limelight-left", gyro.getRawGyroY(), 0, 0, 0, 0, 0);
     LimelightHelpers.PoseEstimate mt2Left =
         LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-left");
 
     // --- LIMELIGHT RIGHT ---
-    LimelightHelpers.SetRobotOrientation(
-        "limelight-right",
-        m_poseEstimator.getEstimatedPosition().getRotation().getDegrees(),
-        0,
-        0,
-        0,
-        0,
-        0);
+    LimelightHelpers.SetRobotOrientation("limelight-right", gyro.getRawGyroY(), 0, 0, 0, 0, 0);
     LimelightHelpers.PoseEstimate mt2Right =
         LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-right");
 
     // reject if spinning too fast
-    if (Math.abs(m_gyro.getRate()) > 360) {
+    if (Math.abs(gyro.getRate()) > 360) {
       return;
     }
 
@@ -448,6 +434,7 @@ public class SwerveSubsystem extends SubsystemBase {
     if (m_desiredStates != null) {
       publisher2.set(m_desiredStates);
     }
+    updateMegaTag2Pose(this.m_PoseEstimator, this.m_gyro);
     publisher.set(getModuleStates());
     m_PoseEstimator.update(getGyroYaw(), getModulePositions());
     publisherPose.set(m_PoseEstimator.getEstimatedPosition());
