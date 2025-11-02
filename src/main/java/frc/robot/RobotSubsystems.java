@@ -2,6 +2,9 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.RobotBase;
 import frc.robot.subsystems.Aempitch.armPitch;
+import frc.robot.subsystems.ArmPitchSim.ArmPitchIOSim;
+import frc.robot.subsystems.ArmPitchSim.ArmPitchSim;
+import frc.robot.subsystems.ArmPitchSim.armPitchIOreal;
 import frc.robot.subsystems.IntakeIndexer.IntakeIndexer;
 import frc.robot.subsystems.IntakePitch.IntakePitch;
 import frc.robot.subsystems.armGruper.ArmGriper;
@@ -19,6 +22,7 @@ public class RobotSubsystems {
   // public final elevator2 elevator2;
   public final ArmGriper ArmGriper;
   public final armPitch armpitch;
+  public final ArmPitchSim armPitchSim;
   public final IntakeGriper IntakeGriper;
   public final IntakePitch intakepitch;
   public final IntakeIndexer intakeindexer;
@@ -26,11 +30,13 @@ public class RobotSubsystems {
   public final ClimbSubsystem ClimbSubsystem;
 
   public RobotSubsystems() {
-    // if (RobotBase.isReal()) {
-    //   elevator2 = new elevator2(new elevatorIOreal());
-    // } else {
-    //   elevator2 = new elevator2(new elevatorIOsim());
-    // }
+    if (RobotBase.isReal()) {
+      // elevator2 = new elevator2(new elevatorIOreal());
+      armPitchSim = new ArmPitchSim(new armPitchIOreal());
+    } else {
+      armPitchSim = new ArmPitchSim(new ArmPitchIOSim());
+      // elevator2 = new elevator2(new elevatorIOsim());
+    }
     elevator = new elevator();
     ClimbSubsystem = new ClimbSubsystem();
     ArmGriper = new ArmGriper();

@@ -24,7 +24,6 @@ import java.util.function.IntSupplier;
 public class armPitchIOreal implements ArmPitchIO {
 
   public TalonFX m_Pitch = new TalonFX(ArmPItchConstantsSim.m_PitchID, "rio");
-  public armPitchState state = armPitchState.firtstinit;
   private final MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
 
   // armioinputsautologged input = new armioinputsautolog;
@@ -66,108 +65,4 @@ public class armPitchIOreal implements ArmPitchIO {
     }
   }
 
-  public Command changestateCommandMustHaveUntil(armPitchState new_state) {
-    return Commands.run(() -> chengestate(new_state));
-  }
-
-  public void setdefualt(IntSupplier flip) {
-    setRotation(state.getTarget() * flip.getAsInt());
-  }
-
-
-  public void resetPos() {
-    m_Pitch.setPosition(0);
-  }
-
-  public double getArmPosition() {
-    return m_Pitch.getPosition().getValueAsDouble();
-  }
-
-  public BooleanSupplier isLesspos(double pos) {
-    return () -> getArmPosition() < pos;
-  }
-
-  public void needflipreef() {
-    LimelightHelpers.PoseEstimate mt1right =
-        LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-right");
-    boolean doRejectUpdate_right = false;
-    if (mt1right != null) {
-      if (mt1right.tagCount >= 1) {
-        if (mt1right.rawFiducials[0].ambiguity > .7) {
-          doRejectUpdate_right = true;
-        }
-        if (mt1right.rawFiducials[0].distToCamera > 3) {
-          doRejectUpdate_right = true;
-        }
-      }
-      if (mt1right.tagCount == 0) {
-        doRejectUpdate_right = true;
-      }
-
-      if (!doRejectUpdate_right) {
-        flip = () -> 1;
-      }
-    }
-    LimelightHelpers.PoseEstimate mt1left =
-        LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-left");
-    boolean doRejectUpdate_left = false;
-    if (mt1left != null) {
-      if (mt1left.tagCount >= 1) {
-        if (mt1left.rawFiducials[0].ambiguity > .7) {
-          doRejectUpdate_left = true;
-        }
-        if (mt1left.rawFiducials[0].distToCamera > 3) {
-          doRejectUpdate_left = true;
-        }
-      }
-      if (mt1left.tagCount == 0) {
-        doRejectUpdate_left = true;
-      }
-      if (!doRejectUpdate_left) {
-        flip = () -> -1;
-      }
-    }
-  }
-
-  IntSupplier flip = () -> 1;
-
-  public IntSupplier flip() {
-    return flip;
-  }
-
-  public BooleanSupplier isAtLestpos(double pos) {
-    return () -> getArmPosition() > pos;
-  }
-
-  public BooleanSupplier isAtLestPosdouble(double pos) {
-    return () -> Math.abs(getArmPosition()) > Math.abs(pos);
-  }
-
-  public BooleanSupplier islessthenPosdouble(double pos) {
-    return () -> Math.abs(getArmPosition()) < Math.abs(pos);
-  }
-
-  public void chengestate(armPitchState new_state) {
-    state = new_state;
-  }
-
-  public Command chengestateCommand(armPitchState new_state) {
-    return Commands.runOnce(() -> chengestate(new_state));
-  }
-
-  public Command chengestateCommandMustHaveUntil(armPitchState new_state) {
-    return Commands.run(() -> chengestate(new_state));
-  }
-
-  public void setRotation(Double targetPos) {
-    m_Pitch.setControl(motionMagicVoltage.withPosition(targetPos).withSlot(0));
-  }
-
-  public Command setRotationCommand(Double targetPos) {
-    return Commands.runOnce(() -> setRotation(targetPos));
-  }
-
-  public double getarmspin() {
-    return m_Pitch.getPosition().getValueAsDouble();
-  }
 }
