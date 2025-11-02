@@ -19,7 +19,6 @@ public interface ArmPitchIO {
         * on how to get evrey thing
         */
         public Angle pos = Degree.of(90);
-        
         public AngularVelocity speed = DegreesPerSecond.of(0);
         public AngularAcceleration acce = DegreesPerSecondPerSecond.of(0);    
     }

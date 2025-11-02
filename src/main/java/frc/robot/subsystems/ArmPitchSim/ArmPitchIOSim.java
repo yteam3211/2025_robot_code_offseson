@@ -10,8 +10,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 public class ArmPitchIOSim implements ArmPitchIO{
     private TalonFX talon = new TalonFX(ArmPItchConstantsSim.m_PitchID,"rio");
     private TalonFXSimState simState = talon.getSimState();
-    
-    
+    private 
     @Override 
     public void updateInputs(ArmPitchInputs inputs){
 
