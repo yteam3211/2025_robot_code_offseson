@@ -24,7 +24,11 @@ import frc.lib.util.DriveToPointFactory;
 import frc.robot.commands.ArmCommands;
 import frc.robot.commands.IntakeCommands;
 import frc.robot.commands.ScoreCommands;
+<<<<<<< HEAD
 import frc.robot.states.ClimbPosition;
+=======
+import frc.robot.states.armPitchState;
+>>>>>>> 8bf65b46bdd64a085fa92d7a81bc72cd893179c1
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -87,6 +91,7 @@ public class RobotContainer {
     // SubButton.loadButtons(controller, scoreCommands);
     // SwerveButtons.loadButtons(controller, subsystems);
     // defaultbutton.loadButtons(controller, subsystems);
+<<<<<<< HEAD
     // controller.swervecontroller
     //  subsystems.ClimbSubsystem
     controller
@@ -105,6 +110,20 @@ public class RobotContainer {
         .swervecontroller
         .circle()
         .onTrue(Commands.runOnce(() -> subsystems.ClimbSubsystem.setpos(0)));
+=======
+    controller
+        .testController
+        .a()
+        .onTrue(subsystems.armpitch.chengestateCommand(armPitchState.COLLECT));
+    controller
+        .testController
+        .b()
+        .onTrue(subsystems.armpitch.chengestateCommand(armPitchState.L3first));
+    controller
+        .testController
+        .x()
+        .onTrue(subsystems.armpitch.chengestateCommand(armPitchState.rest));
+>>>>>>> 8bf65b46bdd64a085fa92d7a81bc72cd893179c1
   }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

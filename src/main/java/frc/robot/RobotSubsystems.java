@@ -1,6 +1,5 @@
 package frc.robot;
 
-import edu.wpi.first.wpilibj.RobotBase;
 import frc.robot.subsystems.Aempitch.armPitch;
 import frc.robot.subsystems.IntakeIndexer.IntakeIndexer;
 import frc.robot.subsystems.IntakePitch.IntakePitch;
@@ -29,7 +28,7 @@ public class RobotSubsystems {
       IntakeGriper = new IntakeGriper();
       intakepitch = new IntakePitch();
       intakeindexer = new IntakeIndexer();
-      elevator = new elevator();
+      elevator = new elevator2(new elevatorIOreal());
       ClimbSubsystem = new ClimbSubsystem();
     } else {
       ArmGriper = new ArmGriper();
@@ -38,7 +37,7 @@ public class RobotSubsystems {
       IntakeGriper = new IntakeGriper();
       intakepitch = new IntakePitch();
       intakeindexer = new IntakeIndexer();
-      elevator = new elevator();
+      elevator = new elevator2(new elevatorIOsim());
       ClimbSubsystem = new ClimbSubsystem();
     }
   }
