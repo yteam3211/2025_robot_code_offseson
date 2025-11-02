@@ -20,13 +20,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.lib.util.DriveToPointFactory;
-import frc.robot.Buttons.SubButton;
-import frc.robot.Buttons.SwerveButtons;
-import frc.robot.Buttons.defaultbutton;
-import frc.robot.Buttons.driverButtom;
 import frc.robot.commands.ArmCommands;
 import frc.robot.commands.IntakeCommands;
 import frc.robot.commands.ScoreCommands;
+import frc.robot.states.armPitchState;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -85,10 +82,22 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    driverButtom.loadButtons(controller, scoreCommands);
-    SubButton.loadButtons(controller, scoreCommands);
-    SwerveButtons.loadButtons(controller, subsystems);
-    defaultbutton.loadButtons(controller, subsystems);
+    // driverButtom.loadButtons(controller, scoreCommands);
+    // SubButton.loadButtons(controller, scoreCommands);
+    // SwerveButtons.loadButtons(controller, subsystems);
+    // defaultbutton.loadButtons(controller, subsystems);
+    controller
+        .testController
+        .a()
+        .onTrue(subsystems.armpitch.chengestateCommand(armPitchState.COLLECT));
+    controller
+        .testController
+        .b()
+        .onTrue(subsystems.armpitch.chengestateCommand(armPitchState.L3first));
+    controller
+        .testController
+        .x()
+        .onTrue(subsystems.armpitch.chengestateCommand(armPitchState.rest));
   }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

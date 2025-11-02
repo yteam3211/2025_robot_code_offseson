@@ -10,7 +10,6 @@ import frc.robot.states.inakegriperstate;
 import frc.robot.subsystems.Aempitch.armPitch;
 import frc.robot.subsystems.IntakePitch.IntakePitch;
 import frc.robot.subsystems.armGruper.ArmGriper;
-import frc.robot.subsystems.elevatorsim.elevator2;
 import frc.robot.subsystems.elvetor.elevator;
 import frc.robot.subsystems.intakeGriper.IntakeGriper;
 import java.util.function.BooleanSupplier;
@@ -18,14 +17,14 @@ import java.util.function.BooleanSupplier;
 public class ArmCommands {
   public ArmGriper Armgriper;
   public armPitch armpitch;
-  public elevator2 elevator;
+  public elevator elevator;
   public IntakeGriper intakegriper;
   public IntakePitch intakePitch;
 
   public ArmCommands(
       ArmGriper armSubsystem,
       armPitch armpitch,
-      elevator2 elevatorSubsystem,
+      elevator elevatorSubsystem,
       IntakeGriper IntakeGriper,
       IntakePitch intakePitch) {
     this.Armgriper = armSubsystem;
