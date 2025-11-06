@@ -23,7 +23,7 @@ public class driverButtom {
     controller
         .swervecontroller
         .povLeft()
-    //     .onTrue(scoreCommands.getClosestLeftRightPose(sideScore.left).until(SubButton.test));
+        .onTrue(scoreCommands.getClosestLeftRightPose(sideScore.left).until(SubButton.test));
     controller.swervecontroller.cross().whileTrue(scoreCommands.climbslow().until(SubButton.test));
     controller.swervecontroller.circle().whileTrue(scoreCommands.climbfast().until(SubButton.test));
   }
