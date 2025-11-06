@@ -83,28 +83,11 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    // driverButtom.loadButtons(controller, scoreCommands);
-    // SubButton.loadButtons(controller, scoreCommands);
-    // SwerveButtons.loadButtons(controller, subsystems);
-    // defaultbutton.loadButtons(controller, subsystems);
-    // controller.swervecontroller
-    //  subsystems.ClimbSubsystem
-    controller
-        .swervecontroller
-        .cross()
-        .onTrue(subsystems.ClimbSubsystem.chengestatecCommand(ClimbPosition.MoveFast));
-    controller
-        .swervecontroller
-        .triangle()
-        .onTrue(subsystems.ClimbSubsystem.chengestatecCommand(ClimbPosition.Move));
-    controller
-        .swervecontroller
-        .square()
-        .onTrue(subsystems.ClimbSubsystem.chengestatecCommand(ClimbPosition.Hold));
-    controller
-        .swervecontroller
-        .circle()
-        .onTrue(Commands.runOnce(() -> subsystems.ClimbSubsystem.setpos(0)));
+    /
+driverButtom.loadButtons(controller, scoreCommands);
+     SubButton.loadButtons(controller, scoreCommands);
+     SwerveButtons.loadButtons(controller, subsystems);
+    defaultbutton.loadButtons(controller, subsystems);
   }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
