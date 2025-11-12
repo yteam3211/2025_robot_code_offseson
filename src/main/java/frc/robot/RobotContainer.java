@@ -84,18 +84,16 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj.Joystick} or {@link PS5Controller}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
-  private boolean isderiver = false;
-  protected void configureButtonBindings() {
-    if(isderiver){
-      driverButtom.loadButtons(controller, scoreCommands);
-      SubButton.loadButtons(controller, scoreCommands);
-      SwerveButtons.loadButtons(controller, subsystems);
-      defaultbutton.loadButtons(controller, subsystems);  
-    }
+  private boolean isdriver = true;
+  private void configureButtonBindings() {
+    if (isdriver){
+    driverButtom.loadButtons(controller, scoreCommands);
+    SubButton.loadButtons(controller, scoreCommands);
+    SwerveButtons.loadButtons(controller, subsystems);
+    defaultbutton.loadButtons(controller, subsystems);}
     else{
-      controller.swervecontroller.triangle().onTrue(subsystems.elevator.defer(null));
+      
     }
-    
   }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
