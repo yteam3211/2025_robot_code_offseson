@@ -19,12 +19,14 @@ import edu.wpi.first.wpilibj.PS5Controller;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import frc.lib.util.DriveToPointFactory;
+import frc.robot.Buttons.SubButton;
+import frc.robot.Buttons.SwerveButtons;
+import frc.robot.Buttons.defaultbutton;
+import frc.robot.Buttons.driverButtom;
 import frc.robot.commands.ArmCommands;
 import frc.robot.commands.IntakeCommands;
 import frc.robot.commands.ScoreCommands;
-import frc.robot.states.ClimbPosition;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -35,19 +37,19 @@ import frc.robot.states.ClimbPosition;
 public class RobotContainer {
   // subsystem container use this to get use the subsystems
   // subsystems
-  public final RobotSubsystems subsystems;
+  public RobotSubsystems subsystems;
   // Controller
-  private final Controller controller;
+  protected Controller controller;
 
-  private final IntakeCommands intakeCommands;
-  private final ArmCommands armCommands;
-  private final ScoreCommands scoreCommands;
-  private final DriveToPointFactory driveToPointFactory;
+  protected IntakeCommands intakeCommands;
+  protected ArmCommands armCommands;
+  protected ScoreCommands scoreCommands;
+  protected DriveToPointFactory driveToPointFactory;
   // Dashboard inputs
-  private final SendableChooser<Command> autoChooser;
+  protected SendableChooser<Command> autoChooser;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
-  public RobotContainer() {
+  public RobotContainer(boolean drivelern) {
     subsystems = new RobotSubsystems();
     controller = new Controller();
 
@@ -82,29 +84,18 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj.Joystick} or {@link PS5Controller}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
-  private void configureButtonBindings() {
-    // driverButtom.loadButtons(controller, scoreCommands);
-    // SubButton.loadButtons(controller, scoreCommands);
-    // SwerveButtons.loadButtons(controller, subsystems);
-    // defaultbutton.loadButtons(controller, subsystems);
-    // controller.swervecontroller
-    //  subsystems.ClimbSubsystem
-    controller
-        .swervecontroller
-        .cross()
-        .onTrue(subsystems.ClimbSubsystem.chengestatecCommand(ClimbPosition.MoveFast));
-    controller
-        .swervecontroller
-        .triangle()
-        .onTrue(subsystems.ClimbSubsystem.chengestatecCommand(ClimbPosition.Move));
-    controller
-        .swervecontroller
-        .square()
-        .onTrue(subsystems.ClimbSubsystem.chengestatecCommand(ClimbPosition.Hold));
-    controller
-        .swervecontroller
-        .circle()
-        .onTrue(Commands.runOnce(() -> subsystems.ClimbSubsystem.setpos(0)));
+  private boolean isderiver = false;
+  protected void configureButtonBindings() {
+    if(isderiver){
+      driverButtom.loadButtons(controller, scoreCommands);
+      SubButton.loadButtons(controller, scoreCommands);
+      SwerveButtons.loadButtons(controller, subsystems);
+      defaultbutton.loadButtons(controller, subsystems);  
+    }
+    else{
+      controller.swervecontroller.triangle().onTrue(subsystems.elevator.defer(null));
+    }
+    
   }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

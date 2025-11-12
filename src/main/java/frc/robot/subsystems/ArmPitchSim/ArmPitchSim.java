@@ -6,43 +6,34 @@ package frc.robot.subsystems.ArmPitchSim;
 
 import static edu.wpi.first.units.Units.Degree;
 
-import java.io.IOError;
-import java.util.function.BooleanSupplier;
-import java.util.function.IntSupplier;
-
-import org.littletonrobotics.junction.AutoLogOutput;
-import org.littletonrobotics.junction.Logger;
-
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.util.LimelightHelpers;
 import frc.robot.states.armPitchState;
 import frc.robot.subsystems.ArmPitchSim.ArmPitchIO.ArmPitchInputs;
+import java.util.function.BooleanSupplier;
+import java.util.function.IntSupplier;
+import org.littletonrobotics.junction.AutoLogOutput;
 
 public class ArmPitchSim extends SubsystemBase {
-  @AutoLogOutput
-  armPitchState state = armPitchState.firtstinit;
+  @AutoLogOutput armPitchState state = armPitchState.firtstinit;
   ArmPitchInputs inputs = new ArmPitchInputs();
   ArmPitchIO io;
   /** Creates a new ArmPitchSim. */
   public ArmPitchSim(ArmPitchIO io) {
     this.io = io;
-    
   }
 
-  
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
     io.updateInputs(inputs);
     // Logger.processInputs("Arm Pitch", inputs);
   }
-  
-  
+
   public void needflipreef() {
     LimelightHelpers.PoseEstimate mt1right =
         LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-right");
@@ -91,16 +82,17 @@ public class ArmPitchSim extends SubsystemBase {
     return flip;
   }
 
-  public Angle getAngle(){
+  public Angle getAngle() {
     return inputs.pos;
   }
-  public AngularVelocity getVelocity(){
+
+  public AngularVelocity getVelocity() {
     return inputs.speed;
   }
-  public AngularAcceleration getacc(){
+
+  public AngularAcceleration getacc() {
     return inputs.acce;
   }
-
 
   public BooleanSupplier isLesspos(double pos) {
     return () -> getAngle().in(Degree) < pos;
@@ -121,5 +113,4 @@ public class ArmPitchSim extends SubsystemBase {
   public Command setRotationCommand(Double targetPos) {
     return io.setPos(Degree.of(targetPos));
   }
-
 }

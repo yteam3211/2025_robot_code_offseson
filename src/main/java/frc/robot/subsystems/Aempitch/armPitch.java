@@ -72,17 +72,16 @@ public class armPitch extends SubsystemBase {
     return Commands.run(() -> chengestate(new_state));
   }
 
-  public void setdefualt(IntSupplier flip) {
-    setRotation(state.getTarget() * flip.getAsInt());
+  public void setdefualt() {
+    setRotation(state.getTarget());
   }
 
   public Command setDefualArmPitchCommand() {
-    return this.runOnce(() -> setdefualt(flip()));
+    return this.runOnce(() -> setdefualt(  ));
   }
 
   @Override
   public void periodic() {
-    needflipreef();
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Arm Position", getArmPosition());
     SmartDashboard.putString("Arm Pitch", state.name() + state.getTarget());
@@ -176,7 +175,8 @@ public class armPitch extends SubsystemBase {
   }
 
   public void setRotation(Double targetPos) {
-    m_Pitch.setControl(motionMagicVoltage.withPosition(targetPos).withSlot(0));
+    needflipreef();
+    m_Pitch.setControl(motionMagicVoltage.withPosition(targetPos * flip().getAsInt()).withSlot(0));
   }
 
   public Command setRotationCommand(Double targetPos) {

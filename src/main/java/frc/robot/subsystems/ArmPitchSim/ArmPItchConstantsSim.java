@@ -8,6 +8,8 @@ public class ArmPItchConstantsSim {
   public static final double POSITION_CONVERSION_FACTOR = 0.273809524;
   public static final NeutralModeValue NeutralMode = NeutralModeValue.Brake;
   public static int m_PitchID = 16;
+  public static double gearRatio = 34.54;
+  public static double jkgsquremeters;
 
   public final class MotionMagicConstantsspin {
     public static final double MOTION_MAGIC_VELOCITY = 140;
