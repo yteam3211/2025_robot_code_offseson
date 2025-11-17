@@ -12,17 +12,11 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 
 public class armPitchIOreal implements ArmPitchIO {
 
   public TalonFX m_Pitch = new TalonFX(ArmPItchConstantsSim.m_PitchID, "rio");
   private final MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
-
-  // armioinputsautologged input = new armioinputsautolog;
-  // armio m_io;
 
   public armPitchIOreal() {
     m_Pitch.setPosition(0);
@@ -60,20 +54,21 @@ public class armPitchIOreal implements ArmPitchIO {
   }
 
   @Override
+  public void updateArmPitch() {}
+
+  @Override
   public void updateInputs(ArmPitchInputs inputs) {
     inputs.pos = m_Pitch.getPosition().getValue();
     inputs.speed = m_Pitch.getVelocity().getValue();
-    inputs.acce = m_Pitch.getAcceleration().getValue();
-  }
-
-  @Deprecated
-  @Override
-  public Command setSpeedPos(double speed) {
-    return Commands.runOnce(() -> m_Pitch.set(speed));
   }
 
   @Override
-  public Command setPos(Angle pos) {
-    return Commands.runOnce(() -> m_Pitch.setControl(motionMagicVoltage.withPosition(pos)));
+  public void setSpeedPos(double speed) {
+    m_Pitch.set(speed);
+  }
+
+  @Override
+  public void setPos(Double pos) {
+    m_Pitch.setControl(motionMagicVoltage.withPosition(pos));
   }
 }

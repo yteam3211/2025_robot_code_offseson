@@ -4,6 +4,9 @@
 
 package frc.robot.subsystems.elevatorsim;
 
+import static edu.wpi.first.units.Units.Centimeter;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -83,10 +86,6 @@ public class elevator2 extends SubsystemBase {
     return Commands.run(() -> changeState(new_state));
   }
 
-  public void stopElevatorcommand() {
-    this.getCurrentCommand().cancel();
-  }
-
   public Command changeStateCommand(Elevatorstates newstate) {
     return Commands.runOnce(() -> changeState(newstate));
   }
@@ -100,7 +99,7 @@ public class elevator2 extends SubsystemBase {
   }
 
   public double getHeight() {
-    return inputs.height;
+    return inputs.height.in(Centimeter);
   }
 
   public BooleanSupplier isAtLestHight(double height) {
@@ -108,7 +107,7 @@ public class elevator2 extends SubsystemBase {
   }
 
   public double getVelocity() {
-    return inputs.speed;
+    return inputs.speed.in(MetersPerSecond) * 100;
   }
 
   public void resetHeight() {

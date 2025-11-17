@@ -39,7 +39,6 @@ public class ArmCommands {
   }
 
   public Command elevatorUpDwon() {
-    elevator.changeStateCommand(Elevatorstates.INTAKE_MODE_FIRST);
     return elevator
         .changestateCommandMustHaveUntil(Elevatorstates.INTAKE_MODE_FIRST)
         .until(elevator.isAtLestHight(50));

@@ -1,5 +1,8 @@
 package frc.robot.subsystems.elevatorsim;
 
+import static edu.wpi.first.units.Units.Centimeter;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
@@ -71,8 +74,8 @@ public class elevatorIOreal implements elevatorIO {
 
   @Override
   public void updateinputs(elevatorInputs new_Inputs) {
-    new_Inputs.height = motor.getPosition().getValueAsDouble();
-    new_Inputs.speed = motor.get();
+    new_Inputs.height = Centimeter.of(motor.getPosition().getValueAsDouble());
+    new_Inputs.speed = MetersPerSecond.of(motor.getVelocity().getValueAsDouble() * 100);
     new_Inputs.is_close = m_closeSwitch.get();
   }
 
@@ -82,5 +85,15 @@ public class elevatorIOreal implements elevatorIO {
   @Override
   public void setheight(DoubleSupplier height) {
     motor.setControl(motionMagicVoltage.withPosition(height.getAsDouble()).withSlot(0));
+  }
+
+  @Override
+  public void setMotorHeight(double height) {
+    motor.setPosition(height);
+  }
+
+  @Override
+  public void setSpeed(DoubleSupplier speed) {
+    motor.set(speed.getAsDouble());
   }
 }

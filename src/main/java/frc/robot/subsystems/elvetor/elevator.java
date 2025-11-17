@@ -87,7 +87,6 @@ public class elevator extends SubsystemBase {
     SmartDashboard.putNumber("ELEVATOR: distance", getHeight());
     SmartDashboard.putNumber("ELEVATOR velcoity", getVelocity());
     SmartDashboard.putString("ELEVATOR state", state.name() + "   " + state.getTarget());
-    SmartDashboard.putBoolean("isdown", isDown);
     if (getCurrentCommand() != null) {
       SmartDashboard.putString("command running on elevtor", getCurrentCommand().getName());
     }
@@ -111,8 +110,6 @@ public class elevator extends SubsystemBase {
     return Commands.run(() -> setspeed(speed));
   }
 
-  Boolean isDown = false;
-
   public Command setToZeroPosionCommand() {
     return changestateCommandMustHaveUntil(Elevatorstates.REST_MODE)
         .until(() -> getHeight() < 5)
@@ -122,10 +119,6 @@ public class elevator extends SubsystemBase {
   public Command setToZeroPosionCommandsuper() {
     return changeStateCommand(Elevatorstates.REST_MODE)
         .andThen(this.run(() -> motor.set(-0.2)).until(() -> this.isElevatorDown()));
-  }
-
-  public Boolean isDown() {
-    return isDown;
   }
 
   public void setDefaultElevator() {
@@ -138,12 +131,10 @@ public class elevator extends SubsystemBase {
 
   public void changeState(Elevatorstates newstate) {
     limitSwitchPressedAfterLestCommand = true;
-    isDown = true;
     state = newstate;
   }
 
   public Command changestateCommandMustHaveUntil(Elevatorstates new_state) {
-    isDown = true;
     return Commands.run(() -> changeState(new_state));
   }
 
@@ -152,7 +143,6 @@ public class elevator extends SubsystemBase {
   }
 
   public Command changeStateCommand(Elevatorstates newstate) {
-    isDown = true;
     return Commands.runOnce(() -> changeState(newstate));
   }
 

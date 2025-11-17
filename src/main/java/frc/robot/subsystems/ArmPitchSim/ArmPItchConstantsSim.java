@@ -2,6 +2,7 @@ package frc.robot.subsystems.ArmPitchSim;
 
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 
 public class ArmPItchConstantsSim {
 
@@ -9,7 +10,8 @@ public class ArmPItchConstantsSim {
   public static final NeutralModeValue NeutralMode = NeutralModeValue.Brake;
   public static int m_PitchID = 16;
   public static double gearRatio = 34.54;
-  public static double jkgsquremeters;
+  public static double ARM_LENGTH = 0.043;
+  public static double jkgsquremeters = SingleJointedArmSim.estimateMOI(ARM_LENGTH, 7.092);
 
   public final class MotionMagicConstantsspin {
     public static final double MOTION_MAGIC_VELOCITY = 140;

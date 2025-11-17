@@ -77,7 +77,7 @@ public class armPitch extends SubsystemBase {
   }
 
   public Command setDefualArmPitchCommand() {
-    return this.runOnce(() -> setdefualt(  ));
+    return this.runOnce(() -> setdefualt());
   }
 
   @Override
