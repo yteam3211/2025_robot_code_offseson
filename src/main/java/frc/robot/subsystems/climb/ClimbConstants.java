@@ -6,7 +6,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 public class ClimbConstants {
 
-  public static int CLIMB_MOTOR_ID = 60;
+  public static int CLIMB_MOTOR_ID = 55;
   public static final double POSITION_CONVERSION_FACTOR = 1;
   public static final double GEAR_RATIO = 0;
   public static final FeedbackSensorSourceValue SensorSource =

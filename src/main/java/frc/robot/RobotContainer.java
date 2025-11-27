@@ -19,13 +19,11 @@ import edu.wpi.first.wpilibj.PS5Controller;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.states.Elevatorstates;
-import frc.robot.states.armPitchState;
-import frc.robot.subsystems.ArmPitchSim.ArmPitchIOSim;
-import frc.robot.subsystems.ArmPitchSim.ArmPitchSim;
-import frc.robot.subsystems.elevatorsim.elevator2;
-import frc.robot.subsystems.elevatorsim.elevatorIOsim;
-import frc.robot.subsystems.swerve.SwerveSubsystem;
+import edu.wpi.first.wpilibj2.command.Commands;
+import frc.lib.util.DriveToPointFactory;
+import frc.robot.commands.ArmCommands;
+import frc.robot.commands.IntakeCommands;
+import frc.robot.commands.ScoreCommands;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -36,40 +34,40 @@ import frc.robot.subsystems.swerve.SwerveSubsystem;
 public class RobotContainer {
   // subsystem container use this to get use the subsystems
   // subsystems
-  // public RobotSubsystems subsystems;
+  public RobotSubsystems subsystems;
   // Controller
   protected Controller controller;
 
-  // protected IntakeCommands intakeCommands;
-  // protected ArmCommands armCommands;
-  // protected ScoreCommands scoreCommands;
-  // protected DriveToPointFactory driveToPointFactory;
+  protected IntakeCommands intakeCommands;
+  protected ArmCommands armCommands;
+  protected ScoreCommands scoreCommands;
+  protected DriveToPointFactory driveToPointFactory;
   // Dashboard inputs
   protected SendableChooser<Command> autoChooser;
   // private SwerveSubsystem swerveSubsystem = new SwerveSubsystem();
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
-  public RobotContainer(boolean drivelern) {
-    // subsystems = new RobotSubsystems();
+  public RobotContainer() {
+    subsystems = new RobotSubsystems();
     controller = new Controller();
 
-    // intakeCommands =
-    //     new IntakeCommands(
-    //         subsystems.IntakeGriper, subsystems.intakepitch, subsystems.intakeindexer);
-    // driveToPointFactory = new DriveToPointFactory(subsystems.swerve);
-    // armCommands =
-    //     new ArmCommands(
-    //         subsystems.ArmGriper,
-    //         subsystems.armpitch,
-    //         subsystems.elevator,
-    //         subsystems.IntakeGriper,
-    //         subsystems.intakepitch);
-    // scoreCommands =
-    //     new ScoreCommands(
-    //         armCommands,
-    //         intakeCommands,
-    //         driveToPointFactory,
-    //         subsystems.swerve,
-    //         subsystems.ClimbSubsystem);
+    intakeCommands =
+        new IntakeCommands(
+            subsystems.IntakeGriper, subsystems.IntakePitchSim, subsystems.intakeindexer);
+    driveToPointFactory = new DriveToPointFactory(subsystems.drive);
+    armCommands =
+        new ArmCommands(
+            subsystems.ArmGriper,
+            subsystems.armpitch,
+            subsystems.elevator2,
+            subsystems.IntakeGriper,
+            subsystems.IntakePitchSim);
+    scoreCommands =
+        new ScoreCommands(
+            armCommands,
+            intakeCommands,
+            driveToPointFactory,
+            subsystems.drive,
+            subsystems.ClimbSubsystem);
     // Set up auto routines
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("autoChooser", autoChooser);
@@ -83,12 +81,12 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj.Joystick} or {@link PS5Controller}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
-  private boolean isdriver = false;
+  private boolean isdriver = true;
 
-  private ArmPitchSim armPitchSim = new ArmPitchSim(new ArmPitchIOSim());
-  private elevator2 elevator2 = new elevator2(new elevatorIOsim());
+  // private ArmPitchSim armPitchSim = new ArmPitchSim(new ArmPitchIOSim());
+  // private elevator2 elevator2 = new elevator2(new elevatorIOsim());
   // private elevator2 elevetor = new elevator2(new elevatorIOreal());
-  private SwerveSubsystem swerverSubsystem = new SwerveSubsystem();
+  // private SwerveSubsystem swerverSubsystem = new SwerveSubsystem();
 
   private void configureButtonBindings() {
     if (isdriver) {
@@ -96,15 +94,25 @@ public class RobotContainer {
       // SubButton.loadButtons(controller, scoreCommands);
       // SwerveButtons.loadButtons(controller, subsystems);
       // defaultbutton.loadButtons(controller, subsystems);
-    } else {
       controller
           .swervecontroller
           .triangle()
-          .onTrue(armPitchSim.changeStateCommand(armPitchState.COLLECT));
-      controller
-          .swervecontroller
-          .square()
-          .onTrue(elevator2.changeStateCommand(Elevatorstates.INTAKE_MODE_FIRST));
+          .onTrue(
+              Commands.run(
+                      () -> {
+                        subsystems.drive.dirveat12voltz();
+                      },
+                      subsystems.drive)
+                  .withTimeout(1)
+                  .andThen(
+                      Commands.runOnce(
+                          () -> subsystems.drive.runCharacterization(0), subsystems.drive)));
+    } else {
+      // controller
+      //     .swervecontroller
+      //     .triangle()
+      //
+      // .onTrue(subsystems.IntakePitchSim.changestateCommand(IntakePitchstate.INTAKE_POSITION));
     }
   }
   /**

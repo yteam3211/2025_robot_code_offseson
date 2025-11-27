@@ -6,16 +6,16 @@ import frc.robot.states.IntakeIndexerState;
 import frc.robot.states.IntakePitchstate;
 import frc.robot.states.inakegriperstate;
 import frc.robot.subsystems.IntakeIndexer.IntakeIndexer;
-import frc.robot.subsystems.IntakePitch.IntakePitch;
+import frc.robot.subsystems.IntakePitchSim.IntakePitchSim;
 import frc.robot.subsystems.intakeGriper.IntakeGriper;
 
 public class IntakeCommands {
-  private IntakePitch intakePitch;
+  private IntakePitchSim intakePitch;
   private IntakeGriper Intakegriper;
   private IntakeIndexer intakeIndexer;
 
   public IntakeCommands(
-      IntakeGriper intakeSubsystem, IntakePitch intakePitch, IntakeIndexer intakeIndexer) {
+      IntakeGriper intakeSubsystem, IntakePitchSim intakePitch, IntakeIndexer intakeIndexer) {
     this.intakePitch = intakePitch;
     this.Intakegriper = intakeSubsystem;
     this.intakeIndexer = intakeIndexer;
@@ -29,7 +29,7 @@ public class IntakeCommands {
   }
 
   public Command downTakeIndexunil() {
-    return downTakeIndex().until(() -> intakeIndexer.isCorakIn() && intakePitch.getPos() > 60);
+    return downTakeIndex().until(() -> intakeIndexer.isCorakIn() && intakePitch.getAngle() > 60);
   }
 
   public Command upNOTakeNOIndex() {
@@ -63,8 +63,8 @@ public class IntakeCommands {
   public Command intakeCommand() {
 
     return downTakeIndexunil()
-        .andThen(upTakeIndex().until(() -> intakePitch.getPos() < 40))
-        .andThen(upNOTakeNOIndexuntil().until(() -> intakePitch.getPos() < 20));
+        .andThen(upTakeIndex().until(() -> intakePitch.getAngle() < 40))
+        .andThen(upNOTakeNOIndexuntil().until(() -> intakePitch.getAngle() < 20));
   }
 
   public Command scoreL1Command() {
@@ -73,10 +73,10 @@ public class IntakeCommands {
         .alongWith(
             intakeIndexer
                 .changestateCommandMustHaveUntil(IntakeIndexerState.STOP)
-                .until(() -> intakePitch.getPos() > 30))
+                .until(() -> intakePitch.getAngle() > 30))
         .andThen(
             Intakegriper.changestateCommandMustHaveUntil(inakegriperstate.Eject)
-                .until(() -> !intakePitch.isClose())
+                .until(() -> !intakePitch.isClosed())
                 .andThen(Commands.waitSeconds(0.5))
                 .andThen(resetCommand()));
   }

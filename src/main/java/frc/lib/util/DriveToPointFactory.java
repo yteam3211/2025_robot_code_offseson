@@ -4,16 +4,16 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.swerve.SwerveSubsystem;
+import frc.robot.commands.swerve.DriveCommands;
+import frc.robot.subsystems.drive.Drive;
 import java.util.function.Supplier;
 
 public class DriveToPointFactory {
-  private final SwerveSubsystem swerve;
+  private final Drive swerve;
 
-  public DriveToPointFactory(SwerveSubsystem swerve) {
+  public DriveToPointFactory(Drive swerve) {
     this.swerve = swerve;
   }
 
@@ -46,7 +46,7 @@ public class DriveToPointFactory {
                   rotPID.calculate(
                       current.getRotation().getRadians(), Target.get().getRotation().getRadians());
 
-              swerve.drive(new Translation2d(xOut, yOut), rotOut, true, true);
+              DriveCommands.joystickDrive(swerve, () -> xOut, () -> yOut, () -> rotOut);
             })
         .until(
             () -> {

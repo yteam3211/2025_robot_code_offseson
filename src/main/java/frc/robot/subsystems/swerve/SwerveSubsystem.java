@@ -4,8 +4,8 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-import com.studica.frc.AHRS;
-import com.studica.frc.AHRS.NavXComType;
+import com.reduxrobotics.sensors.canandgyro.Canandgyro;
+import com.reduxrobotics.sensors.canandgyro.CanandgyroSettings;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -19,6 +19,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.networktables.StructPublisher;
+import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -38,13 +39,28 @@ public class SwerveSubsystem extends SubsystemBase {
   public SwerveModule[] m_swerveMods;
   public SwerveModuleState[] m_desiredStates;
   private final SwerveDrivePoseEstimator m_PoseEstimator;
-  public AHRS m_gyro;
+  public Canandgyro m_canandgyro;
   public StructArrayPublisher<SwerveModuleState> publisher;
   public StructArrayPublisher<SwerveModuleState> publisher2;
   public StructPublisher<Pose2d> publisherPose;
+  public Alert gyrosAlert = new Alert("gyro not clab", Alert.AlertType.kError);
 
   public SwerveSubsystem() {
-    m_gyro = new AHRS(NavXComType.kMXP_SPI);
+    m_canandgyro = new Canandgyro(47);
+    m_canandgyro.startCalibration();
+    m_canandgyro.waitForCalibrationToFinish(7);
+    CanandgyroSettings gyroSettings =
+        new CanandgyroSettings()
+            .setAccelerationFramePeriod(0.02)
+            .setAngularPositionFramePeriod(0.02)
+            .setAngularVelocityFramePeriod(0.02)
+            .setYawFramePeriod(0.02)
+            .setStatusFramePeriod(0.02);
+    boolean gyroSettingsfalid = true;
+    for (int i = 5; i != 0; i--) {
+      gyroSettingsfalid = !m_canandgyro.setSettings(gyroSettings);
+    }
+    gyrosAlert.set(gyroSettingsfalid);
     initialHeadingReset();
 
     m_swerveMods =
@@ -71,8 +87,8 @@ public class SwerveSubsystem extends SubsystemBase {
             .getStructTopic("MyPose", m_swerveOdometry.getPoseMeters().struct)
             .publish();
     Rotation2d tempgyro;
-    if (SwerveConstants.INVERT_GYRO) tempgyro = Rotation2d.fromDegrees(m_gyro.getYaw());
-    else tempgyro = Rotation2d.fromDegrees(360 - m_gyro.getYaw());
+    if (SwerveConstants.INVERT_GYRO) tempgyro = Rotation2d.fromDegrees(m_canandgyro.getYaw());
+    else tempgyro = Rotation2d.fromDegrees(360 - m_canandgyro.getYaw());
     m_PoseEstimator =
         new SwerveDrivePoseEstimator(
             SwerveConstants.SWERVE_KINEMATICS, tempgyro, getModulePositions(), getPose());
@@ -169,19 +185,20 @@ public class SwerveSubsystem extends SubsystemBase {
     return new Pose2d(closestReef.getCenter(), closestReef.getAngle());
   }
 
-  public void updateMegaTag2Pose(SwerveDrivePoseEstimator m_poseEstimator, AHRS gyro) {
+  public void updateMegaTag2Pose(SwerveDrivePoseEstimator m_poseEstimator, Canandgyro gyro) {
     // --- LIMELIGHT LEFT ---
-    LimelightHelpers.SetRobotOrientation("limelight-left", gyro.getRawGyroY(), 0, 0, 0, 0, 0);
+
+    LimelightHelpers.SetRobotOrientation("limelight-left", gyro.getQuaternionZ(), 0, 0, 0, 0, 0);
     LimelightHelpers.PoseEstimate mt2Left =
         LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-left");
 
     // --- LIMELIGHT RIGHT ---
-    LimelightHelpers.SetRobotOrientation("limelight-right", gyro.getRawGyroY(), 0, 0, 0, 0, 0);
+    LimelightHelpers.SetRobotOrientation("limelight-right", gyro.getQuaternionZ(), 0, 0, 0, 0, 0);
     LimelightHelpers.PoseEstimate mt2Right =
         LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-right");
 
     // reject if spinning too fast
-    if (Math.abs(gyro.getRate()) > 360) {
+    if (Math.abs(gyro.getAngularVelocityYaw()) > 360) {
       return;
     }
 
@@ -263,17 +280,19 @@ public class SwerveSubsystem extends SubsystemBase {
     }
   }
 
+  public double AngleAdjustment = 0;
+
   public void initialHeadingReset() {
     try {
       Thread.sleep(1000);
     } catch (Exception e) {
     }
-    m_gyro.reset();
-    m_gyro.setAngleAdjustment(180);
+    m_canandgyro.setYaw(0);
+    AngleAdjustment = 180;
   }
 
   public void resetGyro() {
-    m_gyro.reset();
+    m_canandgyro.setYaw(0);
   }
 
   /* Used by SwerveControllerCommand in Auto */
@@ -348,8 +367,8 @@ public class SwerveSubsystem extends SubsystemBase {
 
   public Rotation2d getGyroYaw() {
     return SwerveConstants.INVERT_GYRO
-        ? Rotation2d.fromDegrees(360 - m_gyro.getYaw())
-        : Rotation2d.fromDegrees(m_gyro.getYaw());
+        ? Rotation2d.fromDegrees(360 - m_canandgyro.getYaw())
+        : Rotation2d.fromDegrees(m_canandgyro.getYaw());
   }
 
   public void resetModulesToAbsolute() {
@@ -420,10 +439,10 @@ public class SwerveSubsystem extends SubsystemBase {
       SmartDashboard.putNumber(
           "Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);
     }
-    SmartDashboard.putNumber("YAW", m_gyro.getYaw());
-    SmartDashboard.putNumber("PITCH", m_gyro.getPitch());
-    SmartDashboard.putNumber("ROLL", m_gyro.getRoll());
-    SmartDashboard.putNumber("ANGLE", m_gyro.getAngle());
+    SmartDashboard.putNumber("YAW", m_canandgyro.getYaw());
+    SmartDashboard.putNumber("PITCH", m_canandgyro.getPitch());
+    SmartDashboard.putNumber("ROLL", m_canandgyro.getRoll());
+    SmartDashboard.putNumber("ANGLE", m_canandgyro.getMultiturnYaw());
     SmartDashboard.putString("CURRENT_HEADING", getHeading().toString());
 
     SmartDashboard.putString("POSITION", getPose().toString());
@@ -434,7 +453,7 @@ public class SwerveSubsystem extends SubsystemBase {
     if (m_desiredStates != null) {
       publisher2.set(m_desiredStates);
     }
-    updateMegaTag2Pose(this.m_PoseEstimator, this.m_gyro);
+    updateMegaTag2Pose(this.m_PoseEstimator, this.m_canandgyro);
     publisher.set(getModuleStates());
     m_PoseEstimator.update(getGyroYaw(), getModulePositions());
     publisherPose.set(m_PoseEstimator.getEstimatedPosition());

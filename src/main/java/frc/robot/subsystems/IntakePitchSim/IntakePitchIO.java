@@ -1,22 +1,18 @@
-package frc.robot.subsystems.ArmPitchSim;
+package frc.robot.subsystems.IntakePitchSim;
 
-import static edu.wpi.first.units.Units.Degree;
-import static edu.wpi.first.units.Units.DegreesPerSecond;
-
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.AngularVelocity;
 import org.littletonrobotics.junction.AutoLog;
 
-public interface ArmPitchIO {
+public interface IntakePitchIO {
   @AutoLog
-  public static class ArmPitchInputs {
+  public static class IntakePitchInputs {
     /**
      * look https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/units/Units.html on
      * how to get evrey thing
      */
-    public Angle pos = Degree.of(90);
+    public double pos = 42;
 
-    public AngularVelocity speed = DegreesPerSecond.of(0);
+    public double speed = 0;
+    public boolean isClosed = false;
   }
   /**
    * updateInputs default setting
@@ -26,7 +22,7 @@ public interface ArmPitchIO {
    * @apiNote check https://docs.advantagekit.org/getting-started/what-is-advantagekit/ for more
    *     info
    */
-  void updateInputs(ArmPitchInputs inputs);
+  void updateInputs(IntakePitchInputs inputs);
   /**
    * set simple speed (dutycycle must be from -1 to 1)
    *

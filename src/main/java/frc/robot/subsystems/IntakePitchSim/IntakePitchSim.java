@@ -2,28 +2,23 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems.ArmPitchSim;
+package frc.robot.subsystems.IntakePitchSim;
 
-import static edu.wpi.first.units.Units.Degree;
-
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.util.LimelightHelpers;
-import frc.robot.states.armPitchState;
+import frc.robot.states.IntakePitchstate;
 import java.util.function.BooleanSupplier;
 import java.util.function.IntSupplier;
-import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
-public class ArmPitchSim extends SubsystemBase {
-  @AutoLogOutput armPitchState state = armPitchState.firtstinit;
-  ArmPitchInputsAutoLogged inputs = new ArmPitchInputsAutoLogged();
-  ArmPitchIO io;
+public class IntakePitchSim extends SubsystemBase {
+  IntakePitchstate state = IntakePitchstate.ZERO_POSITION;
+  IntakePitchInputsAutoLogged inputs = new IntakePitchInputsAutoLogged();
+  IntakePitchIO io;
   /** Creates a new ArmPitchSim. */
-  public ArmPitchSim(ArmPitchIO io) {
+  public IntakePitchSim(IntakePitchIO io) {
     this.io = io;
     this.setDefaultCommand(defualtCommand());
   }
@@ -32,8 +27,8 @@ public class ArmPitchSim extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     io.updateInputs(inputs);
-    Logger.processInputs("Arm Pitch", inputs);
-    Logger.recordOutput("arm Ptihc/state", state);
+    Logger.processInputs("IntakePitch", inputs);
+    Logger.recordOutput("IntakePitch/state", state);
   }
 
   @Override
@@ -89,40 +84,48 @@ public class ArmPitchSim extends SubsystemBase {
     return flip;
   }
 
-  public Angle getAngle() {
+  public double getAngle() {
     return inputs.pos;
   }
 
-  public AngularVelocity getVelocity() {
+  public boolean isClosed() {
+    return inputs.isClosed;
+  }
+
+  public double getVelocity() {
     return inputs.speed;
   }
 
   public BooleanSupplier isLesspos(double pos) {
-    return () -> getAngle().in(Degree) < pos;
+    return () -> getAngle() < pos;
   }
 
   public BooleanSupplier isAtLestpos(double pos) {
-    return () -> getAngle().in(Degree) > pos;
+    return () -> getAngle() > pos;
   }
 
   public BooleanSupplier isAtLestPosdouble(double pos) {
-    return () -> Math.abs(getAngle().in(Degree)) > Math.abs(pos);
+    return () -> Math.abs(getAngle()) > Math.abs(pos);
   }
 
   public BooleanSupplier islessthenPosdouble(double pos) {
-    return () -> Math.abs(getAngle().in(Degree)) < Math.abs(pos);
+    return () -> Math.abs(getAngle()) < Math.abs(pos);
   }
 
   public Command setRotationCommand(Double targetPos) {
     return Commands.runOnce(() -> io.setPos(targetPos));
   }
 
-  public void changeState(armPitchState new_State) {
+  public void changeState(IntakePitchstate new_State) {
     state = new_State;
   }
 
-  public Command changeStateCommand(armPitchState new_State) {
+  public Command changestateCommand(IntakePitchstate new_State) {
     return Commands.runOnce(() -> changeState(new_State));
+  }
+
+  public Command changestateCommandMustHaveUntil(IntakePitchstate new_State) {
+    return Commands.run(() -> changeState(new_State));
   }
 
   public Command defualtCommand() {

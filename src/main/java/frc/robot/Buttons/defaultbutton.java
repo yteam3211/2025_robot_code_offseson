@@ -3,7 +3,7 @@ package frc.robot.Buttons;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import frc.robot.Controller;
 import frc.robot.RobotSubsystems;
-import frc.robot.commands.swerve.DriveCommand;
+import frc.robot.commands.swerve.DriveCommands;
 
 public class defaultbutton {
   public static void loadButtons(Controller Controller, RobotSubsystems robotSubsystems) {
@@ -12,12 +12,11 @@ public class defaultbutton {
 
   public static void swerve(
       CommandPS5Controller driverController, RobotSubsystems robotSubsystems) {
-    robotSubsystems.swerve.setDefaultCommand(
-        new DriveCommand(
-            robotSubsystems.swerve,
+    robotSubsystems.drive.setDefaultCommand(
+        DriveCommands.joystickDrive(
+            robotSubsystems.drive,
             () -> -driverController.getLeftY(),
             () -> -driverController.getLeftX(),
-            () -> -driverController.getRightX(),
-            () -> false));
+            () -> -driverController.getRightX()));
   }
 }
