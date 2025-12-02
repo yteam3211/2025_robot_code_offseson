@@ -16,7 +16,7 @@ public class SwerveConstants {
       CHOSEN_MODULE = // TODO: This must be tuned to specific robot
       COTSTalonFXSwerveConstants.SDS.MK4i.Falcon500(
               COTSTalonFXSwerveConstants.SDS.MK4i.driveRatios.L2);
-  public static final boolean INVERT_GYRO = true;
+  public static final boolean INVERT_GYRO = false;
   public static double SLOW_DRIVE = 1;
 
   /* Drivetrain Constants */

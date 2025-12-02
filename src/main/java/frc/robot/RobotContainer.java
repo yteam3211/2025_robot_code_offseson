@@ -16,14 +16,16 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.PS5Controller;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.lib.util.DriveToPointFactory;
+import frc.robot.Buttons.SwerveButtons;
+import frc.robot.Buttons.defaultbutton;
 import frc.robot.commands.ArmCommands;
 import frc.robot.commands.IntakeCommands;
 import frc.robot.commands.ScoreCommands;
+import frc.robot.commands.swerve.DriveCommands2;
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -43,7 +45,7 @@ public class RobotContainer {
   protected ScoreCommands scoreCommands;
   protected DriveToPointFactory driveToPointFactory;
   // Dashboard inputs
-  protected SendableChooser<Command> autoChooser;
+  private final LoggedDashboardChooser<Command> autoChooser;
   // private SwerveSubsystem swerveSubsystem = new SwerveSubsystem();
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -53,7 +55,7 @@ public class RobotContainer {
     intakeCommands =
         new IntakeCommands(
             subsystems.IntakeGriper, subsystems.IntakePitchSim, subsystems.intakeindexer);
-    driveToPointFactory = new DriveToPointFactory(subsystems.drive);
+    // driveToPointFactory = new DriveToPointFactory(subsystems.drive);
     armCommands =
         new ArmCommands(
             subsystems.ArmGriper,
@@ -63,14 +65,10 @@ public class RobotContainer {
             subsystems.IntakePitchSim);
     scoreCommands =
         new ScoreCommands(
-            armCommands,
-            intakeCommands,
-            driveToPointFactory,
-            subsystems.drive,
-            subsystems.ClimbSubsystem);
+            armCommands, intakeCommands, driveToPointFactory, subsystems.ClimbSubsystem);
     // Set up auto routines
-    autoChooser = AutoBuilder.buildAutoChooser();
-    SmartDashboard.putData("autoChooser", autoChooser);
+    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -92,21 +90,14 @@ public class RobotContainer {
     if (isdriver) {
       // driverButtom.loadButtons(controller, scoreCommands);
       // SubButton.loadButtons(controller, scoreCommands);
-      // SwerveButtons.loadButtons(controller, subsystems);
-      // defaultbutton.loadButtons(controller, subsystems);
-      controller
-          .swervecontroller
-          .triangle()
-          .onTrue(
-              Commands.run(
-                      () -> {
-                        subsystems.drive.dirveat12voltz();
-                      },
-                      subsystems.drive)
-                  .withTimeout(1)
-                  .andThen(
-                      Commands.runOnce(
-                          () -> subsystems.drive.runCharacterization(0), subsystems.drive)));
+      SwerveButtons.loadButtons(controller, subsystems);
+      defaultbutton.loadButtons(controller, subsystems);
+      // controller
+      //     .swervecontroller
+      //     .triangle()
+      //     .whileTrue(
+      //         DriveCommands.joystickDriveAtAngle(
+      //             subsystems.drive, () -> 0, () -> 1, () -> Rotation2d.fromDegrees(0)));
     } else {
       // controller
       //     .swervecontroller
@@ -114,6 +105,24 @@ public class RobotContainer {
       //
       // .onTrue(subsystems.IntakePitchSim.changestateCommand(IntakePitchstate.INTAKE_POSITION));
     }
+    autoChooser.addOption(
+        "Drive Wheel Radius Characterization",
+        DriveCommands2.wheelRadiusCharacterization(subsystems.drive));
+    autoChooser.addOption(
+        "Drive Simple FF Characterization",
+        DriveCommands2.feedforwardCharacterization(subsystems.drive));
+    autoChooser.addOption(
+        "Drive SysId (Quasistatic Forward)",
+        subsystems.drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    autoChooser.addOption(
+        "Drive SysId (Quasistatic Reverse)",
+        subsystems.drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    autoChooser.addOption(
+        "Drive SysId (Dynamic Forward)",
+        subsystems.drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    autoChooser.addOption(
+        "Drive SysId (Dynamic Reverse)",
+        subsystems.drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
   }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -121,6 +130,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autoChooser.getSelected();
+    return autoChooser.get();
   }
 }

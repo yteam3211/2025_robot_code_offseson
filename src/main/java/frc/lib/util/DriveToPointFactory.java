@@ -6,7 +6,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.commands.swerve.DriveCommands;
+import frc.robot.commands.swerve.DriveCommands2;
 import frc.robot.subsystems.drive.Drive;
 import java.util.function.Supplier;
 
@@ -46,7 +46,7 @@ public class DriveToPointFactory {
                   rotPID.calculate(
                       current.getRotation().getRadians(), Target.get().getRotation().getRadians());
 
-              DriveCommands.joystickDrive(swerve, () -> xOut, () -> yOut, () -> rotOut);
+              DriveCommands2.joystickDrive(swerve, () -> xOut, () -> yOut, () -> rotOut);
             })
         .until(
             () -> {

@@ -14,23 +14,24 @@ public class GyroIOCanAndGyro implements GyroIO {
   public GyroIOCanAndGyro() {
     CanandgyroSettings settings =
         new CanandgyroSettings()
-            .setAccelerationFramePeriod(0.02)
             .setAngularPositionFramePeriod(0.02)
-            .setAngularVelocityFramePeriod(0.02)
-            .setStatusFramePeriod(0.02)
-            .setYawFramePeriod(0.02);
+            .setYawFramePeriod(0.02)
+            .setAccelerationFramePeriod(0);
     boolean settingsapplied = canandgyro.setSettings(settings);
-    while (!settingsapplied) {
-      settingsapplied = canandgyro.setSettings(settings);
-    }
+    canandgyro.setYaw(Units.degreesToRotations(0));
+    // while (!settingsapplied) {
+    //   settingsapplied = canandgyro.setSettings(settings);
+    // }
     yawTimestampQueue = PhoenixOdometryThread.getInstance().makeTimestampQueue();
-    yawPositionQueue = PhoenixOdometryThread.getInstance().registerSignal(canandgyro::getYaw);
+    yawPositionQueue =
+        PhoenixOdometryThread.getInstance()
+            .registerSignal(() -> Units.rotationsToDegrees(canandgyro.getYaw()));
   }
 
   @Override
   public void updateInputs(GyroIOInputs inputs) {
     inputs.connected = canandgyro.isConnected();
-    inputs.yawPosition = Rotation2d.fromRotations(canandgyro.getYaw());
+    inputs.yawPosition = canandgyro.getRotation2d();
     inputs.yawVelocityRadPerSec = Units.rotationsToRadians(canandgyro.getAngularVelocityYaw());
     inputs.odometryYawTimestamps =
         yawTimestampQueue.stream().mapToDouble((Double value) -> value).toArray();
@@ -38,5 +39,7 @@ public class GyroIOCanAndGyro implements GyroIO {
         yawPositionQueue.stream()
             .map((Double value) -> Rotation2d.fromDegrees(value))
             .toArray(Rotation2d[]::new);
+    yawTimestampQueue.clear();
+    yawPositionQueue.clear();
   }
 }

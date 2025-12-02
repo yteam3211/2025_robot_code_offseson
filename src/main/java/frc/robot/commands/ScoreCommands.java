@@ -14,7 +14,6 @@ import frc.lib.util.ReefPositions;
 import frc.lib.util.ReefSidePosition;
 import frc.robot.states.ClimbPosition;
 import frc.robot.subsystems.climb.ClimbSubsystem;
-import frc.robot.subsystems.drive.Drive;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
@@ -23,19 +22,16 @@ public class ScoreCommands {
   private ArmCommands armCommands;
   private IntakeCommands intakeCommands;
   private DriveToPointFactory driveToPointFactory;
-  private Drive swerveSubsystem;
   private ClimbSubsystem ClimbSubsystem;
 
   public ScoreCommands(
       ArmCommands armCommands,
       IntakeCommands intakeCommands,
       DriveToPointFactory driveToPointFactory,
-      Drive swerveSubsystem,
       ClimbSubsystem ClimbSubsystem) {
     this.armCommands = armCommands;
     this.intakeCommands = intakeCommands;
     this.driveToPointFactory = driveToPointFactory;
-    this.swerveSubsystem = swerveSubsystem;
     this.ClimbSubsystem = ClimbSubsystem;
 
     NamedCommands.registerCommand("score_L4", scoreL4auto());

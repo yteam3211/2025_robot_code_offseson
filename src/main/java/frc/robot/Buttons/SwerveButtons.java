@@ -11,5 +11,22 @@ public class SwerveButtons {
         .swervecontroller
         .touchpad()
         .onTrue(new InstantCommand(() -> robotSubsystems.drive.zeroHeading()));
+    // robotControllers
+    //     .swervecontroller
+    //     .R1()
+    //     .onTrue(Commands.runOnce(() -> robotSubsystems.swerve.resetPose(),
+    // robotSubsystems.swerve));
+    // robotControllers
+    //     .swervecontroller
+    //     .R2()
+    //     .onTrue(
+    //         Commands.runOnce(
+    //             () -> robotSubsystems.swerve.resetDriveEncoders(), robotSubsystems.swerve));
+    // robotControllers
+    //     .swervecontroller
+    //     .circle()
+    //     .whileTrue(
+    //         Commands.runOnce(() -> robotSubsystems.swerve.moveFrontLeft(),
+    // robotSubsystems.swerve));
   }
 }

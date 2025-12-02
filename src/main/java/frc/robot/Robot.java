@@ -15,11 +15,15 @@ package frc.robot;
 
 import com.pathplanner.lib.commands.PathfindingCommand;
 import com.reduxrobotics.canand.CanandEventLoop;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.lib.util.LimelightHelpers;
+import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
+import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.networktables.NT4Publisher;
+import org.littletonrobotics.junction.wpilog.WPILOGReader;
+import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -34,45 +38,45 @@ public class Robot extends LoggedRobot {
 
   public Robot() {
     CanandEventLoop.getInstance();
-    // Record metadata
-    // Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
-    // Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
-    // Logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA);
-    // Logger.recordMetadata("GitDate", BuildConstants.GIT_DATE);
-    // Logger.recordMetadata("GitBranch", BuildConstants.GIT_BRANCH);
-    // switch (BuildConstants.DIRTY) {
-    //   case 0:
-    //     Logger.recordMetadata("GitDirty", "All changes committed");
-    //     break;
-    //   case 1:
-    //     Logger.recordMetadata("GitDirty", "Uncomitted changes");
-    //     break;
-    //   default:
-    //     Logger.recordMetadata("GitDirty", "Unknown");
-    //     break;
-    // }
-    // // // Set up data receivers & replay source
-    // switch (Constants.currentMode) {
-    //   case REAL:
-    //     // Running on a real robot, log to a USB stick ("/U/logs")
-    //     Logger.addDataReceiver(new WPILOGWriter("U/logs/tset"));
-    //     Logger.addDataReceiver(new NT4Publisher());
-    //     break;
+    // // Record metadata
+    Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
+    Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
+    Logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA);
+    Logger.recordMetadata("GitDate", BuildConstants.GIT_DATE);
+    Logger.recordMetadata("GitBranch", BuildConstants.GIT_BRANCH);
+    switch (BuildConstants.DIRTY) {
+      case 0:
+        Logger.recordMetadata("GitDirty", "All changes committed");
+        break;
+      case 1:
+        Logger.recordMetadata("GitDirty", "Uncomitted changes");
+        break;
+      default:
+        Logger.recordMetadata("GitDirty", "Unknown");
+        break;
+    }
+    // // Set up data receivers & replay source
+    switch (Constants.currentMode) {
+      case REAL:
+        //     // Running on a real robot, log to a USB stick ("/U/logs")
+        Logger.addDataReceiver(new WPILOGWriter());
+        Logger.addDataReceiver(new NT4Publisher());
+        break;
 
-    //   case SIM:
-    //     // Running a physics simulator, log to NT
-    //     Logger.addDataReceiver(new NT4Publisher());
-    //     break;
+      case SIM:
+        //     // Running a physics simulator, log to NT
+        Logger.addDataReceiver(new NT4Publisher());
+        break;
 
-    //   case REPLAY:
-    //     // Replaying a log, set up replay source
-    //     setUseTiming(true); // Run as fast as possible
-    //     String logPath = LogFileUtil.findReplayLog();
-    //     Logger.setReplaySource(new WPILOGReader(logPath));
-    //     Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim")));
-    //     break;
-    // }
-    // Logger.start();
+      case REPLAY:
+        //     // Replaying a log, set up replay source
+        setUseTiming(true); // Run as fast as possible
+        String logPath = LogFileUtil.findReplayLog();
+        Logger.setReplaySource(new WPILOGReader(logPath));
+        Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim")));
+        break;
+    }
+    Logger.start();
     robotContainer = new RobotContainer();
   }
 
@@ -88,13 +92,13 @@ public class Robot extends LoggedRobot {
   /** This function is called periodically during all modes. */
   @Override
   public void robotPeriodic() {
-    double rightTag = LimelightHelpers.getFiducialID("limelight-right");
-    double leftTag = LimelightHelpers.getFiducialID("limelight-left");
-    SmartDashboard.putNumber("left tag", leftTag);
-    SmartDashboard.putNumber("right tag", rightTag);
+    // double rightTag = LimelightHelpers.getFiducialID("limelight-right");
+    // double leftTag = LimelightHelpers.getFiducialID("limelight-left");
+    // SmartDashboard.putNumber("left tag", leftTag);
+    // SmartDashboard.putNumber("right tag", rightTag);
     // Optionally switch the thread to high priority to improve loop
     // timing (see the template project documentation for details)
-    // Threads.setCurrentThreadPriority(true, 99);
+    Threads.setCurrentThreadPriority(true, 99);
 
     // Runs the Scheduler. This is responsible for polling buttons, adding
     // newly-scheduled commands, running already-scheduled commands, removing
@@ -104,21 +108,13 @@ public class Robot extends LoggedRobot {
     CommandScheduler.getInstance().run();
 
     // Return to non-RT thread priority (do not modify the first argument)
-    // Threads.setCurrentThreadPriority(false, 10);
+    Threads.setCurrentThreadPriority(false, 10);
   }
 
   // public static double lastdegrees = 0;
   /** This function is called once when the robot is disabled. */
   @Override
   public void disabledInit() {}
-
-  public void limelightclib() {
-    LimelightHelpers.PoseEstimate mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
-    {
-      // lastdegrees = mt1.pose.getRotation().getDegrees();
-    }
-  }
-
   /** This function is called periodically when disabled. */
   @Override
   public void disabledPeriodic() {
