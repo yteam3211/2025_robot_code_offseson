@@ -21,6 +21,12 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.BatterySim;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import edu.wpi.first.wpilibj.simulation.RoboRioSim;
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj.util.Color8Bit;
 import frc.robot.subsystems.elvetor.elvetorconstants.MotorCurrentLimits;
 import java.util.function.DoubleSupplier;
 
@@ -40,8 +46,14 @@ public class elevatorIOsim implements elevatorIO {
           0);
   private MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
   private TalonFX m_master = new TalonFX(elvetorconstants.masterid);
+  Mechanism2d mec = new Mechanism2d(4, 4);
+
+  MechanismRoot2d root = mec.getRoot("elevaotr", 2, 0);
+  MechanismLigament2d ligament2d =
+      new MechanismLigament2d("elevaotr", 2, 0, 0, new Color8Bit(Color.kWhite));
 
   public elevatorIOsim() {
+    root.append(ligament2d);
     TalonFXConfiguration talonFXConfiguration = new TalonFXConfiguration();
 
     FeedbackConfigs feedbackConfigs = talonFXConfiguration.Feedback;
@@ -111,6 +123,8 @@ public class elevatorIOsim implements elevatorIO {
             Meters.of(elevatorSim.getVelocityMetersPerSecond()).in(Centimeter) * postorot);
     RoboRioSim.setVInVoltage(
         BatterySim.calculateDefaultBatteryLoadedVoltage(elevatorSim.getCurrentDrawAmps()));
+    ligament2d.setLength(elevatorSim.getPositionMeters() * 100);
+    SmartDashboard.putData("mec", mec);
   }
 
   @Override

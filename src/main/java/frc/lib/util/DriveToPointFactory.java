@@ -11,10 +11,10 @@ import frc.robot.subsystems.drive.Drive;
 import java.util.function.Supplier;
 
 public class DriveToPointFactory {
-  private final Drive swerve;
+  private final Drive Drive;
 
-  public DriveToPointFactory(Drive swerve) {
-    this.swerve = swerve;
+  public DriveToPointFactory(Drive Drive) {
+    this.Drive = Drive;
   }
 
   /** PathPlanner constraints for auto-driving */
@@ -36,26 +36,25 @@ public class DriveToPointFactory {
     PIDController rotPID = new PIDController(5, 0, 0);
     rotPID.enableContinuousInput(-Math.PI, Math.PI);
 
-    return swerve
-        .run(
+    return Drive.run(
             () -> {
-              Pose2d current = swerve.getPose();
+              Pose2d current = Drive.getPose();
               double xOut = xPID.calculate(current.getX(), Target.get().getY());
               double yOut = yPID.calculate(current.getY(), Target.get().getY());
               double rotOut =
                   rotPID.calculate(
                       current.getRotation().getRadians(), Target.get().getRotation().getRadians());
 
-              DriveCommands2.joystickDrive(swerve, () -> xOut, () -> yOut, () -> rotOut);
+              DriveCommands2.joystickDrive(Drive, () -> xOut, () -> yOut, () -> rotOut);
             })
         .until(
             () -> {
-              Pose2d error = Target.get().relativeTo(swerve.getPose());
+              Pose2d error = Target.get().relativeTo(Drive.getPose());
               return Math.abs(error.getX()) < 0.2
                   && Math.abs(error.getY()) < 0.2
                   && Math.abs(error.getRotation().getRadians()) < Math.toRadians(3);
             })
-        .finallyDo(() -> swerve.stop());
+        .finallyDo(() -> Drive.stop());
   }
 
   /** Builds a full drive-to-pose command (pathfind + PID settle) */

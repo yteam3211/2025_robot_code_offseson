@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.PS5Controller;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.lib.util.DriveToPointFactory;
+import frc.robot.Buttons.SubButton;
 import frc.robot.Buttons.SwerveButtons;
 import frc.robot.Buttons.defaultbutton;
 import frc.robot.commands.ArmCommands;
@@ -89,7 +90,7 @@ public class RobotContainer {
   private void configureButtonBindings() {
     if (isdriver) {
       // driverButtom.loadButtons(controller, scoreCommands);
-      // SubButton.loadButtons(controller, scoreCommands);
+      SubButton.loadButtons(controller, scoreCommands);
       SwerveButtons.loadButtons(controller, subsystems);
       defaultbutton.loadButtons(controller, subsystems);
       // controller
