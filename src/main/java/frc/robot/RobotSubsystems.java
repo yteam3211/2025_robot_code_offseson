@@ -83,7 +83,6 @@ public class RobotSubsystems {
                   Meter.of(Math.abs(TunerConstants.FrontRight.LocationY)));
       SwerveDriveSimulation driveSimulation =
           new SwerveDriveSimulation(driveTrainSimulationConfig, new Pose2d(2, 2, new Rotation2d()));
-      SimulatedArena.getInstance().addDriveTrainSimulation(driveSimulation);
       drive =
           new Drive(
               new GyroIO() {},
@@ -91,6 +90,14 @@ public class RobotSubsystems {
               new ModuleIOMaple(driveSimulation.getModules()[1]),
               new ModuleIOMaple(driveSimulation.getModules()[2]),
               new ModuleIOMaple(driveSimulation.getModules()[3]));
+      SimulatedArena.getInstance().addDriveTrainSimulation(driveSimulation);
+      //   drive =
+      //       new Drive(
+      //           new GyroIO() {},
+      //           new ModuleIOSim(TunerConstants.FrontLeft),
+      //           new ModuleIOSim(TunerConstants.FrontRight),
+      //           new ModuleIOSim(TunerConstants.BackLeft),
+      //           new ModuleIOSim(TunerConstants.BackRight));
       vision =
           new Vision(
               drive::addVisionMeasurement,
